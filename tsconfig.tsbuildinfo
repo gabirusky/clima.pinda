@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/components/common/errorboundary.tsx","./src/components/common/loadingspinner.tsx","./src/constants/config.ts","./src/constants/thresholds.ts","./src/hooks/useclimatedata.ts","./src/hooks/usescrollposition.ts","./src/hooks/usewindowsize.ts","./src/types/climate.ts"],"version":"5.9.3"}

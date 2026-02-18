@@ -3,17 +3,15 @@ import { useState, useEffect } from 'react';
 /**
  * Returns the current scroll position (scrollY), updated via
  * requestAnimationFrame to avoid layout thrashing.
- *
- * @returns {number} scrollY in pixels
  */
-export function useScrollPosition() {
+export function useScrollPosition(): number {
     const [scrollY, setScrollY] = useState(0);
 
     useEffect(() => {
-        let rafId = null;
+        let rafId: number | null = null;
 
         function handleScroll() {
-            if (rafId) return; // already scheduled
+            if (rafId !== null) return;
             rafId = requestAnimationFrame(() => {
                 setScrollY(window.scrollY);
                 rafId = null;
@@ -23,7 +21,7 @@ export function useScrollPosition() {
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            if (rafId) cancelAnimationFrame(rafId);
+            if (rafId !== null) cancelAnimationFrame(rafId);
         };
     }, []);
 

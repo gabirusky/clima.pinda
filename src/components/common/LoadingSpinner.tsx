@@ -16,21 +16,15 @@ export default function LoadingSpinner() {
                 fill="none"
                 aria-hidden="true"
             >
-                <circle
-                    cx="24"
-                    cy="24"
-                    r="20"
-                    stroke="#e5e7eb"
-                    strokeWidth="4"
-                />
+                <circle cx="24" cy="24" r="20" stroke="#1e293b" strokeWidth="4" />
                 <path
                     d="M44 24a20 20 0 0 0-20-20"
-                    stroke="#1e40af"
+                    stroke="#3b82f6"
                     strokeWidth="4"
                     strokeLinecap="round"
                 />
             </svg>
-            <p className="text-gray-500 text-sm font-medium">
+            <p className="text-white/40 text-sm font-medium tracking-wide">
                 Carregando dados climáticos…
             </p>
         </div>

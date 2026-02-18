@@ -1,33 +1,33 @@
 import { useState, useEffect } from 'react';
 
+interface WindowSize {
+    width: number;
+    height: number;
+}
+
 /**
  * Returns the current window dimensions, debounced on resize (200ms).
- *
- * @returns {{ width: number, height: number }}
  */
-export function useWindowSize() {
-    const [size, setSize] = useState({
+export function useWindowSize(): WindowSize {
+    const [size, setSize] = useState<WindowSize>({
         width: window.innerWidth,
         height: window.innerHeight,
     });
 
     useEffect(() => {
-        let timeoutId = null;
+        let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
         function handleResize() {
-            clearTimeout(timeoutId);
+            if (timeoutId !== null) clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
-                setSize({
-                    width: window.innerWidth,
-                    height: window.innerHeight,
-                });
+                setSize({ width: window.innerWidth, height: window.innerHeight });
             }, 200);
         }
 
         window.addEventListener('resize', handleResize);
         return () => {
             window.removeEventListener('resize', handleResize);
-            clearTimeout(timeoutId);
+            if (timeoutId !== null) clearTimeout(timeoutId);
         };
     }, []);
 

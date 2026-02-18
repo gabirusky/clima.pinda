@@ -20,16 +20,19 @@
 - [x] Create `data/` directory structure: `raw/`, `processed/`, `scripts/`, `notebooks/`
 - [x] Add `data/raw/.gitkeep` and `data/processed/.gitkeep`
 
-### 1.3 Frontend Scaffolding
-- [x] Run `npm create vite@latest . -- --template react` in project root
-- [x] Install runtime deps: `npm install d3 recharts framer-motion scrollama leaflet react-leaflet`
-- [x] Install dev deps: `npm install -D tailwindcss postcss autoprefixer eslint prettier @eslint/js eslint-plugin-react`
-- [x] Initialize Tailwind: `npx tailwindcss init -p`
-- [x] Configure `tailwind.config.js` content paths to `./src/**/*.{js,jsx,ts,tsx}`
-- [x] Create `vite.config.js` with `base: '/pindamonhangaba-climate/'` and `outDir: 'dist'`
-- [x] Create `tsconfig.json` (optional TypeScript config)
-- [x] Create `.eslintrc.json` with react plugin rules
+### 1.3 Frontend Scaffolding (TypeScript + shadcn/ui + Tailwind v4)
+- [x] Create `vite.config.ts` with `base: '/pindamonhangaba-climate/'`, Tailwind v4 Vite plugin, `@/` alias
+- [x] Create `tsconfig.json` with strict mode and `@/*` path alias
+- [x] Create `eslint.config.js` with React + hooks rules
 - [x] Create `.prettierrc` with standard formatting rules
+- [ ] Install Tailwind CSS v4: `npm install tailwindcss @tailwindcss/vite`
+- [ ] Install shadcn/ui deps: `npm install class-variance-authority clsx tailwind-merge lucide-react`
+- [ ] Install Radix primitives: `npm install @radix-ui/react-slot @radix-ui/react-dialog @radix-ui/react-tooltip @radix-ui/react-select @radix-ui/react-slider @radix-ui/react-tabs`
+- [ ] Initialize shadcn/ui: `npx -y shadcn@latest init` (use Git Bash)
+- [ ] Install runtime deps: `npm install d3 recharts framer-motion scrollama leaflet react-leaflet`
+- [ ] Install type defs: `npm install -D @types/d3 @types/leaflet @types/scrollama`
+- [ ] Add shadcn Button: `npx shadcn add button` (smoke test)
+- [ ] Verify dev server starts: `npm run dev`
 
 ---
 
@@ -152,70 +155,70 @@
 ## PHASE 4 — Frontend Foundation
 
 ### 4.1 Entry Point & Root
-- [ ] Edit `src/main.jsx`: import React, ReactDOM, App, `./styles/index.css`; render `<App />`
-- [ ] Edit `index.html`: set `<title>`, add meta description, OG tags, Twitter Card tags, Google Fonts (Inter, JetBrains Mono)
+- [ ] Edit `src/main.tsx`: import React, ReactDOM, App, `./index.css`; render `<App />`
+- [ ] Edit `index.html`: set `<title>`, add meta description, OG tags, Twitter Card tags, Google Fonts (Syne, DM Sans, JetBrains Mono)
 - [ ] Add Schema.org Dataset JSON-LD script in `index.html`
 - [ ] Add CSP meta tag in `index.html`
 
-### 4.2 CSS Design System
-- [ ] Create `src/styles/variables.css` with all CSS custom properties (temperature colors, stripe colors, UI colors, typography, spacing)
-- [ ] Create `src/styles/animations.css` with keyframes: `fadeIn`, `slideUp`, `stripeReveal`, `pulseHot`
-- [ ] Edit `src/styles/index.css`: import variables, animations; set base styles (font-family, box-sizing, scroll-behavior: smooth)
+### 4.2 CSS Design System (Tailwind v4 CSS-first)
+- [ ] Edit `src/index.css`: `@import "tailwindcss"` + `@theme {}` block with temperature colors, stripe colors, fonts (Syne, DM Sans)
+- [ ] Add `@custom-variant dark (&:where(.dark, .dark *))` for dark mode class strategy
+- [ ] Add keyframes in `src/index.css`: `stripeReveal`, `slideUp`, `pulseHot`, `fadeIn`
+- [ ] Set base styles: dark background (#0a0f1e), Syne for headings, DM Sans for body
 
-### 4.3 Constants
-- [ ] Create `src/constants/config.js`: export `LAT`, `LON`, `START_YEAR`, `END_YEAR`, `DATA_BASE_URL`, `REPO_BASE`
-- [ ] Create `src/constants/thresholds.js`: export `HD30_THRESHOLD = 30`, `HD32_THRESHOLD = 32`, `TR20_THRESHOLD = 20`, `SU25_THRESHOLD = 25`, `HEAT_WAVE_MIN_DURATION = 3`, `DRY_DAY_THRESHOLD = 1`
+### 4.3 TypeScript Types
+- [ ] Create `src/types/climate.ts`: export `DailyRecord`, `AnnualMetrics`, `DecadalMetrics`, `ClimateSummary` interfaces
+- [ ] `DailyRecord`: `{ date: string; temp_max: number; temp_min: number; temp_mean: number; precipitation: number; humidity: number; wind_max: number; data_quality?: string }`
+- [ ] `AnnualMetrics`: `{ year: number; hd30: number; hd32: number; tr20: number; su25: number; dtr_mean: number; hwdi_days: number; hwdi_events: number; hwdi_longest: number; cdd: number; gdd: number; p90_days: number; p95_days: number; temp_max_mean: number; temp_min_mean: number; temp_mean_annual: number; precip_total: number; precip_days: number; hot_season_length: number; anomaly: number }`
+- [ ] `ClimateSummary`: `{ hottest_day: {...}; coldest_day: {...}; longest_heat_wave: {...}; hd30_trend_slope_per_decade: number; decade_comparison: {...} }`
 
-### 4.4 Utility Functions
-- [ ] Create `src/utils/colors.js`: implement `tempToColor(temp)` returning hex from temperature scale
-- [ ] Create `src/utils/colors.js`: implement `anomalyToStripeColor(anomaly)` for climate stripes
-- [ ] Create `src/utils/colors.js`: export colorblind-safe palette arrays (Viridis 9-step, ColorBrewer RdBu)
-- [ ] Create `src/utils/formatters.js`: implement `formatTemp(val)` → `"28.5°C"`
-- [ ] Create `src/utils/formatters.js`: implement `formatDate(dateStr)` → `"Jan 15, 1985"`
-- [ ] Create `src/utils/formatters.js`: implement `formatDecade(year)` → `"1980s"`
-- [ ] Create `src/utils/calculations.js`: implement `linearRegression(xArr, yArr)` → `{slope, intercept, r2}`
-- [ ] Create `src/utils/calculations.js`: implement `movingAverage(arr, window)` → smoothed array
-- [ ] Create `src/utils/calculations.js`: implement `percentile(arr, p)` → value at p-th percentile
-- [ ] Create `src/utils/dataProcessing.js`: implement `groupByYear(records)` → object keyed by year
-- [ ] Create `src/utils/dataProcessing.js`: implement `groupByDecade(records)` → object keyed by decade
-- [ ] Create `src/utils/dataProcessing.js`: implement `filterByYear(records, year)` → array of daily records for that year
+### 4.4 Constants
+- [ ] Create `src/constants/config.ts`: export `LAT`, `LON`, `START_YEAR`, `END_YEAR`, `DATA_BASE_URL`, `REPO_BASE`
+- [ ] Create `src/constants/thresholds.ts`: export `HD30_THRESHOLD`, `HD32_THRESHOLD`, `TR20_THRESHOLD`, `SU25_THRESHOLD`, `HEAT_WAVE_MIN_DURATION`, `DRY_DAY_THRESHOLD`
 
-### 4.5 Custom Hooks
-- [ ] Create `src/hooks/useClimateData.js`: fetch `climate_data.json`, `metrics.json`, `summary.json` in parallel; return `{dailyData, metrics, summary, loading, error}`
-- [ ] Add error handling in `useClimateData.js`: catch fetch errors, set `error` state
-- [ ] Add loading state in `useClimateData.js`: `loading = true` until all three fetches resolve
-- [ ] Create `src/hooks/useScrollPosition.js`: return `scrollY` updated via `window.addEventListener('scroll', ...)` with `requestAnimationFrame` throttle
-- [ ] Create `src/hooks/useWindowSize.js`: return `{width, height}` updated on resize with debounce (200ms)
+### 4.5 Utility Functions
+- [ ] Create `src/utils/colors.ts`: `tempToColor(temp: number): string`, `anomalyToStripeColor(anomaly: number): string`
+- [ ] Create `src/utils/formatters.ts`: `formatTemp(val: number): string`, `formatDate(dateStr: string): string`, `formatDecade(year: number): string`
+- [ ] Create `src/utils/calculations.ts`: `linearRegression(x: number[], y: number[]): {slope, intercept, r2}`, `movingAverage(arr: number[], window: number): number[]`, `percentile(arr: number[], p: number): number`
+- [ ] Create `src/utils/dataProcessing.ts`: `groupByYear`, `groupByDecade`, `filterByYear`
+- [ ] Create `src/lib/utils.ts`: `cn(...inputs: ClassValue[]): string` (shadcn/ui `cn` helper — generated by shadcn init)
+
+### 4.6 Custom Hooks
+- [ ] Create `src/hooks/useClimateData.ts`: fetch `climate_data.json`, `metrics.json`, `summary.json` in parallel; return typed `{dailyData: DailyRecord[], metrics: Record<number, AnnualMetrics>, summary: ClimateSummary, loading: boolean, error: Error | null}`
+- [ ] Create `src/hooks/useScrollPosition.ts`: return `scrollY: number` via rAF-throttled scroll listener
+- [ ] Create `src/hooks/useWindowSize.ts`: return `{width: number, height: number}` with 200ms debounce
 
 ---
 
 ## PHASE 5 — Layout Components
 
-### 5.1 Header (`src/components/layout/Header.jsx`)
+### 5.1 Header (`src/components/layout/Header.tsx`)
 - [ ] Render sticky header with project title and subtitle
 - [ ] Add navigation links: #stripes, #summer, #nights, #heatwaves, #hottest, #cost, #future
 - [ ] Highlight active section based on scroll position
 - [ ] Collapse to hamburger menu on mobile (<768px)
 - [ ] Add smooth scroll behavior on nav link click
+- [ ] Use shadcn/ui `Button` for nav CTAs
 
-### 5.2 Footer (`src/components/layout/Footer.jsx`)
+### 5.2 Footer (`src/components/layout/Footer.tsx`)
 - [ ] Render attribution: "Climate data: Open-Meteo (ERA5 / Copernicus/ECMWF)"
 - [ ] Render attribution: "Visualization inspired by Ed Hawkins' Climate Stripes"
 - [ ] Add GitHub repository link
 - [ ] Add data download links (CSV, JSON)
 - [ ] Add license info (MIT code, CC BY 4.0 data)
 
-### 5.3 Navigation (`src/components/layout/Navigation.jsx`)
+### 5.3 Navigation (`src/components/layout/Navigation.tsx`)
 - [ ] Extract nav logic into reusable component
-- [ ] Accept `sections` prop (array of `{id, label}`)
+- [ ] Accept `sections` prop (array of `{id: string; label: string}`)
 - [ ] Highlight active section using IntersectionObserver
 
 ### 5.4 Common Components
-- [ ] Create `src/components/common/LoadingSpinner.jsx`: animated SVG spinner with "Loading climate data..." text
-- [ ] Create `src/components/common/ErrorBoundary.jsx`: class component catching render errors, showing fallback UI
-- [ ] Create `src/components/common/Tooltip.jsx`: positioned tooltip div, accepts `x`, `y`, `content` props
-- [ ] Create `src/components/common/DataTable.jsx`: accessible `<table>` alternative for chart data (screen readers)
-- [ ] Create `src/components/common/SectionTitle.jsx`: styled `<h2>` with decorative underline animation
+- [ ] Create `src/components/common/LoadingSpinner.tsx`: animated SVG spinner with "Carregando dados climáticos..." text
+- [ ] Create `src/components/common/ErrorBoundary.tsx`: class component catching render errors, showing fallback UI
+- [ ] Create `src/components/common/Tooltip.tsx`: positioned tooltip div, accepts `x`, `y`, `content` props
+- [ ] Create `src/components/common/DataTable.tsx`: accessible `<table>` alternative for chart data (screen readers)
+- [ ] Create `src/components/common/SectionTitle.tsx`: styled `<h2>` with decorative underline animation
+- [ ] shadcn/ui components to add: `npx shadcn add card badge separator tabs slider select`
 
 ---
 
@@ -414,20 +417,20 @@
 
 ## PHASE 9 — App Assembly
 
-### 9.1 App Component (`src/App.jsx`)
-- [ ] Import `useClimateData` hook
-- [ ] Show `<LoadingSpinner>` while loading
-- [ ] Show `<ErrorBoundary>` fallback if error
-- [ ] Render `<Header>` at top
+### 9.1 App Component (`src/App.tsx`)
+- [ ] Import `useClimateData` hook (typed)
+- [ ] Show `<LoadingSpinner />` while loading
+- [ ] Wrap in `<ErrorBoundary>` for render error fallback
+- [ ] Render `<Header />` at top
 - [ ] Render all storytelling sections in order: Intro, Summer, TropicalNights, HeatWave, HottestDay, Cost, Future
-- [ ] Render `<Footer>` at bottom
-- [ ] Pass `dailyData`, `metrics`, `summary` as props to sections that need them
+- [ ] Render `<Footer />` at bottom
+- [ ] Pass typed `dailyData`, `metrics`, `summary` as props to sections
 - [ ] Wrap visualization-heavy sections in `React.lazy` + `<Suspense>`
 
 ### 9.2 Data Flow
 - [ ] Verify `useClimateData` fetches from correct paths (relative to `base` in vite.config)
-- [ ] Verify all components receive correct data shape
-- [ ] Add PropTypes validation to all components (or TypeScript interfaces)
+- [ ] Verify all components receive correct data shape (TypeScript will catch mismatches)
+- [ ] Ensure all component props are typed with interfaces from `src/types/climate.ts`
 
 ---
 
@@ -518,7 +521,7 @@
 ### 13.2 Repository Settings
 - [ ] Enable GitHub Pages: Settings → Pages → Source → GitHub Actions
 - [ ] Add `.nojekyll` file to `public/` to prevent Jekyll processing
-- [ ] Verify `base` in `vite.config.js` matches repository name
+- [ ] Verify `base` in `vite.config.ts` matches repository name
 
 ### 13.3 Monitoring
 - [ ] Add Lighthouse CI config (`lighthouserc.json`): assert FCP <1500ms, LCP <2500ms, score >90

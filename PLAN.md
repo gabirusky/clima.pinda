@@ -2,6 +2,8 @@
 
 > **Goal**: Interactive, scrollytelling-driven climate data platform hosted on GitHub Pages analyzing 85+ years of historical data (1940–present) for Pindamonhangaba, SP, Brazil.
 
+> **Frontend Stack**: React 18 · Vite 5 · **TypeScript** · **shadcn/ui** · **Tailwind CSS v4**
+
 ---
 
 ## Architecture Overview
@@ -113,48 +115,94 @@ pindamonhangaba-climate/
 
 ---
 
-## Phase 3 — Frontend Setup (React + Vite)
+## Phase 3 — Frontend Setup (React + Vite + TypeScript + shadcn/ui)
 
 **Stack**:
-- React 18 + Vite (build tool)
-- Tailwind CSS v3 (styling)
-- D3.js v7 (complex visualizations: stripes, ridgeline, calendar heatmap)
-- Recharts (simple time-series and bar charts)
-- Framer Motion (animations)
-- Scrollama.js (scrollytelling)
-- Leaflet.js (interactive map)
+- **React 18** + **Vite 5** (build tool)
+- **TypeScript** (strict mode)
+- **Tailwind CSS v4** (styling — new CSS-first config, no tailwind.config.js)
+- **shadcn/ui** (component library — Radix primitives + Tailwind; components copied into project for full ownership)
+- **D3.js v7** (complex visualizations: stripes, ridgeline, calendar heatmap)
+- **Recharts** (simple time-series and bar charts)
+- **Framer Motion** (Motion library for React animations)
+- **Scrollama.js** (scrollytelling)
+- **Leaflet.js** (interactive map)
 
-**Init**:
+**Why shadcn/ui?** Unlike opinionated libraries (MUI, Ant Design), shadcn/ui gives full ownership of component code. Components are copied into the project, allowing deep customization — critical for the distinctive climate storytelling aesthetic.
+
+**Init** (use Git Bash, not PowerShell):
 ```bash
-npm create vite@latest . -- --template react
+# 1. Scaffold Vite + React + TypeScript
+npm create vite@latest . -- --template react-ts
+
+# 2. Install Tailwind CSS v4 (new CSS-first approach)
+npm install tailwindcss @tailwindcss/vite
+
+# 3. Install shadcn/ui dependencies
+npm install class-variance-authority clsx tailwind-merge lucide-react
+npm install @radix-ui/react-slot @radix-ui/react-dialog @radix-ui/react-tooltip
+npm install @radix-ui/react-select @radix-ui/react-slider @radix-ui/react-tabs
+
+# 4. Initialize shadcn/ui
+npx -y shadcn@latest init
+
+# 5. Install visualization + storytelling libs
 npm install d3 recharts framer-motion scrollama leaflet react-leaflet
-npm install -D tailwindcss postcss autoprefixer eslint prettier
+npm install -D @types/d3 @types/leaflet @types/scrollama
 ```
 
-**vite.config.js**:
-```js
-export default {
+**vite.config.ts** (Tailwind v4 uses Vite plugin, not PostCSS):
+```ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
   base: '/pindamonhangaba-climate/',
-  build: { outDir: 'dist', assetsDir: 'assets' }
+  resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      output: { manualChunks: { d3: ['d3'], recharts: ['recharts'], leaflet: ['leaflet', 'react-leaflet'] } }
+    }
+  },
+  optimizeDeps: { include: ['scrollama'] }
+})
+```
+
+**src/index.css** (Tailwind v4 CSS-first config — no tailwind.config.js needed):
+```css
+@import "tailwindcss";
+
+@theme {
+  /* Temperature scale */
+  --color-temp-cold: #2166ac;
+  --color-temp-cool: #67a9cf;
+  --color-temp-mild: #d1e5f0;
+  --color-temp-warm: #fddbc7;
+  --color-temp-hot: #ef8a62;
+  --color-temp-very-hot: #b2182b;
+  /* Climate stripes (Ed Hawkins) */
+  --color-stripe-cold: #08519c;
+  --color-stripe-neutral: #ffffff;
+  --color-stripe-hot: #a50f15;
+  /* Fonts — distinctive, non-generic choices per SKILL.md */
+  --font-display: 'Syne', sans-serif;     /* Bold, geometric display */
+  --font-body: 'DM Sans', sans-serif;     /* Clean, readable body */
+  --font-mono: 'JetBrains Mono', monospace;
 }
 ```
 
-**Design System** (`src/styles/variables.css`):
-```css
-/* Temperature scale */
---temp-cold: #2166ac; --temp-cool: #67a9cf; --temp-mild: #d1e5f0;
---temp-warm: #fddbc7; --temp-hot: #ef8a62; --temp-very-hot: #b2182b;
-/* Climate stripes (Ed Hawkins) */
---stripe-cold: #08519c; --stripe-cool: #3182bd; --stripe-neutral: #ffffff;
---stripe-warm: #de2d26; --stripe-hot: #a50f15;
-/* UI */
---primary: #1e40af; --secondary: #dc2626; --accent: #f59e0b;
-/* Fonts */
---font-sans: 'Inter', system-ui, sans-serif;
---font-mono: 'JetBrains Mono', monospace;
-```
+**Design Direction** (per SKILL.md):
+- **Tone**: Editorial / data-journalism — think NYT Climate desk, The Pudding
+- **Typography**: Syne (display, bold geometric) + DM Sans (body) — loaded from Google Fonts
+- **Color**: Deep navy background (#0a0f1e) with warm amber/red temperature accents. Dark theme by default.
+- **Motion**: Staggered scroll reveals via Framer Motion `whileInView`. Climate stripes animate left-to-right on entry.
+- **Differentiation**: Full-bleed climate stripes as hero background. Data as art.
 
-**Deliverable**: Scaffolded project with working dev server
+**Deliverable**: Scaffolded TypeScript project with shadcn/ui initialized and working dev server
 
 ---
 
