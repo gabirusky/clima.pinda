@@ -1,0 +1,117 @@
+/* ============================================================
+   Design System — CSS Custom Properties
+   Pindamonhangaba Climate Visualization
+   ============================================================ */
+
+:root {
+    /* --- Temperature Scale (Sequential: Cold → Hot) --- */
+    --temp-cold: #2166ac;
+    /* < 15°C */
+    --temp-cool: #67a9cf;
+    /* 15–20°C */
+    --temp-mild: #d1e5f0;
+    /* 20–25°C */
+    --temp-warm: #fddbc7;
+    /* 25–30°C */
+    --temp-hot: #ef8a62;
+    /* 30–35°C */
+    --temp-very-hot: #b2182b;
+    /* > 35°C */
+
+    /* --- Climate Stripes (Diverging, Ed Hawkins palette) --- */
+    --stripe-cold: #08519c;
+    --stripe-cool: #3182bd;
+    --stripe-neutral: #ffffff;
+    --stripe-warm: #de2d26;
+    --stripe-hot: #a50f15;
+
+    /* --- UI Colors --- */
+    --primary: #1e40af;
+    --primary-light: #3b82f6;
+    --secondary: #dc2626;
+    --accent: #f59e0b;
+    --background: #ffffff;
+    --surface: #f9fafb;
+    --surface-2: #f3f4f6;
+    --border: #e5e7eb;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+
+    /* --- Typography --- */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+    /* Font sizes */
+    --text-xs: 0.75rem;
+    /* 12px */
+    --text-sm: 0.875rem;
+    /* 14px */
+    --text-base: 1rem;
+    /* 16px */
+    --text-lg: 1.125rem;
+    /* 18px */
+    --text-xl: 1.25rem;
+    /* 20px */
+    --text-2xl: 1.5rem;
+    /* 24px */
+    --text-3xl: 1.875rem;
+    /* 30px */
+    --text-4xl: 2.25rem;
+    /* 36px */
+    --text-5xl: 3rem;
+    /* 48px */
+
+    /* Font weights */
+    --font-light: 300;
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    /* --- Spacing (8px base unit) --- */
+    --space-1: 0.25rem;
+    /* 4px */
+    --space-2: 0.5rem;
+    /* 8px */
+    --space-3: 0.75rem;
+    /* 12px */
+    --space-4: 1rem;
+    /* 16px */
+    --space-6: 1.5rem;
+    /* 24px */
+    --space-8: 2rem;
+    /* 32px */
+    --space-12: 3rem;
+    /* 48px */
+    --space-16: 4rem;
+    /* 64px */
+    --space-24: 6rem;
+    /* 96px */
+
+    /* --- Border Radius --- */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-full: 9999px;
+
+    /* --- Shadows --- */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* --- Transitions --- */
+    --transition-fast: 150ms ease;
+    --transition-base: 250ms ease;
+    --transition-slow: 400ms ease;
+
+    /* --- Z-index scale --- */
+    --z-below: -1;
+    --z-base: 0;
+    --z-raised: 10;
+    --z-sticky: 100;
+    --z-overlay: 200;
+    --z-modal: 300;
+    --z-tooltip: 400;
+}

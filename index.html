@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta -->
+    <title>Pindamonhangaba Climate Data | 85 Anos de Tendências de Temperatura</title>
+    <meta
+      name="description"
+      content="Explore 85+ anos de dados climáticos históricos de Pindamonhangaba, SP. Visualize o aquecimento, ondas de calor e noites tropicais de 1940 até hoje."
+    />
+    <link rel="icon" type="image/svg+xml" href="/pindamonhangaba-climate/favicon.svg" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pindamonhangaba Climate Data | 85 Anos de Aquecimento" />
+    <meta
+      property="og:description"
+      content="Explore 85+ anos de dados climáticos históricos de Pindamonhangaba, SP. Visualize o aquecimento, ondas de calor e noites tropicais de 1940 até hoje."
+    />
+    <meta property="og:url" content="https://YOUR_USERNAME.github.io/pindamonhangaba-climate/" />
+    <meta property="og:image" content="https://YOUR_USERNAME.github.io/pindamonhangaba-climate/images/og-image.png" />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pindamonhangaba Climate Data | 85 Anos de Aquecimento" />
+    <meta
+      name="twitter:description"
+      content="Explore 85+ anos de dados climáticos históricos de Pindamonhangaba, SP."
+    />
+    <meta name="twitter:image" content="https://YOUR_USERNAME.github.io/pindamonhangaba-climate/images/og-image.png" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Content Security Policy -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self' https://archive-api.open-meteo.com;"
+    />
+
+    <!-- Schema.org Dataset JSON-LD -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "Pindamonhangaba Historical Climate Data (1940–2024)",
+        "description": "Daily climate records for Pindamonhangaba, SP, Brazil including maximum/minimum/mean temperature, precipitation, humidity, and wind speed from 1940 to 2024.",
+        "url": "https://YOUR_USERNAME.github.io/pindamonhangaba-climate/",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "creator": {
+          "@type": "Organization",
+          "name": "Climate Data Visualization Team"
+        },
+        "temporalCoverage": "1940-01-01/2024-12-31",
+        "spatialCoverage": {
+          "@type": "Place",
+          "name": "Pindamonhangaba, São Paulo, Brazil",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -22.925,
+            "longitude": -45.462
+          }
+        },
+        "variableMeasured": [
+          "Maximum Temperature (°C)",
+          "Minimum Temperature (°C)",
+          "Mean Temperature (°C)",
+          "Precipitation (mm/day)",
+          "Relative Humidity (%)",
+          "Wind Speed (km/h)"
+        ],
+        "isBasedOn": {
+          "@type": "Dataset",
+          "name": "ERA5 Reanalysis",
+          "provider": {
+            "@type": "Organization",
+            "name": "Open-Meteo / Copernicus / ECMWF",
+            "url": "https://open-meteo.com/"
+          }
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

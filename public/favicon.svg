@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Thermometer body -->
+  <rect x="13" y="4" width="6" height="16" rx="3" fill="#1e40af"/>
+  <!-- Thermometer bulb -->
+  <circle cx="16" cy="22" r="5" fill="#dc2626"/>
+  <!-- Temperature fill -->
+  <rect x="14.5" y="12" width="3" height="10" fill="#dc2626"/>
+  <!-- Tick marks -->
+  <line x1="19" y1="8" x2="21" y2="8" stroke="#1e40af" stroke-width="1.5"/>
+  <line x1="19" y1="12" x2="21" y2="12" stroke="#1e40af" stroke-width="1.5"/>
+  <line x1="19" y1="16" x2="21" y2="16" stroke="#1e40af" stroke-width="1.5"/>
+</svg>

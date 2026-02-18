@@ -1,0 +1,335 @@
+# PLAN.md — Pindamonhangaba Climate Visualization
+
+> **Goal**: Interactive, scrollytelling-driven climate data platform hosted on GitHub Pages analyzing 85+ years of historical data (1940–present) for Pindamonhangaba, SP, Brazil.
+
+---
+
+## Architecture Overview
+
+```
+pindamonhangaba-climate/
+├── data/
+│   ├── scripts/                  # Python data pipeline
+│   │   ├── fetch_climate_data.py
+│   │   ├── process_climate_data.py
+│   │   ├── calculate_metrics.py
+│   │   └── generate_web_data.py
+│   ├── raw/                      # Raw API responses (gitignored)
+│   ├── processed/                # Cleaned CSVs (gitignored)
+│   └── notebooks/                # Jupyter exploration
+│       └── exploratory_analysis.ipynb
+├── public/
+│   └── data/                     # JSON consumed by frontend
+│       ├── climate_data.json     # Daily records (compressed)
+│       ├── metrics.json          # Pre-computed annual metrics
+│       └── summary.json          # Headline stats
+├── src/
+│   ├── main.jsx
+│   ├── App.jsx
+│   ├── components/
+│   │   ├── layout/               # Header, Footer, Navigation
+│   │   ├── visualizations/       # All chart components
+│   │   ├── storytelling/         # Scrolly sections
+│   │   ├── widgets/              # Interactive controls
+│   │   └── common/               # Shared UI primitives
+│   ├── hooks/                    # useClimateData, useScrollPosition, useWindowSize
+│   ├── utils/                    # dataProcessing, calculations, formatters, colors
+│   ├── styles/                   # index.css, variables.css, animations.css
+│   └── constants/                # config.js, thresholds.js
+├── tests/
+│   ├── unit/
+│   └── integration/
+├── docs/
+│   ├── API.md
+│   ├── DATA_SOURCES.md
+│   └── DEPLOYMENT.md
+├── .github/
+│   └── workflows/
+│       └── deploy.yml
+├── package.json
+├── vite.config.js
+└── tsconfig.json
+```
+
+---
+
+## Phase 1 — Data Acquisition (Python)
+
+**Primary Source**: Open-Meteo Historical Weather API (`https://archive-api.open-meteo.com/v1/archive`)
+- Coordinates: lat=-22.9250, lon=-45.4620
+- Date range: 1940-01-01 → 2024-12-31
+- Timezone: `America/Sao_Paulo`
+- Parameters: `temperature_2m_max`, `temperature_2m_min`, `temperature_2m_mean`, `precipitation_sum`, `relative_humidity_2m_mean`, `windspeed_10m_max`
+
+**Script**: `data/scripts/fetch_climate_data.py`
+- Chunked requests (max 1 year per call to avoid timeouts)
+- Retry logic with exponential backoff (3 retries)
+- Rate limiting: respect ~10,000 calls/day free tier
+- Save raw JSON per year to `data/raw/`
+- Merge into single CSV: `data/raw/pindamonhangaba_1940_2024.csv`
+
+**Deliverable**: `data/raw/pindamonhangaba_1940_2024.csv`
+
+---
+
+## Phase 2 — Data Processing (Python)
+
+**Script**: `data/scripts/process_climate_data.py`
+- Load raw CSV
+- Handle missing values: linear interpolation for gaps ≤3 days; flag longer gaps
+- Validate: assert T_min ≤ T_mean ≤ T_max; assert precipitation ≥ 0
+- Round temperatures to 1 decimal place
+- Save cleaned CSV: `data/processed/pindamonhangaba_clean.csv`
+
+**Script**: `data/scripts/calculate_metrics.py`
+
+### Core Metrics (per year)
+| Metric | Definition |
+|--------|-----------|
+| HD30 | Days where T_max ≥ 30°C |
+| HD32 | Days where T_max ≥ 32°C |
+| TR20 | Nights where T_min ≥ 20°C |
+| SU25 | Days where T_max ≥ 25°C |
+| DTR | Mean daily (T_max − T_min) |
+| HWDI | Total days in heat waves (≥3 consecutive days T_max > 32°C) |
+| CDD | Max consecutive dry days (precipitation < 1mm) |
+| GDD | Growing Degree Days: SUM(MAX(0, (T_max+T_min)/2 − 10)) |
+| P90 | Days above 90th percentile of historical T_max |
+| P95 | Days above 95th percentile of historical T_max |
+
+### Temporal Analysis
+- First/last day of year exceeding 30°C (seasonal shift)
+- Decadal averages for all metrics
+- Mann-Kendall trend test + linear regression slope for HD30, TR20, DTR
+
+**Script**: `data/scripts/generate_web_data.py`
+- Produce `public/data/climate_data.json` — daily records (date, temp_max, temp_min, temp_mean, precip, humidity, wind)
+- Produce `public/data/metrics.json` — annual metrics object keyed by year
+- Produce `public/data/summary.json` — headline stats (hottest day, longest heat wave, decade comparisons, trend slopes)
+- Gzip compress if payload > 500KB
+- Round all floats to 1 decimal
+
+**Deliverable**: `public/data/*.json`
+
+---
+
+## Phase 3 — Frontend Setup (React + Vite)
+
+**Stack**:
+- React 18 + Vite (build tool)
+- Tailwind CSS v3 (styling)
+- D3.js v7 (complex visualizations: stripes, ridgeline, calendar heatmap)
+- Recharts (simple time-series and bar charts)
+- Framer Motion (animations)
+- Scrollama.js (scrollytelling)
+- Leaflet.js (interactive map)
+
+**Init**:
+```bash
+npm create vite@latest . -- --template react
+npm install d3 recharts framer-motion scrollama leaflet react-leaflet
+npm install -D tailwindcss postcss autoprefixer eslint prettier
+```
+
+**vite.config.js**:
+```js
+export default {
+  base: '/pindamonhangaba-climate/',
+  build: { outDir: 'dist', assetsDir: 'assets' }
+}
+```
+
+**Design System** (`src/styles/variables.css`):
+```css
+/* Temperature scale */
+--temp-cold: #2166ac; --temp-cool: #67a9cf; --temp-mild: #d1e5f0;
+--temp-warm: #fddbc7; --temp-hot: #ef8a62; --temp-very-hot: #b2182b;
+/* Climate stripes (Ed Hawkins) */
+--stripe-cold: #08519c; --stripe-cool: #3182bd; --stripe-neutral: #ffffff;
+--stripe-warm: #de2d26; --stripe-hot: #a50f15;
+/* UI */
+--primary: #1e40af; --secondary: #dc2626; --accent: #f59e0b;
+/* Fonts */
+--font-sans: 'Inter', system-ui, sans-serif;
+--font-mono: 'JetBrains Mono', monospace;
+```
+
+**Deliverable**: Scaffolded project with working dev server
+
+---
+
+## Phase 4 — Core Visualizations
+
+### 4.1 Climate Stripes (`ClimateStripes.jsx`)
+- SVG: 85 vertical bars, one per year (1940–2024)
+- Color scale: diverging blue→white→red centered on 1940–1980 mean
+- Hover tooltip: year + annual mean temperature
+- Animated entrance on scroll (Framer Motion)
+
+### 4.2 Calendar Heatmap (`CalendarHeatmap.jsx`)
+- D3.js GitHub-style grid: 365 cells × selectable year
+- Color: blue (cold) → red (hot) for T_max
+- Hover: date + T_max + T_min + precipitation
+- Click: modal with full day details
+- Year selector dropdown
+
+### 4.3 Ridgeline Plot (`RidgelinePlot.jsx`)
+- D3.js stacked density plots
+- X-axis: temperature (°C), Y-axis: decades (1940s–2020s)
+- Shows rightward shift of distribution over time
+
+### 4.4 Time Series Charts (`TimeSeriesChart.jsx`)
+- Recharts LineChart
+- Metrics: HD30, TR20, DTR, CDD (toggle buttons)
+- Trend line overlay (linear regression)
+- Zoom/pan via Recharts brush
+- Highlight record years
+
+### 4.5 Comparative Bar Charts (`ComparativeBarChart.jsx`)
+- Recharts BarChart
+- Decadal averages: 1940s vs 1950s … vs 2020s
+- Grouped bars: HD30, TR20, HWDI
+
+### 4.6 Interactive Map (`InteractiveMap.jsx`)
+- Leaflet.js centered on Pindamonhangaba (-22.9250, -45.4620)
+- Marker with popup: location name + data coverage
+- Temperature anomaly overlay (optional choropleth)
+
+### 4.7 Radial Chart (`RadialChart.jsx`)
+- D3.js polar/radial chart
+- Monthly average temperatures by decade
+- Overlay multiple decades for comparison
+
+**Deliverable**: All visualization components rendering with real data
+
+---
+
+## Phase 5 — Scrollytelling Sections
+
+**Library**: Scrollama.js — triggers visualization state changes on scroll progress
+
+### Sections
+
+| # | Title | Visualization | Key Stat |
+|---|-------|--------------|----------|
+| 1 | The Warming Valley | Climate Stripes (animated) | Δ avg temp since 1940 |
+| 2 | The Summer That Never Ends | HD30 bar chart (animated) | Days >30°C: 1980s vs 2024 |
+| 3 | Sleepless Nights | Calendar heatmap (TR20 highlighted) | TR20 % increase since 1940 |
+| 4 | Heat Waves: The New Normal | Heat wave timeline | Longest heat wave: X days in [year] |
+| 5 | The Hottest Day | Record card | Date, temperature, context |
+| 6 | The Cost of Heat | AC Calculator widget | AC hours: 1990 vs 2024 |
+| 7 | What's Next? | Trend extrapolation chart | Projected HD30 by 2050 |
+
+**ScrollySection.jsx**: Generic wrapper — accepts `steps` array, calls `onStepEnter`/`onStepExit` callbacks to drive visualization state.
+
+**Deliverable**: Complete scrollytelling narrative
+
+---
+
+## Phase 6 — Interactive Widgets
+
+### YearSelector (`widgets/YearSelector.jsx`)
+- Two dropdowns (Year A / Year B)
+- Side-by-side comparison table of all metrics
+
+### ThresholdSlider (`widgets/ThresholdSlider.jsx`)
+- Range: 25°C–35°C (step 0.5°C)
+- Recalculates days above threshold in real time
+- Updates time series chart
+
+### ACCalculator (`widgets/ACCalculator.jsx`)
+- Input: year selection
+- Formula: `SUM(hours where T > 25°C) * usage_factor`
+- Output: estimated AC hours + cost estimate
+
+### PersonalTimeline (`widgets/PersonalTimeline.jsx`)
+- Input: birth year
+- Output: climate summary for user's lifetime (HD30 trend, hottest year lived)
+
+**Deliverable**: All widgets functional
+
+---
+
+## Phase 7 — Polish & Optimization
+
+### Performance
+- Lazy load all visualization components below fold (`React.lazy` + `Suspense`)
+- Use WebP images with `<picture>` fallbacks
+- Implement service worker (Vite PWA plugin)
+- Canvas for Calendar Heatmap (>1000 data points)
+- Debounce scroll events (16ms)
+- Target: FCP <1.5s, LCP <2.5s, TTI <3.5s, CLS <0.1
+
+### Accessibility (WCAG 2.1 AA)
+- Colorblind-safe palettes (Viridis for sequential, ColorBrewer for diverging)
+- Min contrast 4.5:1 text, 3:1 graphics
+- ARIA labels on all SVG/Canvas elements
+- Data table alternatives for all charts
+- Full keyboard navigation
+- Touch targets ≥44×44px
+
+### SEO
+- `<title>`: "Pindamonhangaba Climate Data | 85 Years of Temperature Trends"
+- Meta description (150–160 chars)
+- Open Graph + Twitter Card tags
+- Schema.org Dataset JSON-LD
+- `sitemap.xml`, `robots.txt`
+
+### Cross-browser
+- Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+- iOS Safari 14+, Chrome Android 90+
+- Polyfills for ES6+ via Vite legacy plugin
+
+**Deliverable**: Lighthouse score >90 all categories
+
+---
+
+## Phase 8 — Deployment
+
+**GitHub Actions** (`.github/workflows/deploy.yml`):
+```yaml
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 1 1 *'   # Annual data refresh (Jan 1)
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: ./dist }
+  deploy:
+    environment: { name: github-pages, url: '${{ steps.deployment.outputs.page_url }}' }
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+```
+
+**Deliverable**: Live site at `https://<user>.github.io/pindamonhangaba-climate/`
+
+---
+
+## Success Criteria
+
+| Category | Criterion |
+|----------|-----------|
+| Data | 85+ years fetched, >95% completeness, no T_min > T_max |
+| Performance | Lighthouse >90 all categories, FCP <1.5s |
+| Accessibility | Zero WAVE/axe violations |
+| Visualizations | All 7 charts render on desktop + mobile |
+| Storytelling | All 7 scroll sections trigger correctly |
+| Deployment | Auto-deploy on push to main |
