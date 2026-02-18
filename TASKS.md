@@ -25,14 +25,14 @@
 - [x] Create `tsconfig.json` with strict mode and `@/*` path alias
 - [x] Create `eslint.config.js` with React + hooks rules
 - [x] Create `.prettierrc` with standard formatting rules
-- [ ] Install Tailwind CSS v4: `npm install tailwindcss @tailwindcss/vite`
-- [ ] Install shadcn/ui deps: `npm install class-variance-authority clsx tailwind-merge lucide-react`
-- [ ] Install Radix primitives: `npm install @radix-ui/react-slot @radix-ui/react-dialog @radix-ui/react-tooltip @radix-ui/react-select @radix-ui/react-slider @radix-ui/react-tabs`
-- [ ] Initialize shadcn/ui: `npx -y shadcn@latest init` (use Git Bash)
-- [ ] Install runtime deps: `npm install d3 recharts framer-motion scrollama leaflet react-leaflet`
-- [ ] Install type defs: `npm install -D @types/d3 @types/leaflet @types/scrollama`
-- [ ] Add shadcn Button: `npx shadcn add button` (smoke test)
-- [ ] Verify dev server starts: `npm run dev`
+- [x] Install Tailwind CSS v4: `npm install tailwindcss @tailwindcss/vite`
+- [x] Install shadcn/ui deps: `npm install class-variance-authority clsx tailwind-merge lucide-react`
+- [x] Install Radix primitives: `npm install @radix-ui/react-slot @radix-ui/react-dialog @radix-ui/react-tooltip @radix-ui/react-select @radix-ui/react-slider @radix-ui/react-tabs`
+- [x] Initialize shadcn/ui: `npx -y shadcn@latest init` (use Git Bash)
+- [x] Install runtime deps: `npm install d3 recharts framer-motion scrollama leaflet react-leaflet`
+- [x] Install type defs: `npm install -D @types/d3 @types/leaflet`
+- [x] Add shadcn Button: `npx shadcn add button` (smoke test)
+- [x] Verify dev server starts: `npm run dev`
 
 ---
 
