@@ -59,7 +59,7 @@ pindamonhangaba-climate/
 
 **Primary Source**: Open-Meteo Historical Weather API (`https://archive-api.open-meteo.com/v1/archive`)
 - Coordinates: lat=-22.9250, lon=-45.4620
-- Date range: 1940-01-01 → 2024-12-31
+- Date range: 1940-01-01 → 2025-12-31
 - Timezone: `America/Sao_Paulo`
 - Parameters: `temperature_2m_max`, `temperature_2m_min`, `temperature_2m_mean`, `precipitation_sum`, `relative_humidity_2m_mean`, `windspeed_10m_max`
 
@@ -68,9 +68,9 @@ pindamonhangaba-climate/
 - Retry logic with exponential backoff (3 retries)
 - Rate limiting: respect ~10,000 calls/day free tier
 - Save raw JSON per year to `data/raw/`
-- Merge into single CSV: `data/raw/pindamonhangaba_1940_2024.csv`
+- Merge into single CSV: `data/raw/pindamonhangaba_1940_2025.csv`
 
-**Deliverable**: `data/raw/pindamonhangaba_1940_2024.csv`
+**Deliverable**: `data/raw/pindamonhangaba_1940_2025.csv`
 
 ---
 
@@ -209,7 +209,7 @@ export default defineConfig({
 ## Phase 4 — Core Visualizations
 
 ### 4.1 Climate Stripes (`ClimateStripes.jsx`)
-- SVG: 85 vertical bars, one per year (1940–2024)
+- SVG: 86 vertical bars, one per year (1940–2025)
 - Color scale: diverging blue→white→red centered on 1940–1980 mean
 - Hover tooltip: year + annual mean temperature
 - Animated entrance on scroll (Framer Motion)

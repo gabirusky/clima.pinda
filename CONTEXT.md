@@ -147,7 +147,7 @@
 - Open-Meteo returns only days with data. If a day is missing, it won't appear in the response.
 - Fix: After merging, reindex to a full date range and interpolate.
   ```python
-  full_index = pd.date_range('1940-01-01', '2024-12-31', freq='D')
+  full_index = pd.date_range('1940-01-01', '2025-12-31', freq='D')
   df = df.set_index('date').reindex(full_index).reset_index()
   df.rename(columns={'index': 'date'}, inplace=True)
   ```
@@ -275,7 +275,7 @@
 
 **First/last hot day when no hot days exist**: If a year has zero days ≥30°C (unlikely but possible in early records), `first_hot_day` and `last_hot_day` should be `null`, not 0 or NaN.
 
-**Percentile calculation uses full historical baseline**: The 90th/95th percentile is computed from the FULL 1940–2024 T_max distribution, not per-year. Recomputing it per year would defeat the purpose.
+**Percentile calculation uses full historical baseline**: The 90th/95th percentile is computed from the FULL 1940–2025 T_max distribution, not per-year. Recomputing it per year would defeat the purpose.
 
 ### Frontend Edge Cases
 

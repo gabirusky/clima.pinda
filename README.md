@@ -13,7 +13,7 @@ This project analyzes and visualizes climate trends for **Pindamonhangaba, SP, B
 **Key question**: How many days per year have exceeded 30°C historically, and what trends can we identify?
 
 ### Visualizations
-- 🌈 **Climate Stripes** — Ed Hawkins-style warming visualization (1940–2024)
+- 🌈 **Climate Stripes** — Ed Hawkins-style warming visualization (1940–2025)
 - 📅 **Calendar Heatmap** — GitHub-style daily temperature grid per year
 - 📊 **Ridgeline Plot** — Temperature distribution shift by decade (Joy Division style)
 - 📈 **Time Series Charts** — Annual metrics with trend lines (HD30, TR20, DTR, CDD)
@@ -66,7 +66,7 @@ npm run dev
 cd data
 pip install -r requirements.txt
 
-# 1. Fetch raw data from Open-Meteo (1940–2024)
+# 1. Fetch raw data from Open-Meteo (1940–2025)
 python scripts/fetch_climate_data.py
 
 # 2. Clean and validate

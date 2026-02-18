@@ -130,7 +130,7 @@ df = fetch_open_meteo_data(
     lat=-22.9250,
     lon=-45.4620,
     start_date='1940-01-01',
-    end_date='2024-12-31'
+    end_date='2025-12-31'
 )
 ```
 
@@ -165,7 +165,7 @@ def fetch_cds_era5_data():
 #### FR1.3: Data Processing Pipeline
 
 **Steps**:
-1. **Fetch Raw Data**: Download 85+ years (1940-2024) of daily data from Open-Meteo
+1. **Fetch Raw Data**: Download 86+ years (1940-2025) of daily data from Open-Meteo
 2. **Data Cleaning**:
    - Handle missing values (interpolation or flagging)
    - Validate temperature ranges (sanity checks)
@@ -272,7 +272,7 @@ def fetch_cds_era5_data():
 #### FR3.1: Climate Stripes
 - **Description**: Horizontal bars colored by annual average temperature
 - **Color Scale**: Blue (cold) → White (average) → Red (hot)
-- **Years**: 1940-2024 (85 bars)
+- **Years**: 1940-2025 (86 bars)
 - **Interactivity**: Hover to show year and temperature
 - **Tech**: SVG/Canvas with D3.js or pure CSS
 
@@ -820,7 +820,7 @@ pindamonhangaba-climate/
 4. ✅ Validate data quality
 5. ✅ Export to CSV
 
-**Deliverable**: `data/raw/pindamonhangaba_1940_2024.csv`
+**Deliverable**: `data/raw/pindamonhangaba_1940_2025.csv`
 
 ### Phase 2: Data Processing (Week 1-2)
 

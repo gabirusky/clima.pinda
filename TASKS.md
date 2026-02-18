@@ -39,21 +39,21 @@
 ## PHASE 2 — Data Acquisition (Python)
 
 ### 2.1 Fetch Script (`data/scripts/fetch_climate_data.py`)
-- [ ] Define constants: `LAT = -22.9250`, `LON = -45.4620`, `START_DATE = '1940-01-01'`, `END_DATE = '2024-12-31'`
-- [ ] Define `PARAMETERS` list: `['temperature_2m_max', 'temperature_2m_min', 'temperature_2m_mean', 'precipitation_sum', 'relative_humidity_2m_mean', 'windspeed_10m_max']`
-- [ ] Implement `fetch_year(year)` function that calls Open-Meteo archive API for a single year
-- [ ] Add `requests.get()` call with params: `latitude`, `longitude`, `start_date`, `end_date`, `daily`, `timezone='America/Sao_Paulo'`
-- [ ] Add HTTP status check: raise on non-200 response
-- [ ] Add JSON parsing and return as dict
-- [ ] Implement retry logic: 3 attempts with exponential backoff (1s, 2s, 4s)
-- [ ] Implement `save_raw_year(year, data)` to write JSON to `data/raw/year_{year}.json`
-- [ ] Implement `load_raw_year(year)` to read cached JSON (skip API call if file exists)
-- [ ] Implement `merge_years_to_dataframe(years)` that concatenates all year DataFrames
-- [ ] Convert `time` column to `pd.to_datetime`
-- [ ] Rename columns to: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
-- [ ] Save merged DataFrame to `data/raw/pindamonhangaba_1940_2024.csv` (index=False)
-- [ ] Add `__main__` block that fetches all years 1940–2024 with progress bar (tqdm)
-- [ ] Add logging to console: year fetched, rows returned, any errors
+- [x] Define constants: `LAT = -22.9250`, `LON = -45.4620`, `START_DATE = '1940-01-01'`, `END_DATE = '2025-12-31'`
+- [x] Define `PARAMETERS` list: `['temperature_2m_max', 'temperature_2m_min', 'temperature_2m_mean', 'precipitation_sum', 'relative_humidity_2m_mean', 'windspeed_10m_max']`
+- [x] Implement `fetch_year(year)` function that calls Open-Meteo archive API for a single year
+- [x] Add `requests.get()` call with params: `latitude`, `longitude`, `start_date`, `end_date`, `daily`, `timezone='America/Sao_Paulo'`
+- [x] Add HTTP status check: raise on non-200 response
+- [x] Add JSON parsing and return as dict
+- [x] Implement retry logic: 3 attempts with exponential backoff (1s, 2s, 4s)
+- [x] Implement `save_raw_year(year, data)` to write JSON to `data/raw/year_{year}.json`
+- [x] Implement `load_raw_year(year)` to read cached JSON (skip API call if file exists)
+- [x] Implement `merge_years_to_dataframe(years)` that concatenates all year DataFrames
+- [x] Convert `time` column to `pd.to_datetime`
+- [x] Rename columns to: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
+- [x] Save merged DataFrame to `data/raw/pindamonhangaba_1940_2025.csv` (index=False)
+- [x] Add `__main__` block that fetches all years 1940–2025 with progress bar (tqdm)
+- [x] Add logging to console: year fetched, rows returned, any errors
 
 ### 2.2 Exploratory Notebook (`data/notebooks/exploratory_analysis.ipynb`)
 - [ ] Cell 1: Load raw CSV, display `.head()`, `.info()`, `.describe()`
@@ -67,7 +67,7 @@
 ## PHASE 3 — Data Processing (Python)
 
 ### 3.1 Cleaning Script (`data/scripts/process_climate_data.py`)
-- [ ] Load `data/raw/pindamonhangaba_1940_2024.csv`
+- [ ] Load `data/raw/pindamonhangaba_1940_2025.csv`
 - [ ] Assert `date` column has no duplicates
 - [ ] Assert date range is complete (no missing calendar days)
 - [ ] Identify missing value rows (NaN in any column)
@@ -385,7 +385,7 @@
 
 ### 8.1 Year Selector (`src/components/widgets/YearSelector.jsx`)
 - [ ] Render two `<select>` dropdowns: Year A (default 1980), Year B (default 2024)
-- [ ] Populate options from 1940–2024
+- [ ] Populate options from 1940–2025
 - [ ] Render comparison table with rows: HD30, HD32, TR20, SU25, DTR, HWDI, CDD, GDD
 - [ ] Highlight cells where Year B > Year A (red) or < Year A (blue)
 - [ ] Add "Reset" button to restore defaults
@@ -398,7 +398,7 @@
 - [ ] Show current count for most recent year
 
 ### 8.3 AC Calculator (`src/components/widgets/ACCalculator.jsx`)
-- [ ] Render year selector (1940–2024)
+- [ ] Render year selector (1940–2025)
 - [ ] On year change: filter daily records for that year
 - [ ] Calculate `hours_above_25 = count(temp_max >= 25) * 8` (approximate daytime hours)
 - [ ] Display: "Estimated AC hours needed: X"
@@ -407,8 +407,8 @@
 - [ ] Allow user to input electricity rate (default: R$0.80/kWh)
 
 ### 8.4 Personal Timeline (`src/components/widgets/PersonalTimeline.jsx`)
-- [ ] Render birth year input (number, min=1940, max=2024)
-- [ ] On submit: filter metrics from birth year to 2024
+- [ ] Render birth year input (number, min=1940, max=2025)
+- [ ] On submit: filter metrics from birth year to 2025
 - [ ] Display: "In your lifetime, HD30 has increased from X to Y days/year"
 - [ ] Display: "The hottest year of your life was [year] with X days above 30°C"
 - [ ] Show mini time series chart for user's lifetime span
