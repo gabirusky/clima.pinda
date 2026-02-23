@@ -193,8 +193,8 @@ def merge_years_to_dataframe(years: list[int]) -> pd.DataFrame:
 
     merged = pd.concat(frames, ignore_index=True)
 
-    # Convert time column to proper datetime
-    merged["time"] = pd.to_datetime(merged["time"])
+    # Convert time column to proper datetime (CoW-safe for pandas 3.x)
+    merged = merged.assign(time=pd.to_datetime(merged["time"]))
 
     # Rename to project-standard column names
     merged = merged.rename(columns=COLUMN_RENAME)
