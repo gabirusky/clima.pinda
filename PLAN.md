@@ -13,6 +13,7 @@ pindamonhangaba-climate/
 ├── data/
 │   ├── scripts/                  # Python data pipeline
 │   │   ├── fetch_climate_data.py
+│   │   ├── validate_cross_source.py  # ERA5 vs MERRA-2 cross-validation
 │   │   ├── process_climate_data.py
 │   │   ├── calculate_metrics.py
 │   │   └── generate_web_data.py
@@ -375,7 +376,7 @@ jobs:
 
 | Category | Criterion |
 |----------|-----------|
-| Data | 85+ years fetched, >95% completeness, no T_min > T_max |
+| Data | 85+ years fetched, >95% completeness, no T_min > T_max. **Cross-validated:** ERA5 vs MERRA-2 r=0.89 (T_max), r=0.93 (T_min), RMSE<2°C ✅ |
 | Performance | Lighthouse >90 all categories, FCP <1.5s |
 | Accessibility | Zero WAVE/axe violations |
 | Visualizations | All 7 charts render on desktop + mobile |

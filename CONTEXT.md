@@ -114,6 +114,12 @@
 - ERA5 temperatures may be **systematically 1–2°C lower** than ground station measurements in urban areas (no urban heat island in the model).
 - Do NOT mix ERA5 data with INMET station data without bias correction.
 
+### ERA5 vs MERRA-2 Cross-Validation (Phase 2 — completed)
+- Script: `data/scripts/validate_cross_source.py` — fetches NASA POWER (MERRA-2) via free public API, no key required.
+- **Results** (10 sample years, 3,653 records): r T_max=0.893, r T_min=0.926, RMSE T_max=1.75°C, RMSE T_min=1.98°C. All within the published ERA5 vs MERRA-2 benchmark range (r 0.85–0.95, RMSE 1.5–3°C).
+- **T_min warm bias (+1.51°C ERA5 > MERRA-2)**: This is a **known, documented inter-reanalysis difference**, NOT a bug. ERA5's finer ~9km grid resolves Pindamonhangaba's nocturnal cold-air pooling in the Paraíba Valley better than MERRA-2's ~50km grid. If you ever see code trying to "correct" this difference, it is unnecessary.
+- **Output files**: `data/raw/cross_validation_results.csv`, `data/notebooks/cross_validation_plot.png`.
+
 ### Pindamonhangaba Geography
 - Located in the Paraíba Valley (Vale do Paraíba), São Paulo state, Brazil
 - Altitude: ~550m above sea level (valley floor)

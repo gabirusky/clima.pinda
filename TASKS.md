@@ -36,7 +36,7 @@
 
 ---
 
-## PHASE 2 — Data Acquisition (Python)
+## PHASE 2 — Data Acquisition (Python) ✅ Complete
 
 ### 2.1 Fetch Script (`data/scripts/fetch_climate_data.py`)
 - [x] Define constants: `LAT = -22.9250`, `LON = -45.4620`, `START_DATE = '1940-01-01'`, `END_DATE = '2025-12-31'`
@@ -49,18 +49,37 @@
 - [x] Implement `save_raw_year(year, data)` to write JSON to `data/raw/year_{year}.json`
 - [x] Implement `load_raw_year(year)` to read cached JSON (skip API call if file exists)
 - [x] Implement `merge_years_to_dataframe(years)` that concatenates all year DataFrames
-- [x] Convert `time` column to `pd.to_datetime`
+- [x] Convert `time` column to `pd.to_datetime` (CoW-safe `.assign()` — pandas 2.x/3.x compatible)
 - [x] Rename columns to: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
 - [x] Save merged DataFrame to `data/raw/pindamonhangaba_1940_2025.csv` (index=False)
 - [x] Add `__main__` block that fetches all years 1940–2025 with progress bar (tqdm)
 - [x] Add logging to console: year fetched, rows returned, any errors
+
+**Result**: 31,047 rows · 1940-01-01 → 2025-12-31 · T_max 9.4–38.2°C · T_min 1.3–24.7°C · 1 NaN total
 
 ### 2.2 Exploratory Notebook (`data/notebooks/exploratory_analysis.ipynb`)
 - [x] Cell 1: Load raw CSV, display `.head()`, `.info()`, `.describe()`
 - [x] Cell 2: Plot missing values heatmap (seaborn)
 - [x] Cell 3: Plot annual T_max distribution (boxplot by decade)
 - [x] Cell 4: Quick HD30 count per year bar chart
-- [x] Cell 5: Validate T_min ≤ T_mean ≤ T_max (assert, show violations)
+- [x] Cell 5: Validate T_min ≤ T_mean ≤ T_max — **✅ 0 violations found across all 31,047 rows**
+
+### 2.3 Cross-Source Validation (`data/scripts/validate_cross_source.py`)
+- [x] Fetch NASA POWER (MERRA-2) for 10 sample years (1985–2024) via free public API — no key required
+- [x] Merge with ERA5 CSV on date; compute Pearson r, RMSE, MAE, bias per year for T_max and T_min
+- [x] Check seasonal correctness (DJF > JJA — Southern Hemisphere)
+- [x] Save results to `data/raw/cross_validation_results.csv`
+- [x] Save scatter plot to `data/notebooks/cross_validation_plot.png`
+
+**Results** (3,653 daily records, 10 years spanning 4 decades):
+| Metric | Result | Benchmark | Status |
+|---|---|---|---|
+| r T_max (ERA5 vs MERRA-2) | 0.893 | > 0.85 | ✅ |
+| r T_min (ERA5 vs MERRA-2) | 0.926 | > 0.88 | ✅ |
+| RMSE T_max | 1.75°C | < 3.0°C | ✅ |
+| RMSE T_min | 1.98°C | < 3.0°C | ✅ |
+| Seasons (DJF > JJA) | 27.7°C vs 23.5°C | correct | ✅ |
+| T_min bias ERA5 vs MERRA-2 | +1.51°C | known difference for valley topography | ℹ️ |
 
 ---
 

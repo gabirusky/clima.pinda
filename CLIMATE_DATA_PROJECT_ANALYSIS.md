@@ -166,15 +166,24 @@ def fetch_cds_era5_data():
 
 **Steps**:
 1. **Fetch Raw Data**: Download 86+ years (1940-2025) of daily data from Open-Meteo
-2. **Data Cleaning**:
+   - ✅ **Complete**: 31,047 rows · 1940-01-01 → 2025-12-31 · 1 NaN total
+   - Script: `data/scripts/fetch_climate_data.py`
+2. **Exploratory Analysis**: Jupyter notebook sanity checks before cleaning
+   - ✅ **Complete**: 0 T_min > T_max violations, heatmap + boxplots generated
+   - Notebook: `data/notebooks/exploratory_analysis.ipynb`
+3. **Cross-Source Validation**: Compare ERA5 vs independent MERRA-2 (NASA POWER)
+   - ✅ **Complete**: r T_max=0.893, r T_min=0.926, RMSE<2°C across 10 sample years
+   - Script: `data/scripts/validate_cross_source.py`
+   - Output: `data/raw/cross_validation_results.csv`, `data/notebooks/cross_validation_plot.png`
+4. **Data Cleaning**:
    - Handle missing values (interpolation or flagging)
    - Validate temperature ranges (sanity checks)
    - Convert units if necessary
-3. **Data Transformation**:
+5. **Data Transformation**:
    - Calculate derived metrics (see FR2)
    - Aggregate by year, month, season
    - Generate statistical summaries
-4. **Data Export**:
+6. **Data Export**:
    - Export to JSON for web consumption
    - Export to CSV for backup/analysis
    - Compress if >500KB
