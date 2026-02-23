@@ -52,7 +52,8 @@ This project analyzes and visualizes climate trends for **Pindamonhangaba, SP, B
 
 ### Prerequisites
 - Node.js 20+
-- Python 3.10+
+- [Conda](https://docs.conda.io/en/latest/miniconda.html) (recommended for the data pipeline & notebook)
+- Python 3.10+ (if using pip instead of conda)
 
 ### Frontend
 ```bash
@@ -62,22 +63,57 @@ npm run dev
 ```
 
 ### Data Pipeline (Python)
+
+**Recommended — conda** (uses `data/environment.yml`, Python 3.11, pinned deps):
+```bash
+# One-time: create the environment
+conda env create -f data/environment.yml
+
+# Activate it
+conda activate pinda-climate
+
+# Run the pipeline steps
+python data/scripts/fetch_climate_data.py    # 1. Fetch raw data from Open-Meteo (1940–2025)
+python data/scripts/process_climate_data.py  # 2. Clean and validate
+python data/scripts/calculate_metrics.py     # 3. Calculate climate metrics
+python data/scripts/generate_web_data.py     # 4. Generate web-ready JSON
+```
+
+**Alternative — pip** (plain virtualenv):
 ```bash
 cd data
 pip install -r requirements.txt
 
-# 1. Fetch raw data from Open-Meteo (1940–2025)
 python scripts/fetch_climate_data.py
-
-# 2. Clean and validate
 python scripts/process_climate_data.py
-
-# 3. Calculate climate metrics
 python scripts/calculate_metrics.py
-
-# 4. Generate web-ready JSON
 python scripts/generate_web_data.py
 ```
+
+### Exploratory Notebook
+
+The notebook at `data/notebooks/exploratory_analysis.ipynb` performs sanity checks and visual exploration of the raw CSV before processing. It requires the same conda environment:
+
+```bash
+# 1. Activate the environment (create it first if you haven't — see above)
+conda activate pinda-climate
+
+# 2. Launch Jupyter
+jupyter notebook data/notebooks/exploratory_analysis.ipynb
+```
+
+> **VS Code users**: open the `.ipynb` file and select **`pinda-climate`** from the kernel picker in the top-right corner. No separate Jupyter launch needed.
+
+**Packages used by the notebook:**
+
+| Package | Purpose |
+|---|---|
+| `pandas >= 2.2` | CSV loading, `.resample("YE")`, groupby |
+| `numpy >= 1.26` | Array operations |
+| `matplotlib >= 3.8` | All charts |
+| `seaborn >= 0.13` | Heatmap, boxplot |
+| `scipy >= 1.11` | Statistical support |
+| `jupyter` | Notebook runtime |
 
 ---
 

@@ -56,11 +56,11 @@
 - [x] Add logging to console: year fetched, rows returned, any errors
 
 ### 2.2 Exploratory Notebook (`data/notebooks/exploratory_analysis.ipynb`)
-- [ ] Cell 1: Load raw CSV, display `.head()`, `.info()`, `.describe()`
-- [ ] Cell 2: Plot missing values heatmap (seaborn)
-- [ ] Cell 3: Plot annual T_max distribution (boxplot by decade)
-- [ ] Cell 4: Quick HD30 count per year bar chart
-- [ ] Cell 5: Validate T_min ≤ T_mean ≤ T_max (assert, show violations)
+- [x] Cell 1: Load raw CSV, display `.head()`, `.info()`, `.describe()`
+- [x] Cell 2: Plot missing values heatmap (seaborn)
+- [x] Cell 3: Plot annual T_max distribution (boxplot by decade)
+- [x] Cell 4: Quick HD30 count per year bar chart
+- [x] Cell 5: Validate T_min ≤ T_mean ≤ T_max (assert, show violations)
 
 ---
 
