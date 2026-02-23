@@ -277,6 +277,8 @@
 
 **Precipitation = NaN vs 0**: A missing precipitation value is different from "no rain". Never replace NaN precipitation with 0. Use interpolation or flag.
 
+**Known 1-year ERA5 gap — year 2002 (rows 22646–23010, dates 2002-01-01 → 2002-12-31)**: During Phase 3.1 cleaning, `process_climate_data.py` detected a 365-consecutive-day gap across all columns. The entire calendar year 2002 is absent from the Open-Meteo ERA5 archive for this coordinate. These 365 rows are flagged with `data_quality = 'interpolated_long'` and contain NaN values — they are NOT interpolated. Downstream scripts (`calculate_metrics.py`) must exclude or handle these rows explicitly (e.g., `df.dropna()` or `df[df['data_quality'] == 'ok']` before aggregating). The year 2002 should also be excluded from trend statistics or noted as missing in the UI.
+
 **Heat wave spanning month boundary**: The `calculate_heat_waves` function works on the full year array, so month boundaries don't break it. But if you ever process by month, be careful.
 
 **First/last hot day when no hot days exist**: If a year has zero days ≥30°C (unlikely but possible in early records), `first_hot_day` and `last_hot_day` should be `null`, not 0 or NaN.

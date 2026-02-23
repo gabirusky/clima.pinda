@@ -176,9 +176,12 @@ def fetch_cds_era5_data():
    - Script: `data/scripts/validate_cross_source.py`
    - Output: `data/raw/cross_validation_results.csv`, `data/notebooks/cross_validation_plot.png`
 4. **Data Cleaning**:
-   - Handle missing values (interpolation or flagging)
-   - Validate temperature ranges (sanity checks)
-   - Convert units if necessary
+   - ✅ **Complete**: `data/scripts/process_climate_data.py`
+   - 31,412 calendar days reindexed (1940-01-01 → 2025-12-31)
+   - 1 row interpolated (≤3-day gap), 365 rows flagged `interpolated_long` (1-year gap in ERA5)
+   - 0 T_min/T_max inversions, 0 physical constraint violations
+   - Derived columns added: `year`, `month`, `day_of_year`; `data_quality` column
+   - Output: `data/processed/pindamonhangaba_clean.csv`
 5. **Data Transformation**:
    - Calculate derived metrics (see FR2)
    - Aggregate by year, month, season

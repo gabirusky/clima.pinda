@@ -86,21 +86,21 @@
 ## PHASE 3 — Data Processing (Python)
 
 ### 3.1 Cleaning Script (`data/scripts/process_climate_data.py`)
-- [ ] Load `data/raw/pindamonhangaba_1940_2025.csv`
-- [ ] Assert `date` column has no duplicates
-- [ ] Assert date range is complete (no missing calendar days)
-- [ ] Identify missing value rows (NaN in any column)
-- [ ] For gaps ≤3 consecutive days: apply linear interpolation (`df.interpolate(method='linear')`)
-- [ ] For gaps >3 days: flag with `data_quality` column value `'interpolated_long'`
-- [ ] Validate: assert `temp_min <= temp_mean` for all rows; log violations
-- [ ] Validate: assert `temp_mean <= temp_max` for all rows; log violations
-- [ ] Validate: assert `precipitation >= 0` for all rows
-- [ ] Validate: assert `temp_max < 50` and `temp_min > -10` (sanity bounds for region)
-- [ ] Round `temp_max`, `temp_min`, `temp_mean` to 1 decimal place
-- [ ] Round `precipitation` to 2 decimal places
-- [ ] Add `year`, `month`, `day_of_year` derived columns
-- [ ] Save to `data/processed/pindamonhangaba_clean.csv` (index=False)
-- [ ] Print summary: total rows, missing rows found, rows interpolated, validation violations
+- [x] Load `data/raw/pindamonhangaba_1940_2025.csv`
+- [x] Assert `date` column has no duplicates
+- [x] Assert date range is complete (no missing calendar days)
+- [x] Identify missing value rows (NaN in any column)
+- [x] For gaps ≤3 consecutive days: apply linear interpolation (`df.interpolate(method='linear')`)
+- [x] For gaps >3 days: flag with `data_quality` column value `'interpolated_long'`
+- [x] Validate: assert `temp_min <= temp_mean` for all rows; log violations
+- [x] Validate: assert `temp_mean <= temp_max` for all rows; log violations
+- [x] Validate: assert `precipitation >= 0` for all rows
+- [x] Validate: assert `temp_max < 50` and `temp_min > -10` (sanity bounds for region)
+- [x] Round `temp_max`, `temp_min`, `temp_mean` to 1 decimal place
+- [x] Round `precipitation` to 2 decimal places
+- [x] Add `year`, `month`, `day_of_year` derived columns
+- [x] Save to `data/processed/pindamonhangaba_clean.csv` (index=False)
+- [x] Print summary: total rows, missing rows found, rows interpolated, validation violations
 
 ### 3.2 Metrics Script (`data/scripts/calculate_metrics.py`)
 
