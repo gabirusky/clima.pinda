@@ -178,31 +178,44 @@ Decade comparison (SU30 · WSDI · TR20):
 | **2010s** | **75.4** | **32.6** | **61.5** |
 | **2020s** | **108.2** | **49.2** | **68.0** |
 
-### 3.3 Web Data Generator (`data/scripts/generate_web_data.py`)
+### 3.3 Web Data Generator (`data/scripts/generate_web_data.py`) ✅ Complete
 
 #### climate_data.json
-- [ ] Load `data/processed/pindamonhangaba_clean.csv`
-- [ ] Select columns: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
-- [ ] Convert `date` to string format `YYYY-MM-DD`
-- [ ] Convert to list of dicts (records orientation)
-- [ ] Write to `public/data/climate_data.json`
-- [ ] Check file size; if >500KB, gzip compress to `climate_data.json.gz`
+- [x] Load `data/processed/pindamonhangaba_clean.csv`
+- [x] Select columns: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
+- [x] Convert `date` to string format `YYYY-MM-DD`
+- [x] Convert to list of dicts (records orientation)
+- [x] Write to `public/data/climate_data.json`
+- [x] Check file size; if >500KB, gzip compress to `climate_data.json.gz`
 
 #### metrics.json
-- [ ] Load `data/processed/annual_metrics.csv`
-- [ ] Convert to dict keyed by year: `{1940: {...}, 1941: {...}, ...}`
-- [ ] Write to `public/data/metrics.json`
+- [x] Load `data/processed/annual_metrics.csv`
+- [x] Convert to dict keyed by year: `{1940: {...}, 1941: {...}, ...}`
+- [x] Write to `public/data/metrics.json`
 
 #### summary.json
-- [ ] Find hottest day: row with max `temp_max` → `{date, temp_max, temp_min}`
-- [ ] Find coldest day: row with min `temp_min`
-- [ ] Find wettest day: row with max `precipitation`
-- [ ] Find longest warm spell: from annual metrics `wsdi_days` max (WSDI)
-- [ ] Find year with most SU30 days
-- [ ] Calculate overall trend: SU30 slope per decade
-- [ ] Calculate decade comparison table: 1940s vs 2020s for SU30, TR20, WSDI, CDD, CWD
-- [ ] Calculate `temp_anomaly_by_year`: deviation from 1940–1980 baseline mean
-- [ ] Write to `public/data/summary.json`
+- [x] Find hottest day: row with max `temp_max` → `{date, temp_max, temp_min}`
+- [x] Find coldest day: row with min `temp_min`
+- [x] Find wettest day: row with max `precipitation`
+- [x] Find longest warm spell: from annual metrics `wsdi_days` max (WSDI)
+- [x] Find year with most SU30 days
+- [x] Calculate overall trend: SU30 slope per decade
+- [x] Calculate decade comparison table: 1940s vs 2020s for SU30, TR20, WSDI, CDD, CWD
+- [x] Calculate `temp_anomaly_by_year`: deviation from 1940–1980 baseline mean
+- [x] Write to `public/data/summary.json`
+
+**Results** (31,412 daily records · runtime ~4s):
+| Output file | Size | Contents |
+|---|---|---|
+| `climate_data.json` (`.gz`) | 4,309 KB raw → **425 KB gzip** | 31,412 daily records · auto-compressed (>500 KB threshold) |
+| `metrics.json` | 28.8 KB | 86 annual ETCCDI metric records |
+| `summary.json` | 2.0 KB | Headline stats: hottest day, coldest day, wettest day, WSDI record, SU30 trend, decade comparison, temp anomaly by year |
+
+Key stats surfaced in `summary.json`:
+- **Hottest day**: 1961-09-28 · T_max = 38.2°C
+- **Coldest day**: 1979-06-01 · T_min = 1.3°C
+- **Longest warm spell (WSDI)**: 82 days in 2018
+- **SU30 trend**: +7.09 days/decade (p < 0.0001)
 
 ---
 
