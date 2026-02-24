@@ -107,48 +107,76 @@
 > **ETCCDI Alignment**: All indices are defined according to, or are direct adaptations of, the Expert Team on Climate Change Detection and Indices (ETCCDI) 27-index standard. This ensures findings are directly comparable to peer-reviewed literature.
 
 #### Core Metrics (per year)
-- [ ] Load `data/processed/pindamonhangaba_clean.csv`
-- [ ] Group by `year`
-- [ ] Calculate `su25`: count rows where `temp_max >= 25` — **ETCCDI SU25** (exact standard index; extended warm-season baseline)
-- [ ] Calculate `su30`: count rows where `temp_max >= 30` — **ETCCDI SU30** (modified Summer Days index; locally meaningful heat threshold for Pindamonhangaba's valley climate)
-- [ ] Calculate `tr20`: count rows where `temp_min >= 20` — **ETCCDI TR20** (exact standard index; tropical nights)
-- [ ] Calculate `dtr_mean`: mean of `(temp_max - temp_min)` per year — **ETCCDI DTR** (Diurnal Temperature Range; a sustained long-term decrease is the scientific fingerprint of Urban Heat Island expansion)
-- [ ] Calculate `temp_max_mean`: mean of `temp_max` per year
-- [ ] Calculate `temp_min_mean`: mean of `temp_min` per year
-- [ ] Calculate `temp_mean_annual`: mean of `temp_mean` per year
-- [ ] Calculate `precip_total`: sum of `precipitation` per year
-- [ ] Calculate `precip_days`: count rows where `precipitation >= 1` per year
+- [x] Load `data/processed/pindamonhangaba_clean.csv`
+- [x] Group by `year`
+- [x] Calculate `su25`: count rows where `temp_max >= 25` — **ETCCDI SU25** (exact standard index; extended warm-season baseline)
+- [x] Calculate `su30`: count rows where `temp_max >= 30` — **ETCCDI SU30** (modified Summer Days index; locally meaningful heat threshold for Pindamonhangaba's valley climate)
+- [x] Calculate `tr20`: count rows where `temp_min >= 20` — **ETCCDI TR20** (exact standard index; tropical nights)
+- [x] Calculate `dtr_mean`: mean of `(temp_max - temp_min)` per year — **ETCCDI DTR** (Diurnal Temperature Range; a sustained long-term decrease is the scientific fingerprint of Urban Heat Island expansion)
+- [x] Calculate `temp_max_mean`: mean of `temp_max` per year
+- [x] Calculate `temp_min_mean`: mean of `temp_min` per year
+- [x] Calculate `temp_mean_annual`: mean of `temp_mean` per year
+- [x] Calculate `precip_total`: sum of `precipitation` per year
+- [x] Calculate `precip_days`: count rows where `precipitation >= 1` per year
 
 #### Advanced Metrics
-- [ ] Implement `calculate_wsdi(df, baseline_start=1961, baseline_end=1990, min_duration=6)` — **ETCCDI WSDI** (Warm Spell Duration Index). Annual count of days contributing to warm spells: periods of **≥6 consecutive days** where `temp_max` exceeds the **calendar-day 90th percentile** of the 1961–1990 baseline. This replaces the fixed-threshold HWDI; the percentile-based approach adapts to the region's own historical climate.
-  - Step 1: Compute per-calendar-day 90th percentile T_max from baseline years
+- [x] Implement `calculate_wsdi(df, baseline_start=1961, baseline_end=1990, min_duration=6)` — **ETCCDI WSDI** (Warm Spell Duration Index). Annual count of days contributing to warm spells: periods of **≥6 consecutive days** where `temp_max` exceeds the **calendar-day 90th percentile** of the 1961–1990 baseline. This replaces the fixed-threshold HWDI; the percentile-based approach adapts to the region's own historical climate.
+  - Step 1: Compute per-calendar-day 90th percentile T_max from baseline years (5-day bootstrap window per ETCCDI recommendation)
   - Step 2: Flag days where `temp_max > p90[day_of_year]`
   - Step 3: Count days belonging to streaks of ≥6 consecutive flagged days per year
   - Return: `wsdi_days` (total days in warm spells per year)
-- [ ] Implement `calculate_tx90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TX90p** (Warm Days). Annual percentage of days where `temp_max > calendar-day 90th percentile` of the baseline.
-- [ ] Implement `calculate_tn90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TN90p** (Warm Nights). Annual percentage of nights where `temp_min > calendar-day 90th percentile` of the baseline.
-- [ ] Implement `calculate_cdd(precip_series)` returning max consecutive dry days (precip < 1mm) — **ETCCDI CDD**
-- [ ] Apply `calculate_cdd` per year
-- [ ] Implement `calculate_cwd(precip_series)` returning max consecutive wet days (precip >= 1mm) — **ETCCDI CWD** (paired with CDD to cover both ends of precipitation extremes: drought/fire risk and flood/landslide risk)
-- [ ] Apply `calculate_cwd` per year
-- [ ] Calculate `gdd`: `SUM(MAX(0, (temp_max + temp_min)/2 - 10))` per year (Growing Degree Days — agricultural productivity indicator)
-- [ ] Calculate `p95_days`: days above 95th percentile of the full historical T_max distribution (supplementary extreme threshold)
+- [x] Implement `calculate_tx90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TX90p** (Warm Days). Annual percentage of days where `temp_max > calendar-day 90th percentile` of the baseline.
+- [x] Implement `calculate_tn90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TN90p** (Warm Nights). Annual percentage of nights where `temp_min > calendar-day 90th percentile` of the baseline.
+- [x] Implement `calculate_cdd(precip_series)` returning max consecutive dry days (precip < 1mm) — **ETCCDI CDD**
+- [x] Apply `calculate_cdd` per year
+- [x] Implement `calculate_cwd(precip_series)` returning max consecutive wet days (precip >= 1mm) — **ETCCDI CWD** (paired with CDD to cover both ends of precipitation extremes: drought/fire risk and flood/landslide risk)
+- [x] Apply `calculate_cwd` per year
+- [x] Calculate `gdd`: `SUM(MAX(0, (temp_max + temp_min)/2 - 10))` per year (Growing Degree Days — agricultural productivity indicator)
+- [x] Calculate `p95_days`: days above 95th percentile of the full historical T_max distribution (supplementary extreme threshold)
 
 #### Temporal / Seasonal Analysis
-- [ ] Calculate `first_hot_day`: first day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
-- [ ] Calculate `last_hot_day`: last day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
-- [ ] Calculate `hot_season_length`: `last_hot_day - first_hot_day` (0 if no hot days)
-- [ ] Calculate decadal averages for all metrics (group by `year // 10 * 10`)
+- [x] Calculate `first_hot_day`: first day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
+- [x] Calculate `last_hot_day`: last day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
+- [x] Calculate `hot_season_length`: `last_hot_day - first_hot_day` (0 if no hot days)
+- [x] Calculate decadal averages for all metrics (group by `year // 10 * 10`)
 
 #### Statistical Tests
-- [ ] Implement Mann-Kendall trend test for `su30` series (use `scipy.stats.kendalltau` or `pymannkendall`)
-- [ ] Implement linear regression slope for `su30`, `tr20`, `dtr_mean`, `wsdi_days` (use `scipy.stats.linregress`)
-- [ ] Store trend results: `slope`, `p_value`, `r_squared` per metric
+- [x] Implement Mann-Kendall trend test for `su30` series (use `scipy.stats.kendalltau`)
+- [x] Implement linear regression slope for `su30`, `tr20`, `dtr_mean`, `wsdi_days` (use `scipy.stats.linregress`)
+- [x] Store trend results: `slope`, `p_value`, `r_squared` per metric
 
 #### Output
-- [ ] Assemble annual metrics DataFrame with all columns above
-- [ ] Save to `data/processed/annual_metrics.csv`
-- [ ] Save decadal metrics to `data/processed/decadal_metrics.csv`
+- [x] Assemble annual metrics DataFrame with all columns above
+- [x] Save to `data/processed/annual_metrics.csv`
+- [x] Save decadal metrics to `data/processed/decadal_metrics.csv`
+
+**Results** (86 years · 1940–2025 · runtime ~3s):
+| Metric | Full-period avg | Record | Trend (slope/decade) | p-value |
+|---|---|---|---|---|
+| SU25 (days ≥25°C) | 224.8 /yr | 303 — **2024** | — | — |
+| SU30 (days ≥30°C) | 43.3 /yr | 140 — **2024** | **+7.1 days** | < 0.0001 ✅ |
+| TR20 (nights ≥20°C) | 31.6 /yr | 99 — **2017** | **+5.0 nights** | < 0.0001 ✅ |
+| DTR mean | 9.75°C /yr | — | **+0.11°C** | < 0.0001 ✅ |
+| WSDI days | 13.3 /yr | 82 — **2018** | **+3.9 days** | < 0.0001 ✅ |
+| TX90p | 13.3% /yr | — | — | — |
+| TN90p | 14.6% /yr | — | — | — |
+| CDD max | 24.7 /yr | 49 — **2025** | — | — |
+| CWD max | 20.7 /yr | 55 — **1965** | — | — |
+| p90 T_max baseline range | 25.1–31.7°C | — | — | — |
+| p95 T_max (full historical) | 31.3°C | — | — | — |
+
+Decade comparison (SU30 · WSDI · TR20):
+| Decade | SU30 | WSDI | TR20 |
+|---|---|---|---|
+| 1940s | 23.2 d/yr | 4.2 d/yr | 36.8 n/yr |
+| 1950s | 31.4 | 7.3 | 11.7 |
+| 1960s | 38.0 | 11.5 | 15.7 |
+| 1970s | 32.1 | 3.7 | 17.1 |
+| 1980s | 32.7 | 7.1 | 25.9 |
+| 1990s | 36.3 | 6.4 | 31.9 |
+| 2000s | 38.7 | 12.5 | 30.1 |
+| **2010s** | **75.4** | **32.6** | **61.5** |
+| **2020s** | **108.2** | **49.2** | **68.0** |
 
 ### 3.3 Web Data Generator (`data/scripts/generate_web_data.py`)
 

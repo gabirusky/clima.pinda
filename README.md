@@ -203,9 +203,38 @@ The ERA5 data (Open-Meteo) was cross-validated against **NASA POWER (MERRA-2 rea
 |-------|--------|
 | 1. Project Scaffolding | ✅ Complete |
 | 2. Data Acquisition | ✅ Complete |
-| 3. Data Processing | 🔄 In Progress (3.1 ✅) |
+| 3. Data Processing | 🔄 In Progress (3.1 ✅ · 3.2 ✅) |
 | 4. Frontend Setup | 🔲 Pending |
 | 5. Core Visualizations | 🔲 Pending |
 | 6. Storytelling Sections | 🔲 Pending |
 | 7. Interactive Widgets | 🔲 Pending |
 | 8. Polish & Deployment | 🔲 Pending |
+
+---
+
+## 🔬 Computed Metrics — Key Findings
+
+> Produced by `data/scripts/calculate_metrics.py` · 86 years · 31,412 daily records · runtime ~3s
+
+| Metric | Full-period avg | Record | Trend (slope/decade) | p-value |
+|---|---|---|---|---|
+| SU25 (days ≥25°C) | 224.8 /yr | 303 days — **2024** | — | — |
+| SU30 (days ≥30°C) | 43.3 /yr | 140 days — **2024** | **+7.1 days** | < 0.0001 ✅ |
+| TR20 (nights ≥20°C) | 31.6 /yr | 99 nights — **2017** | **+5.0 nights** | < 0.0001 ✅ |
+| DTR mean | 9.75°C /yr | — | **+0.11°C** | < 0.0001 ✅ |
+| WSDI days | 13.3 /yr | 82 days — **2018** | **+3.9 days** | < 0.0001 ✅ |
+| TX90p | 13.3% /yr | — | — | — |
+| TN90p | 14.6% /yr | — | — | — |
+| CDD max | 24.7 /yr | 49 days — **2025** | — | — |
+| CWD max | 20.7 /yr | 55 days — **1965** | — | — |
+
+**Decade comparison (SU30 · WSDI · TR20):**
+
+| Decade | SU30 | WSDI | TR20 |
+|---|---|---|---|
+| 1940s | 23.2 d/yr | 4.2 d/yr | 36.8 n/yr |
+| 1980s | 32.7 | 7.1 | 25.9 |
+| 2010s | **75.4** | **32.6** | **61.5** |
+| 2020s | **108.2** | **49.2** | **68.0** |
+
+All four tested trend metrics (SU30, TR20, DTR, WSDI) are **statistically significant at p < 0.0001** (Mann-Kendall τ test + OLS regression). The 2010s show a dramatic inflection — SU30 more than doubled from the 1980s baseline.

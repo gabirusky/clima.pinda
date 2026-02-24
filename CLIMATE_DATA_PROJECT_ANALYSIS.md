@@ -166,7 +166,7 @@ def fetch_cds_era5_data():
 
 **Steps**:
 1. **Fetch Raw Data**: Download 86+ years (1940-2025) of daily data from Open-Meteo
-   - ✅ **Complete**: 31,047 rows · 1940-01-01 → 2025-12-31 · 1 NaN total
+   - ✅ **Complete**: 31,412 rows · 1940-01-01 → 2025-12-31 · 1 NaN total
    - Script: `data/scripts/fetch_climate_data.py`
 2. **Exploratory Analysis**: Jupyter notebook sanity checks before cleaning
    - ✅ **Complete**: 0 T_min > T_max violations, heatmap + boxplots generated
@@ -182,10 +182,12 @@ def fetch_cds_era5_data():
    - 0 T_min/T_max inversions, 0 physical constraint violations
    - Derived columns added: `year`, `month`, `day_of_year`; `data_quality` column
    - Output: `data/processed/pindamonhangaba_clean.csv`
-5. **Data Transformation**:
-   - Calculate derived metrics (see FR2)
-   - Aggregate by year, month, season
-   - Generate statistical summaries
+5. **Data Transformation** — Calculate Climate Metrics:
+   - ✅ **Complete**: `data/scripts/calculate_metrics.py` · 86 years · runtime ~3s
+   - All 11 ETCCDI-aligned indices computed (SU25, SU30, TR20, DTR, WSDI, TX90p, TN90p, CDD, CWD, GDD, P95)
+   - 5-day bootstrap window for calendar-day percentile baselines (ETCCDI recommended method)
+   - Mann-Kendall + OLS trend tests: SU30 +7.1 d/decade, TR20 +5.0 n/decade, WSDI +3.9 d/decade (all p < 0.0001)
+   - Output: `data/processed/annual_metrics.csv` (86 rows × 20 cols), `data/processed/decadal_metrics.csv` (9 rows)
 6. **Data Export**:
    - Export to JSON for web consumption
    - Export to CSV for backup/analysis
@@ -878,11 +880,11 @@ pindamonhangaba-climate/
 ### Phase 2: Data Processing (Week 1-2)
 
 **Tasks**:
-1. ✅ Clean and validate data
-2. ✅ Calculate all climate metrics
-3. ✅ Perform statistical analysis
-4. ✅ Generate summary statistics
-5. ✅ Export optimized JSON for web
+1. ✅ Clean and validate data (`process_climate_data.py` — 31,412 rows, 1 interpolated, 0 violations)
+2. ✅ Calculate all climate metrics (`calculate_metrics.py` — 11 ETCCDI indices, 86 years, all 4 trend tests significant p < 0.0001)
+3. ✅ Perform statistical analysis (Mann-Kendall + OLS regression for SU30, TR20, DTR, WSDI)
+4. ⬜ Generate summary statistics (`generate_web_data.py` — next task)
+5. ⬜ Export optimized JSON for web
 
 **Deliverable**: `public/data/*.json`
 

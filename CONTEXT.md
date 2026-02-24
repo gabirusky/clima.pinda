@@ -106,6 +106,8 @@
 | GDD | — | Growing Degree Days | SUM(MAX(0, (T_max+T_min)/2 − 10)) per year |
 | P95 | — | 95th Percentile Days | Days above 95th percentile of full historical T_max distribution |
 
+> **DTR note (ERA5-specific)**: The computed DTR trend for Pindamonhangaba is **+0.11°C/decade (increasing)**, meaning daytime T_max is warming faster than nocturnal T_min. This is the *opposite* of the classic Urban Heat Island signal (which would *compress* DTR). ERA5 reanalysis does not model the urban canopy, so this reflects daytime warming dominating the rural grid cell — not an urban effect. Do not interpret a positive DTR trend as contradicting UHI presence; it simply means ERA5 cannot detect it.
+
 ### Open-Meteo API
 - **Base URL**: `https://archive-api.open-meteo.com/v1/archive`
 - **Coordinates**: lat=-22.9250, lon=-45.4620 (Praça Monsenhor Marcondes, Pindamonhangaba)
@@ -291,7 +293,9 @@
 
 **First/last hot day when no hot days exist**: If a year has zero days ≥30°C (unlikely but possible in early records), `first_hot_day` and `last_hot_day` should be `null`, not 0 or NaN.
 
-**Percentile calculation uses full historical baseline**: The 90th/95th percentile is computed from the FULL 1940–2025 T_max distribution, not per-year. Recomputing it per year would defeat the purpose.
+**Percentile calculation uses full historical baseline**: The 90th/95th percentile for TX90p/TN90p is computed from the calendar-day 90th percentile using only the **1961–1990 baseline** (not the full period). The scalar p95 used for `p95_days` *is* computed from the full 1940–2025 T_max distribution — these two uses are intentionally different. Do not confuse them.
+
+**`calculate_metrics.py` anomaly column uses 1940–1980 baseline**: The `anomaly` column in `annual_metrics.csv` is `temp_mean_annual − mean(1940–1980)`. The 1940–1980 period is used (not 1961–1990) to match the Climate Stripes baseline convention in CONTEXT.md §2.
 
 ### Frontend Edge Cases
 
