@@ -86,29 +86,32 @@ pindamonhangaba-climate/
 
 **Script**: `data/scripts/calculate_metrics.py`
 
+> **ETCCDI Alignment**: All indices are defined according to or are direct adaptations of the ETCCDI 27-index standard, ensuring findings are comparable to peer-reviewed literature.
+
 ### Core Metrics (per year)
-| Metric | Definition |
-|--------|-----------|
-| HD30 | Days where T_max ≥ 30°C |
-| HD32 | Days where T_max ≥ 32°C |
-| TR20 | Nights where T_min ≥ 20°C |
-| SU25 | Days where T_max ≥ 25°C |
-| DTR | Mean daily (T_max − T_min) |
-| HWDI | Total days in heat waves (≥3 consecutive days T_max > 32°C) |
-| CDD | Max consecutive dry days (precipitation < 1mm) |
-| GDD | Growing Degree Days: SUM(MAX(0, (T_max+T_min)/2 − 10)) |
-| P90 | Days above 90th percentile of historical T_max |
-| P95 | Days above 95th percentile of historical T_max |
+| Metric | ETCCDI Index | Definition |
+|--------|-------------|------------|
+| SU25 | SU25 ✅ exact | Days where T_max ≥ 25°C |
+| SU30 | SU30 (modified) | Days where T_max ≥ 30°C (locally meaningful threshold) |
+| TR20 | TR20 ✅ exact | Nights where T_min ≥ 20°C |
+| DTR | DTR ✅ exact | Mean daily (T_max − T_min); long-term decrease = UHI fingerprint |
+| WSDI | WSDI ✅ exact | Days in warm spells: ≥6 consecutive days with T_max > calendar-day 90th pct (1961–1990 baseline) |
+| TX90p | TX90p ✅ exact | % of days where T_max > calendar-day 90th pct of baseline |
+| TN90p | TN90p ✅ exact | % of nights where T_min > calendar-day 90th pct of baseline |
+| CDD | CDD ✅ exact | Max consecutive dry days (precipitation < 1mm) |
+| CWD | CWD ✅ exact | Max consecutive wet days (precipitation ≥ 1mm) |
+| GDD | — | Growing Degree Days: SUM(MAX(0, (T_max+T_min)/2 − 10)) |
+| P95 | — | Days above 95th percentile of full historical T_max |
 
 ### Temporal Analysis
-- First/last day of year exceeding 30°C (seasonal shift)
+- First/last day of year exceeding 30°C (seasonal shift); `null` if no hot days
 - Decadal averages for all metrics
-- Mann-Kendall trend test + linear regression slope for HD30, TR20, DTR
+- Mann-Kendall trend test + linear regression slope for SU30, TR20, DTR, WSDI_days
 
 **Script**: `data/scripts/generate_web_data.py`
 - Produce `public/data/climate_data.json` — daily records (date, temp_max, temp_min, temp_mean, precip, humidity, wind)
-- Produce `public/data/metrics.json` — annual metrics object keyed by year
-- Produce `public/data/summary.json` — headline stats (hottest day, longest heat wave, decade comparisons, trend slopes)
+- Produce `public/data/metrics.json` — annual metrics object keyed by year (ETCCDI-aligned columns: `su25`, `su30`, `tr20`, `dtr_mean`, `wsdi_days`, `tx90p`, `tn90p`, `cdd`, `cwd`, `gdd`, `p95_days`, `hot_season_length`, `anomaly`)
+- Produce `public/data/summary.json` — headline stats (`hottest_day`, `longest_warm_spell` [WSDI], `su30_trend_slope_per_decade`, decade comparisons for SU30/TR20/WSDI/CDD/CWD)
 - Gzip compress if payload > 500KB
 - Round all floats to 1 decimal
 
@@ -229,7 +232,7 @@ export default defineConfig({
 
 ### 4.4 Time Series Charts (`TimeSeriesChart.jsx`)
 - Recharts LineChart
-- Metrics: HD30, TR20, DTR, CDD (toggle buttons)
+- Metrics: SU30, TR20, DTR, WSDI, CDD, CWD (toggle buttons)
 - Trend line overlay (linear regression)
 - Zoom/pan via Recharts brush
 - Highlight record years
@@ -237,7 +240,7 @@ export default defineConfig({
 ### 4.5 Comparative Bar Charts (`ComparativeBarChart.jsx`)
 - Recharts BarChart
 - Decadal averages: 1940s vs 1950s … vs 2020s
-- Grouped bars: HD30, TR20, HWDI
+- Grouped bars: SU30, TR20, WSDI
 
 ### 4.6 Interactive Map (`InteractiveMap.jsx`)
 - Leaflet.js centered on Pindamonhangaba (-22.9250, -45.4620)

@@ -10,13 +10,13 @@
 
 This project analyzes and visualizes climate trends for **Pindamonhangaba, SP, Brazil** (Praça Monsenhor Marcondes, -22.9250°, -45.4620°) using 85+ years of ERA5 reanalysis data from Open-Meteo.
 
-**Key question**: How many days per year have exceeded 30°C historically, and what trends can we identify?
+**Key question**: How many days per year have exceeded 30°C historically, and what trends can we identify? All climate indices are aligned with the **ETCCDI 27-index standard** (Expert Team on Climate Change Detection and Indices), ensuring findings are directly comparable to peer-reviewed scientific literature.
 
 ### Visualizations
 - 🌈 **Climate Stripes** — Ed Hawkins-style warming visualization (1940–2025)
 - 📅 **Calendar Heatmap** — GitHub-style daily temperature grid per year
 - 📊 **Ridgeline Plot** — Temperature distribution shift by decade (Joy Division style)
-- 📈 **Time Series Charts** — Annual metrics with trend lines (HD30, TR20, DTR, CDD)
+- 📈 **Time Series Charts** — Annual metrics with trend lines (SU30, TR20, DTR, WSDI, CDD, CWD)
 - 📊 **Comparative Bar Charts** — Decade-by-decade comparisons
 - 🗺️ **Interactive Map** — Location context
 - 🌀 **Radial Chart** — Monthly temperature cycle by decade
@@ -31,6 +31,23 @@ This project analyzes and visualizes climate trends for **Pindamonhangaba, SP, B
 7. What's Next?
 
 ---
+
+## 📐 Climate Metrics (ETCCDI Standard)
+
+> All indices follow the [ETCCDI 27-index standard](http://etccdi.pacificclimate.org/list_27_indices.shtml), ensuring comparability with peer-reviewed climate science literature.
+
+| Metric | ETCCDI Index | Definition |
+|--------|-------------|------------|
+| **SU25** | SU25 ✅ exact | Days where T\_max ≥ 25°C |
+| **SU30** | SU30 (modified) | Days where T\_max ≥ 30°C (locally meaningful threshold) |
+| **TR20** | TR20 ✅ exact | Nights where T\_min ≥ 20°C |
+| **DTR** | DTR ✅ exact | Mean(T\_max − T\_min) per year; long-term decrease = UHI signal |
+| **WSDI** | WSDI ✅ exact | Days in warm spells: ≥6 consecutive days where T\_max > calendar-day 90th percentile (1961–1990 baseline) |
+| **TX90p** | TX90p ✅ exact | % of days where T\_max > calendar-day 90th percentile of baseline |
+| **TN90p** | TN90p ✅ exact | % of nights where T\_min > calendar-day 90th percentile of baseline |
+| **CDD** | CDD ✅ exact | Max consecutive dry days (precip < 1mm) |
+| **CWD** | CWD ✅ exact | Max consecutive wet days (precip ≥ 1mm) |
+| **GDD** | — | Growing Degree Days: SUM(MAX(0, (T\_max+T\_min)/2−10)) |
 
 ## 🛠️ Tech Stack
 

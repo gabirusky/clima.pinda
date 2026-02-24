@@ -104,14 +104,15 @@
 
 ### 3.2 Metrics Script (`data/scripts/calculate_metrics.py`)
 
+> **ETCCDI Alignment**: All indices are defined according to, or are direct adaptations of, the Expert Team on Climate Change Detection and Indices (ETCCDI) 27-index standard. This ensures findings are directly comparable to peer-reviewed literature.
+
 #### Core Metrics (per year)
 - [ ] Load `data/processed/pindamonhangaba_clean.csv`
 - [ ] Group by `year`
-- [ ] Calculate `hd30`: count rows where `temp_max >= 30`
-- [ ] Calculate `hd32`: count rows where `temp_max >= 32`
-- [ ] Calculate `tr20`: count rows where `temp_min >= 20`
-- [ ] Calculate `su25`: count rows where `temp_max >= 25`
-- [ ] Calculate `dtr_mean`: mean of `(temp_max - temp_min)` per year
+- [ ] Calculate `su25`: count rows where `temp_max >= 25` — **ETCCDI SU25** (exact standard index; extended warm-season baseline)
+- [ ] Calculate `su30`: count rows where `temp_max >= 30` — **ETCCDI SU30** (modified Summer Days index; locally meaningful heat threshold for Pindamonhangaba's valley climate)
+- [ ] Calculate `tr20`: count rows where `temp_min >= 20` — **ETCCDI TR20** (exact standard index; tropical nights)
+- [ ] Calculate `dtr_mean`: mean of `(temp_max - temp_min)` per year — **ETCCDI DTR** (Diurnal Temperature Range; a sustained long-term decrease is the scientific fingerprint of Urban Heat Island expansion)
 - [ ] Calculate `temp_max_mean`: mean of `temp_max` per year
 - [ ] Calculate `temp_min_mean`: mean of `temp_min` per year
 - [ ] Calculate `temp_mean_annual`: mean of `temp_mean` per year
@@ -119,23 +120,29 @@
 - [ ] Calculate `precip_days`: count rows where `precipitation >= 1` per year
 
 #### Advanced Metrics
-- [ ] Implement `calculate_heat_waves(temps, threshold=32, min_duration=3)` function returning `{total_days, events, longest}`
-- [ ] Apply `calculate_heat_waves` per year to get `hwdi_days`, `hwdi_events`, `hwdi_longest`
-- [ ] Implement `calculate_cdd(precip_series)` returning max consecutive dry days (precip < 1mm)
+- [ ] Implement `calculate_wsdi(df, baseline_start=1961, baseline_end=1990, min_duration=6)` — **ETCCDI WSDI** (Warm Spell Duration Index). Annual count of days contributing to warm spells: periods of **≥6 consecutive days** where `temp_max` exceeds the **calendar-day 90th percentile** of the 1961–1990 baseline. This replaces the fixed-threshold HWDI; the percentile-based approach adapts to the region's own historical climate.
+  - Step 1: Compute per-calendar-day 90th percentile T_max from baseline years
+  - Step 2: Flag days where `temp_max > p90[day_of_year]`
+  - Step 3: Count days belonging to streaks of ≥6 consecutive flagged days per year
+  - Return: `wsdi_days` (total days in warm spells per year)
+- [ ] Implement `calculate_tx90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TX90p** (Warm Days). Annual percentage of days where `temp_max > calendar-day 90th percentile` of the baseline.
+- [ ] Implement `calculate_tn90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TN90p** (Warm Nights). Annual percentage of nights where `temp_min > calendar-day 90th percentile` of the baseline.
+- [ ] Implement `calculate_cdd(precip_series)` returning max consecutive dry days (precip < 1mm) — **ETCCDI CDD**
 - [ ] Apply `calculate_cdd` per year
-- [ ] Calculate `gdd`: `SUM(MAX(0, (temp_max + temp_min)/2 - 10))` per year
-- [ ] Calculate `p90_days`: days above 90th percentile of full historical T_max distribution
-- [ ] Calculate `p95_days`: days above 95th percentile of full historical T_max distribution
+- [ ] Implement `calculate_cwd(precip_series)` returning max consecutive wet days (precip >= 1mm) — **ETCCDI CWD** (paired with CDD to cover both ends of precipitation extremes: drought/fire risk and flood/landslide risk)
+- [ ] Apply `calculate_cwd` per year
+- [ ] Calculate `gdd`: `SUM(MAX(0, (temp_max + temp_min)/2 - 10))` per year (Growing Degree Days — agricultural productivity indicator)
+- [ ] Calculate `p95_days`: days above 95th percentile of the full historical T_max distribution (supplementary extreme threshold)
 
 #### Temporal / Seasonal Analysis
-- [ ] Calculate `first_hot_day`: first day of year where `temp_max >= 30` (day_of_year)
-- [ ] Calculate `last_hot_day`: last day of year where `temp_max >= 30` (day_of_year)
+- [ ] Calculate `first_hot_day`: first day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
+- [ ] Calculate `last_hot_day`: last day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
 - [ ] Calculate `hot_season_length`: `last_hot_day - first_hot_day` (0 if no hot days)
 - [ ] Calculate decadal averages for all metrics (group by `year // 10 * 10`)
 
 #### Statistical Tests
-- [ ] Implement Mann-Kendall trend test for `hd30` series (use `scipy.stats.kendalltau` or `pymannkendall`)
-- [ ] Implement linear regression slope for `hd30`, `tr20`, `dtr_mean` (use `scipy.stats.linregress`)
+- [ ] Implement Mann-Kendall trend test for `su30` series (use `scipy.stats.kendalltau` or `pymannkendall`)
+- [ ] Implement linear regression slope for `su30`, `tr20`, `dtr_mean`, `wsdi_days` (use `scipy.stats.linregress`)
 - [ ] Store trend results: `slope`, `p_value`, `r_squared` per metric
 
 #### Output
@@ -162,10 +169,10 @@
 - [ ] Find hottest day: row with max `temp_max` → `{date, temp_max, temp_min}`
 - [ ] Find coldest day: row with min `temp_min`
 - [ ] Find wettest day: row with max `precipitation`
-- [ ] Find longest heat wave: from annual metrics `hwdi_longest` max
-- [ ] Find year with most HD30
-- [ ] Calculate overall trend: HD30 slope per decade
-- [ ] Calculate decade comparison table: 1940s vs 2020s for HD30, TR20, HWDI
+- [ ] Find longest warm spell: from annual metrics `wsdi_days` max (WSDI)
+- [ ] Find year with most SU30 days
+- [ ] Calculate overall trend: SU30 slope per decade
+- [ ] Calculate decade comparison table: 1940s vs 2020s for SU30, TR20, WSDI, CDD, CWD
 - [ ] Calculate `temp_anomaly_by_year`: deviation from 1940–1980 baseline mean
 - [ ] Write to `public/data/summary.json`
 
@@ -188,12 +195,12 @@
 ### 4.3 TypeScript Types
 - [ ] Create `src/types/climate.ts`: export `DailyRecord`, `AnnualMetrics`, `DecadalMetrics`, `ClimateSummary` interfaces
 - [ ] `DailyRecord`: `{ date: string; temp_max: number; temp_min: number; temp_mean: number; precipitation: number; humidity: number; wind_max: number; data_quality?: string }`
-- [ ] `AnnualMetrics`: `{ year: number; hd30: number; hd32: number; tr20: number; su25: number; dtr_mean: number; hwdi_days: number; hwdi_events: number; hwdi_longest: number; cdd: number; gdd: number; p90_days: number; p95_days: number; temp_max_mean: number; temp_min_mean: number; temp_mean_annual: number; precip_total: number; precip_days: number; hot_season_length: number; anomaly: number }`
-- [ ] `ClimateSummary`: `{ hottest_day: {...}; coldest_day: {...}; longest_heat_wave: {...}; hd30_trend_slope_per_decade: number; decade_comparison: {...} }`
+- [ ] `AnnualMetrics`: `{ year: number; su30: number; su32: number; su25: number; tr20: number; dtr_mean: number; wsdi_days: number; tx90p: number; tn90p: number; cdd: number; cwd: number; gdd: number; p95_days: number; temp_max_mean: number; temp_min_mean: number; temp_mean_annual: number; precip_total: number; precip_days: number; hot_season_length: number; anomaly: number }`
+- [ ] `ClimateSummary`: `{ hottest_day: {...}; coldest_day: {...}; longest_warm_spell: {...}; su30_trend_slope_per_decade: number; decade_comparison: {...} }`
 
 ### 4.4 Constants
 - [ ] Create `src/constants/config.ts`: export `LAT`, `LON`, `START_YEAR`, `END_YEAR`, `DATA_BASE_URL`, `REPO_BASE`
-- [ ] Create `src/constants/thresholds.ts`: export `HD30_THRESHOLD`, `HD32_THRESHOLD`, `TR20_THRESHOLD`, `SU25_THRESHOLD`, `HEAT_WAVE_MIN_DURATION`, `DRY_DAY_THRESHOLD`
+- [ ] Create `src/constants/thresholds.ts`: export `SU30_THRESHOLD = 30`, `SU32_THRESHOLD = 32`, `SU25_THRESHOLD = 25`, `TR20_THRESHOLD = 20`, `WSDI_MIN_DURATION = 6`, `WSDI_BASELINE_START = 1961`, `WSDI_BASELINE_END = 1990`, `DRY_DAY_THRESHOLD = 1`, `WET_DAY_THRESHOLD = 1`
 
 ### 4.5 Utility Functions
 - [ ] Create `src/utils/colors.ts`: `tempToColor(temp: number): string`, `anomalyToStripeColor(anomaly: number): string`
@@ -289,7 +296,7 @@
 - [ ] Plot selected metric as `<Line>` with dot on hover
 - [ ] Add trend line as second `<Line>` (dashed, computed from linear regression)
 - [ ] Add `<Brush>` for zoom/pan
-- [ ] Add metric toggle buttons: HD30, TR20, DTR, CDD (above chart)
+- [ ] Add metric toggle buttons: SU30, TR20, DTR, WSDI, CDD, CWD (above chart)
 - [ ] Highlight record year (highest value) with custom dot
 - [ ] Add `<ReferenceLine>` at decade boundaries
 - [ ] Make responsive with `<ResponsiveContainer>`
@@ -299,7 +306,7 @@
 - [ ] Render Recharts `<BarChart>` with grouped bars
 - [ ] X-axis: decades (1940s–2020s)
 - [ ] Y-axis: metric value
-- [ ] Bars: HD30 (red), TR20 (orange), HWDI (dark red)
+- [ ] Bars: SU30 (red), TR20 (orange), WSDI (dark red)
 - [ ] Add `<Tooltip>` with all three values
 - [ ] Add `<Legend>`
 - [ ] Animate bars on scroll entry
@@ -405,7 +412,7 @@
 ### 8.1 Year Selector (`src/components/widgets/YearSelector.jsx`)
 - [ ] Render two `<select>` dropdowns: Year A (default 1980), Year B (default 2024)
 - [ ] Populate options from 1940–2025
-- [ ] Render comparison table with rows: HD30, HD32, TR20, SU25, DTR, HWDI, CDD, GDD
+- [ ] Render comparison table with rows: SU25, SU30, SU32, TR20, DTR, WSDI, TX90p, TN90p, CDD, CWD, GDD
 - [ ] Highlight cells where Year B > Year A (red) or < Year A (blue)
 - [ ] Add "Reset" button to restore defaults
 
@@ -505,8 +512,11 @@
 - [ ] Test `movingAverage(arr, window)`: known input → expected output
 - [ ] Test `percentile(arr, p)`: known input → expected value
 - [ ] Test `groupByYear(records)`: verify correct grouping
-- [ ] Test `calculate_heat_waves` Python function: 3+ consecutive days → event counted
+- [ ] Test `calculate_wsdi` Python function: streak of ≥6 consecutive days above p90 → days counted correctly; streak of 5 → not counted
+- [ ] Test `calculate_tx90p` Python function: known dataset with known percentiles → correct annual percentage
+- [ ] Test `calculate_tn90p` Python function: known dataset with known percentiles → correct annual percentage
 - [ ] Test `calculate_cdd` Python function: known dry streak → correct max
+- [ ] Test `calculate_cwd` Python function: known wet streak → correct max
 - [ ] Test `ClimateStripes` renders correct number of `<rect>` elements
 - [ ] Test `TimeSeriesChart` renders without crashing with mock data
 - [ ] Test `ThresholdSlider` updates displayed count on change
@@ -521,7 +531,9 @@
 - [ ] Create `data/tests/test_process.py`
 - [ ] Test missing value interpolation: inject NaN, verify filled
 - [ ] Test validation: inject T_min > T_max, verify error logged
-- [ ] Test metric calculations: known dataset → expected HD30 count
+- [ ] Test metric calculations: known dataset → expected SU30 count
+- [ ] Test WSDI baseline: verify p90 is computed only from 1961–1990 and not from the full dataset
+- [ ] Test CWD/CDD edge case: all-dry year → CWD=0, CDD=365
 
 ---
 

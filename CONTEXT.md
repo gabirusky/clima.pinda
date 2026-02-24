@@ -48,21 +48,25 @@
   precipitation: 0.0, humidity: 65.3, wind_max: 12.1 }
 
 // Annual metrics (from metrics.json, keyed by year)
-{ hd30: 112, hd32: 45, tr20: 87, su25: 210, dtr_mean: 12.3,
+// All indices are ETCCDI-aligned — see ETCCDI Alignment note in Domain Knowledge below
+{ su25: 210, su30: 112, tr20: 87, dtr_mean: 12.3,
   temp_max_mean: 28.4, temp_min_mean: 16.1, temp_mean_annual: 22.1,
   precip_total: 1234.5, precip_days: 98,
-  hwdi_days: 18, hwdi_events: 3, hwdi_longest: 8,
-  cdd: 42, gdd: 4521.3, p90_days: 36, p95_days: 18,
+  wsdi_days: 18,           // WSDI — percentile-based warm spell days (replaces fixed-threshold HWDI)
+  tx90p: 14.2,             // TX90p — % warm days above calendar-day p90 baseline
+  tn90p: 11.8,             // TN90p — % warm nights above calendar-day p90 baseline
+  cdd: 42, cwd: 12,        // CDD + CWD — paired ETCCDI precipitation extremes
+  gdd: 4521.3, p95_days: 18,
   first_hot_day: 45, last_hot_day: 320, hot_season_length: 275 }
 
 // Summary (from summary.json)
 { hottest_day: {date, temp_max, temp_min},
   coldest_day: {date, temp_min},
   wettest_day: {date, precipitation},
-  longest_heat_wave: {year, days},
-  year_most_hd30: {year, hd30},
-  hd30_trend_slope_per_decade: 8.2,
-  decade_comparison: { "1940s": {...}, "2020s": {...} },
+  longest_warm_spell: {year, days},   // WSDI — percentile-based warm spell (replaces longest_heat_wave/HWDI)
+  year_most_su30: {year, su30},
+  su30_trend_slope_per_decade: 8.2,
+  decade_comparison: { "1940s": {...}, "2020s": {...} },  // columns: su30, tr20, wsdi_days, cdd, cwd
   temp_anomaly_by_year: { 1940: -0.4, ..., 2024: 1.2 } }
 ```
 
@@ -85,18 +89,22 @@
 ## 2. Domain Knowledge
 
 ### Climate Metrics Definitions
-| Metric | Full Name | Definition |
-|--------|-----------|-----------|
-| HD30 | Hot Days | Days where T_max ≥ 30°C |
-| HD32 | Very Hot Days | Days where T_max ≥ 32°C |
-| TR20 | Tropical Nights | Nights where T_min ≥ 20°C |
-| SU25 | Summer Days | Days where T_max ≥ 25°C |
-| DTR | Diurnal Temperature Range | Mean(T_max − T_min) per year |
-| HWDI | Heat Wave Duration Index | Total days in sequences of ≥3 consecutive days with T_max > 32°C |
-| CDD | Consecutive Dry Days | Max consecutive days with precipitation < 1mm |
-| GDD | Growing Degree Days | SUM(MAX(0, (T_max+T_min)/2 − 10)) |
-| P90 | 90th Percentile Days | Days above 90th percentile of historical T_max |
-| P95 | 95th Percentile Days | Days above 95th percentile of historical T_max |
+
+> **ETCCDI Alignment**: All indices are defined according to, or are direct adaptations of, the Expert Team on Climate Change Detection and Indices (ETCCDI) 27-index standard ([etccdi.pacificclimate.org](http://etccdi.pacificclimate.org/list_27_indices.shtml)). This ensures findings are directly comparable to peer-reviewed literature.
+
+| Metric | ETCCDI Index | Full Name | Definition |
+|--------|-------------|-----------|------------|
+| SU25 | SU25 ✅ exact | Summer Days | Days where T_max ≥ 25°C (ETCCDI standard baseline) |
+| SU30 | SU30 (modified) | Hot Days | Days where T_max ≥ 30°C (locally meaningful threshold for Pindamonhangaba's valley climate) |
+| TR20 | TR20 ✅ exact | Tropical Nights | Nights where T_min ≥ 20°C |
+| DTR | DTR ✅ exact | Diurnal Temperature Range | Mean(T_max − T_min) per year; long-term decrease = UHI fingerprint |
+| WSDI | WSDI ✅ exact | Warm Spell Duration Index | Total days in warm spells: streaks ≥6 consecutive days where T_max > calendar-day 90th pct of the 1961–1990 baseline |
+| TX90p | TX90p ✅ exact | Warm Days | Annual % of days where T_max > calendar-day 90th pct of baseline |
+| TN90p | TN90p ✅ exact | Warm Nights | Annual % of nights where T_min > calendar-day 90th pct of baseline |
+| CDD | CDD ✅ exact | Consecutive Dry Days | Max consecutive days with precipitation < 1mm |
+| CWD | CWD ✅ exact | Consecutive Wet Days | Max consecutive days with precipitation ≥ 1mm |
+| GDD | — | Growing Degree Days | SUM(MAX(0, (T_max+T_min)/2 − 10)) per year |
+| P95 | — | 95th Percentile Days | Days above 95th percentile of full historical T_max distribution |
 
 ### Open-Meteo API
 - **Base URL**: `https://archive-api.open-meteo.com/v1/archive`
