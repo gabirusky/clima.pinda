@@ -56,7 +56,7 @@ pindamonhangaba-climate/
 
 ---
 
-## Phase 1 — Data Acquisition (Python)
+## Phase 1 — Data Acquisition (Python) ✅ Complete
 
 **Primary Source**: Open-Meteo Historical Weather API (`https://archive-api.open-meteo.com/v1/archive`)
 - Coordinates: lat=-22.9250, lon=-45.4620
@@ -75,7 +75,7 @@ pindamonhangaba-climate/
 
 ---
 
-## Phase 2 — Data Processing (Python)
+## Phase 2 — Data Processing (Python) ✅ Complete
 
 **Script**: `data/scripts/process_climate_data.py`
 - Load raw CSV
@@ -119,7 +119,10 @@ pindamonhangaba-climate/
 
 ---
 
-## Phase 3 — Frontend Setup (React + Vite + TypeScript + shadcn/ui)
+## Phase 3 — Frontend Setup (React + Vite + TypeScript + shadcn/ui) ✅ Complete
+
+> All scaffolding tasks from Phase 1.3 of TASKS.md are done. The dev server runs (`npm run dev`),
+> TypeScript compiles with 0 errors, and the smoke test confirms real climate data is loaded and rendered.
 
 **Stack**:
 - **React 18** + **Vite 5** (build tool)
@@ -206,7 +209,46 @@ export default defineConfig({
 - **Motion**: Staggered scroll reveals via Framer Motion `whileInView`. Climate stripes animate left-to-right on entry.
 - **Differentiation**: Full-bleed climate stripes as hero background. Data as art.
 
-**Deliverable**: Scaffolded TypeScript project with shadcn/ui initialized and working dev server
+## Phase 4 — Frontend Foundation ✅ Complete
+
+> All TASKS.md § 4.1–4.6 tasks are done. TypeScript: 0 errors. Dev server smoke test: passed.
+
+### 4.1 Entry Point & HTML
+- `src/main.tsx` — React 18 StrictMode entry point
+- `index.html` — SEO meta tags, Open Graph, Twitter Card, Google Fonts (Syne + DM Sans + JetBrains Mono), CSP, Schema.org Dataset JSON-LD
+
+### 4.2 Design System
+- `src/index.css` — Tailwind v4 `@import "tailwindcss"` + `@theme {}` with Ed Hawkins stripe palette, temperature color scale, dark mode `@custom-variant`, keyframes (`stripeReveal`, `slideUp`, `pulseHot`, `fadeIn`)
+
+### 4.3 TypeScript Types (`src/types/climate.ts`)
+- `DailyRecord`, `AnnualMetrics` (ETCCDI: su25/su30/tr20/dtr_mean/wsdi_days/tx90p/tn90p/cdd/cwd/gdd/p95_days/anomaly/first_hot_day/last_hot_day), `DecadalMetrics`, `ClimateSummary` (longest_warm_spell/year_most_su30/su30_trend_slope_per_decade/decade_comparison/temp_anomaly_by_year)
+
+### 4.4 Constants
+- `src/constants/config.ts` — LAT, LON, START_YEAR, END_YEAR, DATA_BASE_URL (Vite BASE_URL aware), REPO_BASE
+- `src/constants/thresholds.ts` — ETCCDI: SU25/SU30/TR20, WSDI_MIN_DURATION=6, WSDI_BASELINE_START/END=1961/1990, DRY/WET_DAY_THRESHOLD=1, ANOMALY_BASELINE_START/END=1940/1980
+
+### 4.5 Utility Functions (all pure, no side effects)
+| Module | Key functions |
+|--------|---------------|
+| `src/utils/colors.ts` | `tempToColor`, `anomalyToStripeColor` (Ed Hawkins 9-color), `su30ToColor`, `precipToColor`, `lerpColor` |
+| `src/utils/formatters.ts` | `formatTemp`, `formatDate`, `formatDateShort`, `formatDecade`, `formatSlope`, `formatPercent`, `formatNumber`, `formatDayOfYear` — all pt-BR |
+| `src/utils/calculations.ts` | `linearRegression` (OLS, R², p-value), `movingAverage`, `percentile`, `kernelDensityEstimator` (Epanechnikov), `mean`, `stdDev`, `clamp`, `normalize`, `trendLine` |
+| `src/utils/dataProcessing.ts` | `groupByYear`, `groupByDecade`, `groupMetricsByDecade`, `filterByYear/Range`, `metricsToArray`, `extractTimeSeries`, `countDaysAboveThreshold`, `monthlyAverages`, `getYears/Decades` |
+| `src/lib/utils.ts` | `cn()` — shadcn/ui class merger |
+
+### 4.6 Custom Hooks
+- `useClimateData` — parallel fetch climate_data.json + metrics.json + summary.json; JSON string→number key coercion for metrics
+- `useScrollPosition` — rAF-throttled `window.scrollY`
+- `useWindowSize` — 200ms-debounced `{width, height}`
+
+### Common Components
+- `LoadingSpinner` — animated SVG + ARIA role="status"
+- `ErrorBoundary` — class component with retry button
+- `Tooltip` — positioned div with auto horizontal-flip overflow detection
+- `DataTable` — visually-hidden accessible chart alternative (WCAG 2.1 AA)
+- `SectionTitle` — Framer Motion `<h2>` with kicker, sliding underline animation, description
+
+**Deliverable**: All Phase 4 types, utils, hooks, and common components are in place. Phase 5 (Layout Components) is next.
 
 ---
 

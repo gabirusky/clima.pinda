@@ -53,13 +53,14 @@ This project analyzes and visualizes climate trends for **Pindamonhangaba, SP, B
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18 + Vite |
+| Frontend | React 18 + Vite 5 + **TypeScript** (strict) |
+| Component Library | **shadcn/ui** (Radix primitives, code-owned) |
+| Styling | **Tailwind CSS v4** (CSS-first `@theme`, no config file) |
 | Visualizations | D3.js v7 + Recharts |
-| Animations | Framer Motion |
-| Scrollytelling | Scrollama.js |
-| Map | Leaflet.js |
-| Styling | Tailwind CSS |
-| Data Pipeline | Python 3.10+ (pandas, numpy, requests) |
+| Animations | Framer Motion 11 |
+| Scrollytelling | Scrollama.js 3 |
+| Map | Leaflet.js 1.9 + react-leaflet |
+| Data Pipeline | Python 3.10+ (pandas, numpy, scipy, requests) |
 | Hosting | GitHub Pages |
 | CI/CD | GitHub Actions |
 
@@ -138,20 +139,54 @@ jupyter notebook data/notebooks/exploratory_analysis.ipynb
 
 ```
 ├── data/
-│   ├── scripts/          # Python data pipeline
-│   ├── notebooks/        # Jupyter exploration
-│   ├── raw/              # Raw API responses (gitignored)
-│   └── processed/        # Cleaned CSVs (gitignored)
+│   ├── scripts/                    # Python data pipeline
+│   │   ├── fetch_climate_data.py   #   1. Fetch raw data (Open-Meteo ERA5)
+│   │   ├── validate_cross_source.py#   2. ERA5 vs MERRA-2 cross-validation
+│   │   ├── process_climate_data.py #   3. Clean & validate daily records
+│   │   ├── calculate_metrics.py    #   4. Compute all ETCCDI indices
+│   │   └── generate_web_data.py    #   5. Export JSON for frontend
+│   ├── notebooks/                  # Jupyter exploration
+│   ├── raw/                        # Raw API responses (gitignored)
+│   └── processed/                  # Cleaned CSVs (gitignored)
 ├── public/
-│   └── data/             # JSON consumed by frontend
+│   └── data/                       # JSON consumed by frontend
+│       ├── climate_data.json        #   31,412 daily records (4.3 MB, also .gz)
+│       ├── metrics.json             #   86 annual ETCCDI metric records
+│       └── summary.json             #   Headline stats & decade comparisons
 ├── src/
-│   ├── components/       # React components
-│   ├── hooks/            # Custom hooks
-│   ├── utils/            # Utility functions
-│   ├── styles/           # CSS design system
-│   └── constants/        # Config and thresholds
-├── .github/workflows/    # CI/CD
-└── docs/                 # Documentation
+│   ├── main.tsx                    # React 18 entry point
+│   ├── App.tsx                     # Root component
+│   ├── index.css                   # Tailwind v4 @theme design system
+│   ├── types/
+│   │   └── climate.ts              # DailyRecord, AnnualMetrics, ClimateSummary
+│   ├── constants/
+│   │   ├── config.ts               # LAT, LON, DATA_BASE_URL, REPO_BASE
+│   │   └── thresholds.ts           # SU30/TR20/WSDI/CDD/CWD thresholds
+│   ├── hooks/
+│   │   ├── useClimateData.ts       # Parallel fetch of all 3 JSON files
+│   │   ├── useScrollPosition.ts    # rAF-throttled scroll Y
+│   │   └── useWindowSize.ts        # 200ms-debounced window dimensions
+│   ├── utils/
+│   │   ├── colors.ts               # tempToColor, anomalyToStripeColor
+│   │   ├── formatters.ts           # formatTemp, formatDate, formatDecade…
+│   │   ├── calculations.ts         # linearRegression, movingAverage, KDE…
+│   │   └── dataProcessing.ts       # groupByYear/Decade, filterByYear…
+│   ├── lib/
+│   │   └── utils.ts                # cn() helper (shadcn/ui)
+│   └── components/
+│       ├── ui/                     # shadcn/ui generated components
+│       ├── common/                 # Shared primitives
+│       │   ├── LoadingSpinner.tsx
+│       │   ├── ErrorBoundary.tsx
+│       │   ├── Tooltip.tsx
+│       │   ├── DataTable.tsx       # Accessible chart alternative (WCAG)
+│       │   └── SectionTitle.tsx    # Animated h2 with sliding underline
+│       ├── layout/                 # Header, Footer, Navigation (Phase 5)
+│       ├── visualizations/         # D3 & Recharts charts (Phase 6)
+│       ├── storytelling/           # Scrolly sections (Phase 7)
+│       └── widgets/                # Interactive controls (Phase 8)
+├── .github/workflows/              # CI/CD
+└── docs/                           # API, data sources, deployment guides
 ```
 
 ---
@@ -204,11 +239,26 @@ The ERA5 data (Open-Meteo) was cross-validated against **NASA POWER (MERRA-2 rea
 | 1. Project Scaffolding | ✅ Complete |
 | 2. Data Acquisition | ✅ Complete |
 | 3. Data Processing | ✅ Complete (3.1 clean · 3.2 metrics · 3.3 web data) |
-| 4. Frontend Setup | 🔲 Pending |
-| 5. Core Visualizations | 🔲 Pending |
-| 6. Storytelling Sections | 🔲 Pending |
-| 7. Interactive Widgets | 🔲 Pending |
-| 8. Polish & Deployment | 🔲 Pending |
+| **4. Frontend Foundation** | **✅ Complete** |
+| 5. Layout Components | 🔲 Next |
+| 6. Visualization Components | 🔲 Pending |
+| 7. Storytelling Sections | 🔲 Pending |
+| 8. Interactive Widgets | 🔲 Pending |
+| 9. App Assembly | 🔲 Pending |
+| 10–14. Accessibility / Perf / Tests / CI / Docs | 🔲 Pending |
+
+### Phase 4 Deliverables (Frontend Foundation)
+- **TypeScript types** (`src/types/climate.ts`): `DailyRecord`, `AnnualMetrics`, `DecadalMetrics`, `ClimateSummary` — field names match exact JSON output of Phase 3 Python scripts
+- **Design system** (`src/index.css`): Tailwind v4 `@theme` with Ed Hawkins stripe palette, temperature color scale, Syne + DM Sans + JetBrains Mono fonts, keyframes
+- **Constants**: ETCCDI-aligned thresholds (SU30, TR20, WSDI baseline 1961–1990, anomaly baseline 1940–1980)
+- **Utilities** — 4 modules, 30+ pure functions:
+  - `colors.ts` — tempToColor, anomalyToStripeColor (Ed Hawkins 9-color), su30ToColor, lerpColor
+  - `formatters.ts` — pt-BR localized: formatTemp, formatDate, formatDecade, formatSlope, formatPercent
+  - `calculations.ts` — linearRegression (OLS + R²/p-value), movingAverage, percentile, KDE (Epanechnikov)
+  - `dataProcessing.ts` — groupByYear/Decade, filterByYear, metricsToArray, extractTimeSeries, monthlyAverages
+- **Hooks**: useClimateData (parallel fetch, string→number key coercion), useScrollPosition (rAF), useWindowSize (debounced)
+- **Common components**: LoadingSpinner, ErrorBoundary, Tooltip (auto-flip), DataTable (WCAG 2.1 AA), SectionTitle (Framer Motion)
+- **Smoke test**: Dev server loads ✅ · `tsc --noEmit` → 0 errors ✅
 
 ---
 
