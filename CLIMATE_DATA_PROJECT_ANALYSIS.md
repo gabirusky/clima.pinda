@@ -193,77 +193,118 @@ def fetch_cds_era5_data():
 
 ### FR2: Climate Metrics Calculation
 
+> **ETCCDI Alignment**: All indices below are defined according to, or are direct adaptations of, the Expert Team on Climate Change Detection and Indices (ETCCDI) 27-index standard ([etccdi.pacificclimate.org](http://etccdi.pacificclimate.org/list_27_indices.shtml)). This ensures the project's findings are directly comparable to the peer-reviewed scientific literature.
+
 #### FR2.1: Core Metrics
 
-1. **Hot Days (HD30)**
+1. **Summer Days — Regional Threshold (SU25)**
+   - **ETCCDI Index**: SU25 (exact standard index)
+   - **Definition**: Days where T_max ≥ 25°C
+   - **Calculation**: `COUNT(T2M_MAX >= 25) per year`
+   - **Purpose**: Extended warm season analysis; ETCCDI standard reference baseline
+
+2. **Hot Days — Local Adaptation (SU30)**
+   - **ETCCDI Index**: SU30 (modified Summer Days index — regional adaptation)
    - **Definition**: Days where T_max ≥ 30°C
    - **Calculation**: `COUNT(T2M_MAX >= 30) per year`
+   - **Rationale**: Pindamonhangaba's valley climate makes 30°C a more locally meaningful heat threshold than the standard 25°C. In the meteorological literature, this is classified as a modified SU index written as SU30.
    - **Output**: Annual count, trend line
 
-2. **Very Hot Days (HD32)**
-   - **Definition**: Days where T_max ≥ 32°C
-   - **Calculation**: `COUNT(T2M_MAX >= 32) per year`
-   - **Purpose**: Distinguish extreme heat
-
 3. **Tropical Nights (TR20)**
+   - **ETCCDI Index**: TR20 (exact standard index)
    - **Definition**: Nights where T_min ≥ 20°C
    - **Calculation**: `COUNT(T2M_MIN >= 20) per year`
    - **Impact**: Sleep quality, health, energy consumption
 
-4. **Summer Days (SU25)**
-   - **Definition**: Days where T_max ≥ 25°C
-   - **Calculation**: `COUNT(T2M_MAX >= 25) per year`
-   - **Purpose**: Extended warm season analysis
+4. **Diurnal Temperature Range (DTR)**
+   - **ETCCDI Index**: DTR (exact standard index)
+   - **Definition**: Mean daily temperature amplitude — difference between daily maximum and minimum
+   - **Calculation**: `MEAN(T2M_MAX - T2M_MIN)` per year
+   - **Analysis**:
+     - Annual mean DTR trend
+     - **A sustained, long-term decrease in DTR is the standard scientific fingerprint of Urban Heat Island (UHI) expansion.** This makes DTR the single most important indicator for proving UHI growth over Pindamonhangaba's 85-year record.
+     - Seasonal patterns (valley cold-air pooling effects in winter)
 
 #### FR2.2: Advanced Metrics
 
-5. **Diurnal Temperature Range (DTR)**
-   - **Definition**: Daily temperature amplitude
-   - **Calculation**: `T2M_MAX - T2M_MIN` per day
-   - **Analysis**: 
-     - Average DTR per year
-     - Trend analysis (decreasing DTR = urban heat island)
-     - Seasonal patterns
-
-6. **Heat Wave Duration Index (HWDI)**
-   - **Definition**: Sequences of 3+ consecutive days with T_max > 32°C
-   - **Calculation**: 
+5. **Warm Spell Duration Index (WSDI)**
+   - **ETCCDI Index**: WSDI (official WMO/ETCCDI standard — upgraded from HWDI)
+   - **Definition**: Annual count of days contributing to warm spells: periods of **at least 6 consecutive days** where T_max exceeds the **calendar-day 90th percentile** of the historical baseline (1961–1990 or 1981–2010)
+   - **Rationale**: Preferred over a fixed-threshold Heat Wave Duration Index (HWDI) because the percentile-based approach adapts to the region's own historical climate. A fixed 32°C threshold could miss historically remarkable events in a cooler baseline period and overcount them in a warmer one.
+   - **Calculation**:
      ```python
-     def calculate_heat_waves(temps, threshold=32, min_duration=3):
-         heat_wave_days = 0
-         current_streak = 0
-         heat_wave_events = []
-         
-         for temp in temps:
-             if temp > threshold:
-                 current_streak += 1
-             else:
-                 if current_streak >= min_duration:
-                     heat_wave_events.append(current_streak)
-                     heat_wave_days += current_streak
-                 current_streak = 0
-         
-         return {
-             'total_days': heat_wave_days,
-             'events': len(heat_wave_events),
-             'longest': max(heat_wave_events) if heat_wave_events else 0
-         }
+     import numpy as np
+     import pandas as pd
+
+     def calculate_wsdi(df, baseline_start=1961, baseline_end=1990, min_duration=6):
+         """
+         Calculate Warm Spell Duration Index (WSDI) — ETCCDI standard.
+         Counts days in warm spells: streaks of >= 6 days where T_max exceeds
+         the calendar-day 90th percentile of the historical baseline.
+
+         Args:
+             df: DataFrame with columns ['date', 'temp_max']
+             baseline_start: First year of the reference baseline period
+             baseline_end:   Last year of the reference baseline period
+             min_duration:   Minimum consecutive days to qualify as a warm spell (default: 6)
+         Returns:
+             Series of annual WSDI values (count of days in warm spells per year)
+         """
+         df = df.copy()
+         df['doy'] = df['date'].dt.dayofyear
+
+         # Step 1: Compute the 90th percentile for each calendar day from the baseline
+         baseline = df[df['date'].dt.year.between(baseline_start, baseline_end)]
+         p90 = baseline.groupby('doy')['temp_max'].quantile(0.90).rename('p90')
+
+         # Step 2: Flag days exceeding the calendar-day 90th percentile
+         df = df.merge(p90, on='doy', how='left')
+         df['exceeds_p90'] = df['temp_max'] > df['p90']
+
+         # Step 3: Identify warm spells (streaks >= min_duration) and count their days
+         wsdi_annual = {}
+         for year, group in df.groupby(df['date'].dt.year):
+             flags = group['exceeds_p90'].values
+             warm_spell_days = 0
+             streak = 0
+             for flag in flags:
+                 if flag:
+                     streak += 1
+                 else:
+                     if streak >= min_duration:
+                         warm_spell_days += streak
+                     streak = 0
+             if streak >= min_duration:   # handle streak ending on Dec 31
+                 warm_spell_days += streak
+             wsdi_annual[year] = warm_spell_days
+
+         return pd.Series(wsdi_annual, name='WSDI')
      ```
 
+6. **Warm Days (TX90p) & Warm Nights (TN90p)**
+   - **ETCCDI Indices**: TX90p / TN90p (exact standard indices)
+   - **Definition**:
+     - **TX90p**: Percentage of days where T_max > 90th percentile of historical T_max for that calendar day
+     - **TN90p**: Percentage of nights where T_min > 90th percentile of historical T_min for that calendar day
+   - **Calculation**: Annual percentage of days/nights exceeding their respective calendar-day 90th percentile (baseline period)
+   - **Purpose**: Context-aware extreme identification. These are the formal ETCCDI labels for percentile-based temperature extremes — TX90p for warm days and TN90p for warm nights.
+
 7. **Consecutive Dry Days (CDD)**
-   - **Definition**: Maximum consecutive days with precipitation < 1mm
+   - **ETCCDI Index**: CDD (exact standard index)
+   - **Definition**: Maximum number of consecutive days with precipitation < 1 mm
    - **Calculation**: Longest streak per year
    - **Impact**: Drought risk, fire hazard
 
-8. **Growing Degree Days (GDD)**
+8. **Consecutive Wet Days (CWD)**
+   - **ETCCDI Index**: CWD (exact standard index — paired with CDD)
+   - **Definition**: Maximum number of consecutive days with precipitation ≥ 1 mm
+   - **Calculation**: Longest streak per year
+   - **Rationale**: Pairing CWD with CDD provides complete coverage of precipitation extremes at both ends of the spectrum: prolonged dry spells (drought/fire risk) and prolonged wet spells (flood/landslide risk in the Serra da Mantiqueira foothills).
+
+9. **Growing Degree Days (GDD)**
    - **Definition**: Accumulated heat above base temperature (10°C)
    - **Calculation**: `SUM(MAX(0, (T_max + T_min)/2 - 10))` per year
    - **Purpose**: Agricultural productivity indicator
-
-9. **Percentile-Based Extremes**
-   - **Hot Days (90th percentile)**: Days above 90th percentile of historical T_max
-   - **Very Hot Days (95th percentile)**: Days above 95th percentile
-   - **Purpose**: Context-aware extreme identification
 
 #### FR2.3: Temporal Analysis
 
@@ -1239,6 +1280,7 @@ The technical stack balances modern web development practices with accessibility
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: 2026-02-17*  
-*Author: Climate Data Visualization Team*
+*Document Version: 1.1*  
+*Last Updated: 2026-02-23*  
+*Author: Climate Data Visualization Team*  
+*v1.1 Notes: Climate metrics (FR2) refactored to align with ETCCDI 27-index standard. DTR promoted to Core Metrics. SU30 adopted as regional Summer Days adaptation. HWDI replaced by WSDI (percentile-based, 6-day threshold). TX90p and TN90p added as formal ETCCDI labels for percentile extremes. CWD added alongside CDD for full precipitation extreme coverage.*
