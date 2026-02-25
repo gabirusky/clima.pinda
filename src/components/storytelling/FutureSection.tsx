@@ -22,11 +22,20 @@ interface FutureSectionProps {
  */
 export default function FutureSection({ metrics }: FutureSectionProps) {
     const arr = metricsToArray(metrics);
-    const xs = arr.map(m => m.year);
-    const ys = arr.map(m => m.su30);
-    const reg = linearRegression(xs, ys);
-    const projected2050 = Math.round(predictRegression([2050], reg)[0]);
-    const projected2040 = Math.round(predictRegression([2040], reg)[0]);
+
+    // Filter out years where su30 is not a valid number before regression
+    const validArr = arr.filter(m => typeof m.su30 === 'number' && isFinite(m.su30));
+    const xs = validArr.map(m => m.year);
+    const ys = validArr.map(m => m.su30);
+
+    // Fallback if not enough data for regression
+    const reg = xs.length >= 2 ? linearRegression(xs, ys) : { slope: 0, intercept: 0, r2: 0, slopePerDecade: 0 };
+    const rawP2050 = xs.length >= 2 ? Math.round(predictRegression([2050], reg)[0]) : 0;
+    const rawP2040 = xs.length >= 2 ? Math.round(predictRegression([2040], reg)[0]) : 0;
+
+    // Clamp to sane range [0, 365] — regression can extrapolate unrealistically
+    const projected2050 = isNaN(rawP2050) ? 0 : Math.max(0, Math.min(365, rawP2050));
+    const projected2040 = isNaN(rawP2040) ? 0 : Math.max(0, Math.min(365, rawP2040));
 
     return (
         <div

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback, type ReactNode } from 'react';
+import { useEffect, useRef, useCallback, useId, type ReactNode } from 'react';
 import scrollama from 'scrollama';
 
 // Mirror scrollama's DecimalType so we can use it in props without
@@ -25,8 +25,9 @@ interface ScrollySectionProps {
  *
  * Design intent: Sticky visualization on right, scrollable prose on left.
  * On mobile: visualization scrolls above the steps.
- * Never set overflow: hidden on the scroller parent.
- * Clean up on unmount; handle resize via scroller.resize().
+ *
+ * Each instance gets a unique scoped selector via useId() so multiple
+ * ScrollySections on the same page don't interfere with each other.
  */
 export default function ScrollySection({
     visualization,
@@ -36,6 +37,10 @@ export default function ScrollySection({
     offset = 0.5,
     id,
 }: ScrollySectionProps) {
+    // Unique stable ID for this instance — scopes Scrollama to this section only
+    const uid = useId().replace(/:/g, '');
+    const stepClass = `scroll-step-${uid}`;
+
     const scrollerRef = useRef<ReturnType<typeof scrollama> | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +57,7 @@ export default function ScrollySection({
 
         scroller
             .setup({
-                step: '.scroll-step',
+                step: `.${stepClass}`,   // scoped — only this section's steps
                 offset,
                 debug: false,
             })
@@ -68,7 +73,7 @@ export default function ScrollySection({
             scroller.destroy();
             window.removeEventListener('resize', handleResize);
         };
-    }, [offset, handleStepEnter, handleStepExit]);
+    }, [offset, stepClass, handleStepEnter, handleStepExit]);
 
     return (
         <section
@@ -83,7 +88,7 @@ export default function ScrollySection({
                 alignItems: 'flex-start',
                 gap: '2rem',
             }}>
-                {/* Steps column — scrollable prose */}
+                {/* Steps column — scrollable prose (LEFT) */}
                 <div
                     className="scroll-steps"
                     style={{
@@ -96,7 +101,7 @@ export default function ScrollySection({
                     {steps.map((step, i) => (
                         <div
                             key={i}
-                            className="scroll-step"
+                            className={stepClass}
                             data-step={i}
                             style={{
                                 minHeight: '100vh',
@@ -110,10 +115,10 @@ export default function ScrollySection({
                                 className="prose-block"
                                 style={{
                                     maxWidth: '540px',
-                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontSize: '1.0625rem',
-                                    lineHeight: 1.75,
-                                    color: 'var(--color-text-secondary)',
+                                    lineHeight: 1.8,
+                                    color: 'var(--color-text-primary)',
                                 }}
                             >
                                 {step}
@@ -122,13 +127,14 @@ export default function ScrollySection({
                     ))}
                 </div>
 
-                {/* Sticky visualization pane */}
+                {/* Sticky visualization pane (RIGHT) */}
                 <div
                     className="sticky-viz"
                     style={{
                         flex: '1 1 auto',
                         position: 'sticky',
                         top: 0,
+                        alignSelf: 'flex-start',   /* required for sticky in flex */
                         height: '100vh',
                         overflow: 'hidden',
                         display: 'flex',
@@ -151,6 +157,7 @@ export default function ScrollySection({
                         position: relative !important;
                         height: 50vh !important;
                         width: 100% !important;
+                        align-self: auto !important;
                     }
                     .scroll-steps {
                         width: 100% !important;

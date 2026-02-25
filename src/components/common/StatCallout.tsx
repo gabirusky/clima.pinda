@@ -48,9 +48,9 @@ export default function StatCallout({
         return () => observer.disconnect();
     }, []);
 
-    // Count-up animation (1200ms, ease-out)
+    // Count-up animation (1200ms, ease-out) — skipped if value is invalid
     useEffect(() => {
-        if (!inView) return;
+        if (!inView || !isFinite(value) || isNaN(value)) return;
 
         const duration = 1200;
         const startTime = performance.now();
@@ -74,9 +74,11 @@ export default function StatCallout({
         };
     }, [inView, value]);
 
-    const displayedStr = displayed.toFixed(decimals);
-    const prefix = showSign && value > 0 ? '+' : value < 0 ? '−' : '';
-    const color = accentColor ?? '#ef8a62'; // --color-stripe-warm
+    // Guard against NaN/Infinity
+    const isValid = isFinite(value) && !isNaN(value);
+    const displayedStr = isValid ? displayed.toFixed(decimals) : '–';
+    const prefix = isValid ? (showSign && value > 0 ? '+' : value < 0 ? '−' : '') : '';
+    const color = accentColor ?? '#ef8a62';
 
     return (
         <motion.div
@@ -88,19 +90,18 @@ export default function StatCallout({
             className="flex flex-col gap-2"
         >
             <div
-                aria-label={`${prefix}${value.toFixed(decimals)} ${unit ?? ''}`}
+                aria-label={isValid ? `${prefix}${value.toFixed(decimals)} ${unit ?? ''}` : 'dados indisponíveis'}
                 style={{
-                    fontFamily: "'Syne', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontWeight: 800,
                     fontSize: 'var(--text-display-xl, clamp(80px, 12vw, 160px))',
                     lineHeight: 0.9,
                     letterSpacing: '-0.04em',
                     color,
-                    // Subtle glow on the number
                     textShadow: `0 0 60px ${color}33`,
                 }}
             >
-                {prefix}{Math.abs(Number(displayedStr)).toFixed(decimals)}
+                {isValid ? `${prefix}${Math.abs(Number(displayedStr)).toFixed(decimals)}` : '–'}
                 {unit && (
                     <span
                         style={{
@@ -120,11 +121,11 @@ export default function StatCallout({
             {label && (
                 <p
                     style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.9375rem',
-                        color: 'var(--color-text-secondary, #a09080)',
+                        color: 'var(--color-text-primary)',
                         maxWidth: '34ch',
-                        lineHeight: 1.5,
+                        lineHeight: 1.6,
                     }}
                 >
                     {label}
