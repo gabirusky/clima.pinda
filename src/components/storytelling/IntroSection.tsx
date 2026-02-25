@@ -96,8 +96,8 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                     inset: 0,
                     zIndex: 5,
                     background: 'rgba(8, 12, 24, 0.12)',
-                    backdropFilter: 'blur(4px)',
-                    WebkitBackdropFilter: 'blur(4px)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
                     pointerEvents: 'none',
                 }} />
 
@@ -106,8 +106,9 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                     position: 'relative',
                     zIndex: 10,
                     textAlign: 'center',
-                    padding: '0 2.5rem',
-                    maxWidth: '820px',
+                    padding: '0 2rem',
+                    width: 'max-content',
+                    maxWidth: '95vw',
                 }}>
                     {/* Kicker — smaller, contextual */}
                     <p style={{
@@ -118,8 +119,9 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         letterSpacing: '-0.02em',
                         color: 'rgba(240,236,227,0.88)',
                         textShadow: '0 2px 24px rgba(0,0,0,0.6)',
-                        marginBottom: '0.4rem',
+                        marginBottom: '0.25rem',
                         whiteSpace: 'nowrap',
+                        textAlign: 'center',
                     }}>
                         Pindamonhangaba está esquentando.
                     </p>
@@ -135,24 +137,26 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         textShadow: '0 2px 48px rgba(178,60,10,0.6)',
                         margin: 0,
                         whiteSpace: 'nowrap',
+                        textAlign: 'center',
                     }}>
                         Aqui está a prova.
                     </p>
 
                     <p style={{
-                        marginTop: '2rem',
+                        marginTop: '1.5rem',
                         fontFamily: "'Raleway', sans-serif",
                         fontSize: 'var(--text-caption, 0.875rem)',
                         color: 'rgba(240,236,227,0.88)',
                         textShadow: '0 2px 24px rgba(0,0,0,0.6)',
                         letterSpacing: '0.1em',
                         textTransform: 'uppercase',
+                        textAlign: 'center',
                     }}>
                         −22.9250°, −45.4620° · 554 m · 1940–2025
                     </p>
 
                     {/* Scroll indicator */}
-                    <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                    <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                         <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                             Role para explorar
                         </span>
