@@ -143,7 +143,7 @@ export default function App() {
 
                             {/* ── HottestDaySection: record day & personal timeline */}
                             <Suspense fallback={<SectionLoader />}>
-                                <HottestDaySection dailyData={safeData} summary={summary!} />
+                                <HottestDaySection dailyData={safeData} summary={summary!} metrics={safeMetrics} />
                             </Suspense>
 
                             {/* ── CostSection: AC Calculator ────────────────── */}

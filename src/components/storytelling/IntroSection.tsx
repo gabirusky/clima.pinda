@@ -83,7 +83,7 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                     justifyContent: 'center',
                     overflow: 'hidden',
                     // Deep aesthetic gradient reflecting the heat narrative
-                    background: 'radial-gradient(ellipse 100% 120% at 50% 10%, #08306b 0%, #0a0f1e 60%, #160205 100%)',
+                    background: 'radial-gradient(ellipse 100% 120% at 50% 10%, #160205 0%, #160205 60%, #160205 100%)',
                 }}
             >
                 {/* Subtle burning glow at the bottom edge fading up */}

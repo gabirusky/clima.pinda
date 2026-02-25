@@ -1,6 +1,6 @@
 import { useState, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import type { DailyRecord, ClimateSummary } from '../../types/climate.ts';
+import type { DailyRecord, ClimateSummary, AnnualMetrics } from '../../types/climate.ts';
 import SectionTitle from '../common/SectionTitle.tsx';
 import LoadingSpinner from '../common/LoadingSpinner.tsx';
 import { formatDate } from '../../utils/formatters.ts';
@@ -11,6 +11,7 @@ const PersonalTimeline = lazy(() => import('../widgets/PersonalTimeline.tsx'));
 interface HottestDaySectionProps {
     dailyData: DailyRecord[];
     summary: ClimateSummary;
+    metrics: Record<number, AnnualMetrics>;
 }
 
 /**
@@ -21,7 +22,7 @@ interface HottestDaySectionProps {
  * Birth year input → PersonalTimeline widget.
  * Design shifts register on PersonalTimeline activation.
  */
-export default function HottestDaySection({ dailyData, summary }: HottestDaySectionProps) {
+export default function HottestDaySection({ dailyData, summary, metrics }: HottestDaySectionProps) {
     const [showTimeline, setShowTimeline] = useState(false);
     const [birthYear, setBirthYear] = useState<number | null>(null);
     const [inputVal, setInputVal] = useState('');
@@ -199,7 +200,7 @@ export default function HottestDaySection({ dailyData, summary }: HottestDaySect
                     transition={{ duration: 0.8 }}
                 >
                     <Suspense fallback={<LoadingSpinner />}>
-                        <PersonalTimeline birthYear={birthYear} metrics={{}} dailyData={dailyData} />
+                        <PersonalTimeline birthYear={birthYear} metrics={metrics} dailyData={dailyData} />
                     </Suspense>
                 </motion.div>
             )}
