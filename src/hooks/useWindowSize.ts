@@ -20,8 +20,18 @@ export function useWindowSize(): WindowSize {
         function handleResize() {
             if (timeoutId !== null) clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
-                setSize({ width: window.innerWidth, height: window.innerHeight });
-            }, 200);
+                setSize(prev => {
+                    // Mobile browser scroll hides/shows address bar, causing minor height changes.
+                    // Ignore these to prevent massive SVG re-renders on scroll.
+                    const diffW = Math.abs(prev.width - window.innerWidth);
+                    const diffH = Math.abs(prev.height - window.innerHeight);
+
+                    if (diffW > 0 || diffH > 150) {
+                        return { width: window.innerWidth, height: window.innerHeight };
+                    }
+                    return prev;
+                });
+            }, 250);
         }
 
         window.addEventListener('resize', handleResize);

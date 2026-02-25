@@ -97,8 +97,6 @@ export default function TropicalNightsSection({ metrics, dailyData }: TropicalNi
                             <CalendarHeatmap
                                 data={dailyData}
                                 year={year}
-                                availableYears={STEP_YEARS}
-                                onYearChange={setYear}
                             />
                         </div>
                     </Suspense>

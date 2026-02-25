@@ -10,9 +10,6 @@ import { formatDate } from '../../utils/formatters.ts';
 interface CalendarHeatmapProps {
     data: DailyRecord[];
     year: number;
-    /** Called when user selects a different year */
-    onYearChange?: (year: number) => void;
-    availableYears?: number[];
 }
 
 interface TooltipInfo {
@@ -37,8 +34,6 @@ const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', '
 export default function CalendarHeatmap({
     data,
     year,
-    onYearChange,
-    availableYears = [],
 }: CalendarHeatmapProps) {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -216,37 +211,7 @@ export default function CalendarHeatmap({
 
     return (
         <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
-            {/* Year selector */}
-            {availableYears.length > 0 && onYearChange && (
-                <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <label
-                        htmlFor="heatmap-year-select"
-                        style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}
-                    >
-                        Ano:
-                    </label>
-                    <select
-                        id="heatmap-year-select"
-                        value={year}
-                        onChange={e => onYearChange(Number(e.target.value))}
-                        aria-label="Selecionar ano para o calendário"
-                        style={{
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: '4px',
-                            color: 'var(--color-text-primary)',
-                            fontFamily: "'DM Sans', sans-serif",
-                            fontSize: '0.875rem',
-                            padding: '0.25rem 0.5rem',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        {availableYears.map(y => (
-                            <option key={y} value={y}>{y}</option>
-                        ))}
-                    </select>
-                </div>
-            )}
+
 
             <div style={{ overflowX: 'auto' }}>
                 <svg

@@ -72,7 +72,7 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
 
     return (
         <div style={{ position: 'relative' }}>
-            {/* Full-bleed hero stripes */}
+            {/* Full-bleed hero gradient */}
             <div
                 style={{
                     position: 'relative',
@@ -82,23 +82,17 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     overflow: 'hidden',
+                    // Deep aesthetic gradient reflecting the heat narrative
+                    background: 'radial-gradient(ellipse 100% 120% at 50% 10%, #08306b 0%, #0a0f1e 60%, #160205 100%)',
                 }}
             >
-                <Suspense fallback={<LoadingSpinner />}>
-                    <div style={{ position: 'absolute', inset: 0 }}>
-                        <ClimateStripes data={metricsArray} height="100%" />
-                    </div>
-                </Suspense>
-
-                {/* Full-size weak blur veil — shows stripes, softens contrast */}
+                {/* Subtle burning glow at the bottom edge fading up */}
                 <div style={{
                     position: 'absolute',
                     inset: 0,
-                    zIndex: 5,
-                    background: 'rgba(8, 12, 24, 0.12)',
-                    backdropFilter: 'blur(12px)',
-                    WebkitBackdropFilter: 'blur(12px)',
+                    background: 'linear-gradient(to top, rgba(178,24,43,0.3) 0%, rgba(214,96,77,0.05) 20%, transparent 60%)',
                     pointerEvents: 'none',
+                    zIndex: 1,
                 }} />
 
                 {/* Overlay headline */}
