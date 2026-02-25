@@ -90,41 +90,77 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                     </div>
                 </Suspense>
 
+                {/* Blur halo behind text — frosted glass oval */}
+                <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    zIndex: 5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    pointerEvents: 'none',
+                }}>
+                    <div style={{
+                        width: 'min(760px, 90vw)',
+                        height: 'min(420px, 60vh)',
+                        borderRadius: '50%',
+                        background: 'rgba(8, 12, 24, 0.38)',
+                        backdropFilter: 'blur(24px)',
+                        WebkitBackdropFilter: 'blur(24px)',
+                        filter: 'blur(0px)',
+                    }} />
+                </div>
+
                 {/* Overlay headline */}
                 <div style={{
                     position: 'relative',
                     zIndex: 10,
                     textAlign: 'center',
-                    padding: '0 2rem',
-                    maxWidth: '800px',
+                    padding: '0 2.5rem',
+                    maxWidth: '820px',
                 }}>
-                    <h1 style={{
-                        fontFamily: "'Syne', sans-serif",
+                    {/* Kicker — smaller, contextual */}
+                    <p style={{
+                        fontFamily: "'Raleway', sans-serif",
+                        fontWeight: 500,
+                        fontSize: 'var(--text-display-md, clamp(28px, 3.5vw, 48px))',
+                        lineHeight: 1.15,
+                        letterSpacing: '-0.02em',
+                        color: 'rgba(240,236,227,0.88)',
+                        textShadow: '0 2px 24px rgba(0,0,0,0.6)',
+                        marginBottom: '0.4rem',
+                    }}>
+                        Pindamonhangaba está esquentando.
+                    </p>
+
+                    {/* Statement — the big punch */}
+                    <p style={{
+                        fontFamily: "'Raleway', sans-serif",
                         fontWeight: 800,
                         fontSize: 'var(--text-display-lg, clamp(48px, 7vw, 96px))',
                         lineHeight: 1.0,
                         letterSpacing: '-0.04em',
-                        color: '#f0ece3',
-                        textShadow: '0 2px 40px rgba(0,0,0,0.8)',
-                        marginBottom: '1.5rem',
+                        color: '#ef8a62',
+                        textShadow: '0 2px 48px rgba(178,60,10,0.6)',
+                        margin: 0,
                     }}>
-                        Pindamonhangaba está esquentando.
-                        <br />
-                        <span style={{ color: '#ef8a62' }}>Aqui está a prova.</span>
-                    </h1>
+                        Aqui está a prova.
+                    </p>
+
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        marginTop: '2rem',
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: 'var(--text-caption, 0.875rem)',
-                        color: 'rgba(240,236,227,0.55)',
-                        letterSpacing: '0.08em',
+                        color: 'rgba(240,236,227,0.45)',
+                        letterSpacing: '0.1em',
                         textTransform: 'uppercase',
                     }}>
-                        −22.9250°, −45.4620° · 554 m de altitude · 1940–2025
+                        −22.9250°, −45.4620° · 554 m · 1940–2025
                     </p>
 
                     {/* Scroll indicator */}
-                    <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                             Role para explorar
                         </span>
                         <ChevronDown />

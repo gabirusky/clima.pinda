@@ -91,16 +91,21 @@ export default function Header() {
                     href="#"
                     onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                     style={{
-                        fontFamily: "'Syne', sans-serif",
-                        fontWeight: 800,
-                        fontSize: '0.875rem',
-                        letterSpacing: '-0.01em',
-                        color: 'var(--color-text-accent, #ef8a62)',
+                        fontFamily: "'Raleway', sans-serif",
+                        fontWeight: 300,
+                        fontSize: '1rem',
+                        letterSpacing: '0.18em',
+                        color: 'rgba(240,236,227,0.9)',
                         textDecoration: 'none',
                         flexShrink: 0,
+                        textTransform: 'uppercase',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.2em',
                     }}
                 >
-                    PINDA ·CLIMA
+                    Pinda
+                    <span style={{ color: 'var(--color-text-accent, #ef8a62)', fontWeight: 700 }}>Clima</span>
                 </a>
 
                 {/* Desktop nav */}
