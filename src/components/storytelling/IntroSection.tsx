@@ -90,26 +90,16 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                     </div>
                 </Suspense>
 
-                {/* Blur halo behind text — frosted glass oval */}
+                {/* Full-size weak blur veil — shows stripes, softens contrast */}
                 <div style={{
                     position: 'absolute',
                     inset: 0,
                     zIndex: 5,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    background: 'rgba(8, 12, 24, 0.12)',
+                    backdropFilter: 'blur(4px)',
+                    WebkitBackdropFilter: 'blur(4px)',
                     pointerEvents: 'none',
-                }}>
-                    <div style={{
-                        width: 'min(760px, 90vw)',
-                        height: 'min(420px, 60vh)',
-                        borderRadius: '50%',
-                        background: 'rgba(8, 12, 24, 0.38)',
-                        backdropFilter: 'blur(24px)',
-                        WebkitBackdropFilter: 'blur(24px)',
-                        filter: 'blur(0px)',
-                    }} />
-                </div>
+                }} />
 
                 {/* Overlay headline */}
                 <div style={{
@@ -129,6 +119,7 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         color: 'rgba(240,236,227,0.88)',
                         textShadow: '0 2px 24px rgba(0,0,0,0.6)',
                         marginBottom: '0.4rem',
+                        whiteSpace: 'nowrap',
                     }}>
                         Pindamonhangaba está esquentando.
                     </p>
@@ -143,6 +134,7 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         color: '#ef8a62',
                         textShadow: '0 2px 48px rgba(178,60,10,0.6)',
                         margin: 0,
+                        whiteSpace: 'nowrap',
                     }}>
                         Aqui está a prova.
                     </p>
