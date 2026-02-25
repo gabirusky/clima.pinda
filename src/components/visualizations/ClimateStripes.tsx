@@ -83,6 +83,10 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
                 setTooltip(t => ({ ...t, visible: false }));
             });
 
+        // SVG native title — shows year on hover (accessibility + browser tooltip)
+        stripes.append('title')
+            .text(d => `${d.year} · ${d.anomaly >= 0 ? '+' : ''}${d.anomaly.toFixed(2)}°C · média ${d.temp_mean_annual.toFixed(1)}°C`);
+
         // Staggered reveal animation — 8ms per stripe
         stripes.each(function (_, i) {
             d3.select(this)
