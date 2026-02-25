@@ -1,0 +1,323 @@
+import { useEffect, useRef, useState, useMemo } from 'react';
+import * as d3 from 'd3';
+import type { DailyRecord } from '../../types/climate.ts';
+import { tempToHeatmapColor } from '../../utils/colors.ts';
+import { useWindowSize } from '../../hooks/useWindowSize.ts';
+import DataTable from '../common/DataTable.tsx';
+import Tooltip from '../common/Tooltip.tsx';
+import { formatDate } from '../../utils/formatters.ts';
+
+interface CalendarHeatmapProps {
+    data: DailyRecord[];
+    year: number;
+    /** Called when user selects a different year */
+    onYearChange?: (year: number) => void;
+    availableYears?: number[];
+}
+
+interface TooltipInfo {
+    visible: boolean;
+    x: number;
+    y: number;
+    record: DailyRecord | null;
+}
+
+const CELL_SIZE = 14;
+const CELL_MARGIN = 2;
+const WEEK_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+/**
+ * CalendarHeatmap — fills day by day like a timelapse of a summer getting longer.
+ *
+ * 53 weeks × 7 days grid. SU30 days get a dot overlay.
+ * TR20 nights get a border highlight.
+ * Animation: cells fill chronologically on scroll entry.
+ */
+export default function CalendarHeatmap({
+    data,
+    year,
+    onYearChange,
+    availableYears = [],
+}: CalendarHeatmapProps) {
+    const svgRef = useRef<SVGSVGElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { width } = useWindowSize();
+    const [tooltip, setTooltip] = useState<TooltipInfo>({ visible: false, x: 0, y: 0, record: null });
+    const [inView, setInView] = useState(false);
+
+    const yearData = useMemo(() =>
+        data.filter(r => r.date.startsWith(`${year}-`)),
+        [data, year]
+    );
+
+    const recordsByDate = useMemo(() => {
+        const m = new Map<string, DailyRecord>();
+        for (const r of yearData) m.set(r.date, r);
+        return m;
+    }, [yearData]);
+
+    // Intersection observer for animation trigger
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        const obs = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) setInView(true);
+        }, { threshold: 0.2 });
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!svgRef.current || !inView) return;
+
+        const svg = d3.select(svgRef.current);
+        svg.selectAll('*').remove();
+
+        const cellStep = CELL_SIZE + CELL_MARGIN;
+        const marginLeft = 36;
+        const marginTop = 28;
+
+        // Build all days of year
+        const startDate = new Date(year, 0, 1);
+        const endDate = new Date(year, 11, 31);
+        const allDays = d3.timeDays(startDate, d3.timeDay.offset(endDate, 1));
+
+        // Compute week offset: start from Monday (d3.timeMonday)
+        const firstMonday = d3.timeMonday(startDate);
+        const weekOffset = d3.timeMonday.count(firstMonday, startDate);
+
+        // Draw day cells
+        const cells = svg.selectAll<SVGRectElement, Date>('rect.day')
+            .data(allDays)
+            .enter()
+            .append('rect')
+            .attr('class', 'day')
+            .attr('x', d => {
+                const weekNum = d3.timeMonday.count(firstMonday, d) + weekOffset;
+                return marginLeft + weekNum * cellStep;
+            })
+            .attr('y', d => {
+                // Mon=0 ... Sun=6 (ISO week)
+                const dow = (d.getDay() + 6) % 7;
+                return marginTop + dow * cellStep;
+            })
+            .attr('width', CELL_SIZE)
+            .attr('height', CELL_SIZE)
+            .attr('rx', 2)
+            .attr('ry', 2)
+            .attr('fill', d => {
+                const dateStr = d3.timeFormat('%Y-%m-%d')(d);
+                const rec = recordsByDate.get(dateStr);
+                return rec ? tempToHeatmapColor(rec.temp_max) : '#1a2035';
+            })
+            .attr('stroke', d => {
+                const dateStr = d3.timeFormat('%Y-%m-%d')(d);
+                const rec = recordsByDate.get(dateStr);
+                return rec && rec.temp_min >= 20 ? '#ef8a62' : 'transparent';
+            })
+            .attr('stroke-width', 1.5)
+            .attr('opacity', 0)
+            .style('cursor', 'pointer')
+            .on('mouseenter', function (event, d) {
+                const dateStr = d3.timeFormat('%Y-%m-%d')(d);
+                const rec = recordsByDate.get(dateStr);
+                const container = containerRef.current?.getBoundingClientRect();
+                const el = (event.target as SVGRectElement).getBoundingClientRect();
+                setTooltip({
+                    visible: true,
+                    x: el.left - (container?.left ?? 0),
+                    y: el.top - (container?.top ?? 0),
+                    record: rec ?? null,
+                });
+            })
+            .on('mouseleave', () => setTooltip(t => ({ ...t, visible: false })));
+
+        // SU30 dot overlays
+        svg.selectAll<SVGCircleElement, Date>('circle.su30-dot')
+            .data(allDays.filter(d => {
+                const dateStr = d3.timeFormat('%Y-%m-%d')(d);
+                const rec = recordsByDate.get(dateStr);
+                return rec && rec.temp_max >= 30;
+            }))
+            .enter()
+            .append('circle')
+            .attr('class', 'su30-dot')
+            .attr('cx', d => {
+                const weekNum = d3.timeMonday.count(firstMonday, d) + weekOffset;
+                return marginLeft + weekNum * cellStep + CELL_SIZE / 2;
+            })
+            .attr('cy', d => {
+                const dow = (d.getDay() + 6) % 7;
+                return marginTop + dow * cellStep + CELL_SIZE / 2;
+            })
+            .attr('r', 2)
+            .attr('fill', '#67001f')
+            .attr('opacity', 0)
+            .attr('pointer-events', 'none');
+
+        // Month labels
+        const format = d3.timeFormat('%Y-%m-%d');
+        MONTHS.forEach((month, mi) => {
+            const firstOfMonth = new Date(year, mi, 1);
+            const weekNum = d3.timeMonday.count(firstMonday, firstOfMonth) + weekOffset;
+            svg.append('text')
+                .attr('x', marginLeft + weekNum * cellStep)
+                .attr('y', marginTop - 10)
+                .attr('fill', 'rgba(240,236,227,0.4)')
+                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-size', 10)
+                .text(month);
+        });
+
+        // Day-of-week labels
+        WEEK_LABELS.forEach((label, i) => {
+            if (i % 2 === 1) { // show Mon, Wed, Fri, Sun only (alternating)
+                svg.append('text')
+                    .attr('x', marginLeft - 4)
+                    .attr('y', marginTop + i * cellStep + CELL_SIZE / 2 + 4)
+                    .attr('text-anchor', 'end')
+                    .attr('fill', 'rgba(240,236,227,0.3)')
+                    .attr('font-family', "'DM Sans', sans-serif")
+                    .attr('font-size', 9)
+                    .text(label.slice(0, 3));
+            }
+        });
+
+        // Animate cells chronologically (2ms per day)
+        cells.each(function (_d, i) {
+            d3.select(this)
+                .transition()
+                .delay(i * 2)
+                .duration(150)
+                .attr('opacity', 1);
+        });
+
+        // Animate SU30 dots after cells
+        svg.selectAll<SVGCircleElement, Date>('circle.su30-dot').each(function (d) {
+            const idx = allDays.findIndex(dd => format(dd) === format(d));
+            d3.select(this)
+                .transition()
+                .delay(idx * 2 + 100)
+                .duration(200)
+                .attr('opacity', 0.9);
+        });
+
+    }, [year, recordsByDate, inView, width]);
+
+    const tableRows = yearData.slice(0, 20).map(r => [
+        r.date,
+        `${r.temp_max.toFixed(1)}°C`,
+        `${r.temp_min.toFixed(1)}°C`,
+        `${r.precipitation.toFixed(1)} mm`,
+    ]);
+
+    const svgHeight = CELL_SIZE * 7 + CELL_MARGIN * 6 + 60;
+
+    return (
+        <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
+            {/* Year selector */}
+            {availableYears.length > 0 && onYearChange && (
+                <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <label
+                        htmlFor="heatmap-year-select"
+                        style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}
+                    >
+                        Ano:
+                    </label>
+                    <select
+                        id="heatmap-year-select"
+                        value={year}
+                        onChange={e => onYearChange(Number(e.target.value))}
+                        aria-label="Selecionar ano para o calendário"
+                        style={{
+                            background: 'rgba(255,255,255,0.06)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '4px',
+                            color: 'var(--color-text-primary)',
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontSize: '0.875rem',
+                            padding: '0.25rem 0.5rem',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        {availableYears.map(y => (
+                            <option key={y} value={y}>{y}</option>
+                        ))}
+                    </select>
+                </div>
+            )}
+
+            <div style={{ overflowX: 'auto' }}>
+                <svg
+                    ref={svgRef}
+                    role="img"
+                    aria-label={`Calendário de calor — ${year}. Cada célula é um dia do ano, colorida pela temperatura máxima.`}
+                    style={{ display: 'block', minWidth: '700px', height: svgHeight }}
+                    width="100%"
+                    height={svgHeight}
+                >
+                    <title>Calendário de Calor — {year}</title>
+                    <desc>Grade de 53 semanas × 7 dias mostrando temperaturas máximas diárias para {year}. Pontos vermelhos = dias acima de 30°C (SU30). Borda laranja = noites acima de 20°C (TR20).</desc>
+                </svg>
+            </div>
+
+            {/* Legend */}
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+                <LegendItem color="#2166ac" label="10°C" />
+                <LegendItem color="#67a9cf" label="20°C" />
+                <LegendItem color="#fddbc7" label="30°C" />
+                <LegendItem color="#d6604d" label="36°C" />
+                <LegendItem color="#b2182b" label="40°C" />
+                <span style={{ marginLeft: '1rem', fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#67001f' }} />
+                    SU30 (≥30°C)
+                </span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+                    <span style={{ display: 'inline-block', width: 10, height: 10, border: '1.5px solid #ef8a62', borderRadius: 2 }} />
+                    TR20 (noite ≥20°C)
+                </span>
+            </div>
+
+            {/* Tooltip */}
+            {tooltip.visible && tooltip.record && (
+                <Tooltip
+                    x={tooltip.x}
+                    y={tooltip.y}
+                    visible={tooltip.visible}
+                    content={
+                        <div>
+                            <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '0.875rem', marginBottom: 4 }}>
+                                {formatDate(tooltip.record.date)}
+                            </p>
+                            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+                                Tmáx: <strong style={{ color: '#ef8a62' }}>{tooltip.record.temp_max.toFixed(1)}°C</strong>
+                            </p>
+                            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+                                Tmín: {tooltip.record.temp_min.toFixed(1)}°C
+                            </p>
+                            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+                                Chuva: {tooltip.record.precipitation.toFixed(1)} mm
+                            </p>
+                        </div>
+                    }
+                />
+            )}
+
+            <DataTable
+                caption={`Calendário de calor — ${year} (primeiros 20 registros)`}
+                headers={['Data', 'Tmáx', 'Tmín', 'Precipitação']}
+                rows={tableRows}
+            />
+        </div>
+    );
+}
+
+function LegendItem({ color, label }: { color: string; label: string }) {
+    return (
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+            <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: 2, background: color }} />
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{label}</span>
+        </span>
+    );
+}

@@ -1,192 +1,201 @@
+import { lazy, Suspense } from 'react';
 import { useClimateData } from './hooks/useClimateData.ts';
 import { useScrollProgress } from './hooks/useScrollProgress.ts';
 import LoadingSpinner from './components/common/LoadingSpinner.tsx';
 import ErrorBoundary from './components/common/ErrorBoundary.tsx';
 
+// ── Phase 5: Layout ──────────────────────────────────────────────────────────
+import Header from './components/layout/Header.tsx';
+import Footer from './components/layout/Footer.tsx';
+
+// ── Phase 7: Storytelling sections — lazy-loaded per section ─────────────────
+const IntroSection = lazy(() => import('./components/storytelling/IntroSection.tsx'));
+const SummerSection = lazy(() => import('./components/storytelling/SummerSection.tsx'));
+const TropicalNightsSection = lazy(() => import('./components/storytelling/TropicalNightsSection.tsx'));
+const HeatWaveSection = lazy(() => import('./components/storytelling/HeatWaveSection.tsx'));
+const HottestDaySection = lazy(() => import('./components/storytelling/HottestDaySection.tsx'));
+const CostSection = lazy(() => import('./components/storytelling/CostSection.tsx'));
+const FutureSection = lazy(() => import('./components/storytelling/FutureSection.tsx'));
+
 /**
-<<<<<<< HEAD
- * App root component.
- *
- * Fetches climate data on mount and passes it to section components.
- * Wraps everything in ErrorBoundary to catch render errors gracefully.
- *
- * Phase 4: Shows a placeholder while sections are built in Phase 5+.
- * Phase 9: Replace the placeholder with the full section layout.
-=======
  * App — root component for "A City's Memory of Heat"
  *
  * Responsibilities:
- * 1. Fetch all climate data via useClimateData
+ * 1. Fetch all climate data via useClimateData (Phase 4 hook)
  * 2. Drive the ambient scroll-heat background via useScrollProgress
- * 3. Render the full scrollytelling narrative (phases 5–8)
- *
- * Storytelling sections will be added in Phase 5.
->>>>>>> 004c615 (feat: new plan and frontend foundation)
+ * 3. Render the Header, all scrollytelling sections, and the Footer
+ * 4. Lazy-load sections to reduce initial bundle size (Phase 11)
  */
 export default function App() {
     // Drives --scroll-heat CSS custom property on document.documentElement.
-    // This powers the ambient background gradient (cool blue → burning red).
+    // This powers the ambient background gradient (cool blue → burning red)
+    // defined in index.css.
     useScrollProgress();
 
     const { dailyData, metrics, summary, loading, error } = useClimateData();
 
     if (loading) return <LoadingSpinner />;
 
-<<<<<<< HEAD
     if (error) {
         return (
             <div
                 role="alert"
-                className="flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center"
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: '100vh',
+                    gap: '1rem',
+                    padding: '2rem',
+                    background: '#0a0f1e',
+                    fontFamily: "'DM Sans', sans-serif",
+                    color: '#a09080',
+                    textAlign: 'center',
+                }}
             >
-                <p className="text-sm text-red-400">
-                    Erro ao carregar dados climáticos:
+                <p style={{ fontSize: '2.5rem' }}>⚠️</p>
+                <p style={{ fontSize: '1.125rem' }}>
+                    Não foi possível carregar os dados climáticos.
                 </p>
-                <p className="font-mono text-xs text-white/40">{error.message}</p>
+                <p style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.3)', maxWidth: '480px' }}>
+                    <strong style={{ color: '#ef8a62' }}>{error.message}</strong>
+                </p>
+                <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.2)', marginTop: '0.5rem' }}>
+                    Verifique se os ficheiros em <code>public/data/</code> estão presentes.
+                </p>
             </div>
         );
     }
 
-    return (
-        <ErrorBoundary>
-            {/* Phase 4 placeholder — sections added in Phase 5+ */}
-            <div className="min-h-screen bg-[#0a0f1e] text-white">
-                <header className="border-b border-white/10 p-8 text-center">
-                    <h1 className="font-display text-4xl font-bold tracking-tight">
-                        Pindamonhangaba: 85 Anos de Aquecimento
-                    </h1>
-                    <p className="mt-2 font-body text-white/50">
-                        Dados climáticos históricos de 1940 a 2025 · ERA5 / Copernicus / ECMWF
-                    </p>
-                </header>
+    // Narrow nulls — useClimateData returns null until fetch resolves.
+    // At this point loading=false and error=null, so safe to coerce.
+    const safeData = dailyData ?? [];
+    const safeMetrics = metrics ?? {};
 
-                <main className="p-8 text-center text-white/30">
-                    <p>Visualizações em desenvolvimento — dados carregados com sucesso.</p>
-                    {summary && (
-                        <div className="mt-6 space-y-2 text-sm">
-                            <p>
-                                Dia mais quente:{' '}
-                                <strong className="text-white/70">
-=======
-    if (error) return (
-        <div
-            role="alert"
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '100vh',
-                gap: '1rem',
-                padding: '2rem',
-                background: '#0a0f1e',
-                fontFamily: "'DM Sans', sans-serif",
-                color: '#a09080',
-                textAlign: 'center',
-            }}
-        >
-            <p style={{ fontSize: '2rem' }}>⚠️</p>
-            <p>Falha ao carregar dados climáticos: <strong style={{ color: '#ef8a62' }}>{error.message}</strong></p>
-        </div>
-    );
+    // If any required data is missing, still render gracefully
+    const hasData = safeData.length > 0 && Object.keys(safeMetrics).length > 0;
 
     return (
         <ErrorBoundary>
-            <div style={{ minHeight: '100vh', color: 'var(--color-text-primary)' }}>
-
-                {/* ── PLACEHOLDER header ── */}
-                <header
+            <div
+                style={{
+                    minHeight: '100vh',
+                    color: 'var(--color-text-primary)',
+                    overflowX: 'hidden',
+                }}
+            >
+                {/* ── Skip link for keyboard navigation (Phase 10) ───────────── */}
+                <a
+                    href="#main-content"
                     style={{
-                        padding: '2rem',
-                        textAlign: 'center',
-                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        position: 'absolute',
+                        top: -40,
+                        left: 0,
+                        background: '#ef8a62',
+                        color: '#0a0f1e',
+                        padding: '0.5rem 1rem',
+                        fontFamily: "'DM Sans', sans-serif",
+                        zIndex: 9999,
+                        transition: 'top 0.2s',
                     }}
+                    onFocus={e => { (e.target as HTMLElement).style.top = '0'; }}
+                    onBlur={e => { (e.target as HTMLElement).style.top = '-40px'; }}
                 >
-                    <h1
-                        style={{
-                            fontFamily: "'Syne', sans-serif",
-                            fontWeight: 800,
-                            fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
-                            letterSpacing: '-0.03em',
-                            color: 'var(--color-text-primary)',
-                        }}
-                    >
-                        A Memória de Calor de uma Cidade
-                    </h1>
-                    <p
-                        style={{
-                            marginTop: '0.5rem',
+                    Pular para o conteúdo
+                </a>
+
+                {/* ── Sticky navigation header ─────────────────────────────── */}
+                <Header />
+
+                {/* ── Main content ─────────────────────────────────────────── */}
+                <main id="main-content">
+                    {!hasData ? (
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            minHeight: '100vh',
+                            gap: '1rem',
                             fontFamily: "'DM Sans', sans-serif",
-                            fontSize: '0.875rem',
-                            color: 'var(--color-text-secondary)',
-                            letterSpacing: '0.06em',
-                            textTransform: 'uppercase',
-                        }}
-                    >
-                        Pindamonhangaba, SP · 1940–2025 · ERA5 Reanalysis
-                    </p>
-                </header>
-
-                {/* ── Data smoke test ── */}
-                <main style={{ padding: '4rem 2rem', textAlign: 'center' }}>
-                    <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
-                        Dados carregados com sucesso. Visualizações em desenvolvimento — Fase 5.
-                    </p>
-
-                    {summary && (
-                        <div
-                            style={{
-                                marginTop: '2rem',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '0.5rem',
-                                alignItems: 'center',
-                                fontFamily: "'DM Sans', sans-serif",
-                                fontSize: '0.875rem',
-                                color: 'var(--color-text-secondary)',
-                            }}
-                        >
-                            <p>
-                                Dia mais quente:{' '}
-                                <strong style={{ color: 'var(--color-stripe-warm)' }}>
->>>>>>> 004c615 (feat: new plan and frontend foundation)
-                                    {summary.hottest_day?.date}
-                                </strong>{' '}
-                                — {summary.hottest_day?.temp_max}°C
-                            </p>
-                            <p>
-                                Tendência SU30:{' '}
-<<<<<<< HEAD
-                                <strong className="text-amber-400">
-                                    +{summary.su30_trend_slope_per_decade} dias/década
-                                </strong>
-                            </p>
-                            <p>
-                                Maior onda de calor:{' '}
-                                <strong className="text-red-400">
-                                    {summary.longest_warm_spell?.days} dias em{' '}
-                                    {summary.longest_warm_spell?.year}
-=======
-                                <strong style={{ color: 'var(--color-stripe-warm)' }}>
-                                    +{summary.su30_trend_slope_per_decade?.toFixed(1)} dias/década
-                                </strong>
-                            </p>
-                            <p>
-                                Dados carregados:{' '}
-                                <strong style={{ color: 'var(--color-text-primary)' }}>
-                                    {dailyData?.length?.toLocaleString('pt-BR')} registros diários
-                                </strong>
-                                {' · '}
-                                <strong style={{ color: 'var(--color-text-primary)' }}>
-                                    {metrics ? Object.keys(metrics).length : 0} anos de métricas
->>>>>>> 004c615 (feat: new plan and frontend foundation)
-                                </strong>
+                            color: 'rgba(255,255,255,0.3)',
+                            textAlign: 'center',
+                            padding: '2rem',
+                        }}>
+                            <p>Os ficheiros de dados ainda não foram gerados.</p>
+                            <p style={{ fontSize: '0.8125rem' }}>
+                                Execute <code style={{ fontFamily: "'JetBrains Mono', monospace", color: '#ef8a62' }}>
+                                    python data/scripts/generate_web_data.py
+                                </code> primeiro.
                             </p>
                         </div>
+                    ) : (
+                        <>
+                            {/* ── IntroSection: Hero stripes ────────────────── */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <IntroSection
+                                    metrics={safeMetrics}
+                                    dailyData={safeData}
+                                    summary={summary!}
+                                />
+                            </Suspense>
+
+                            {/* ── SummerSection: SU30 bar chart ─────────────── */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <SummerSection metrics={safeMetrics} dailyData={safeData} />
+                            </Suspense>
+
+                            {/* ── TropicalNightsSection: TR20 heatmap ────────── */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <TropicalNightsSection metrics={safeMetrics} dailyData={safeData} />
+                            </Suspense>
+
+                            {/* ── HeatWaveSection: WSDI time series ──────────── */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <HeatWaveSection metrics={safeMetrics} summary={summary!} />
+                            </Suspense>
+
+                            {/* ── HottestDaySection: record day & personal timeline */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <HottestDaySection dailyData={safeData} summary={summary!} />
+                            </Suspense>
+
+                            {/* ── CostSection: AC Calculator ────────────────── */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <CostSection metrics={safeMetrics} dailyData={safeData} />
+                            </Suspense>
+
+                            {/* ── FutureSection: OLS projection ─────────────── */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <FutureSection metrics={safeMetrics} />
+                            </Suspense>
+                        </>
                     )}
                 </main>
 
+                {/* ── Footer ────────────────────────────────────────────────── */}
+                <Footer />
             </div>
         </ErrorBoundary>
+    );
+}
+
+/** Minimal section loading placeholder */
+function SectionLoader() {
+    return (
+        <div style={{
+            minHeight: '60vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'rgba(255,255,255,0.2)',
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: '0.875rem',
+        }}>
+            <div style={{ animation: 'pulseHot 1.5s ease-in-out infinite' }}>
+                ···
+            </div>
+        </div>
     );
 }
