@@ -105,7 +105,7 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
             .attr('y', H * 0.93)
             .attr('text-anchor', 'middle')
             .attr('fill', 'rgba(240,236,227,0.45)')
-            .attr('font-family', "'DM Sans', sans-serif")
+            .attr('font-family', "'Raleway', sans-serif")
             .attr('font-size', Math.max(10, Math.min(14, stripeWidth * 6)))
             .attr('pointer-events', 'none')
             .text(d => d.year);
@@ -161,26 +161,47 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
                     style={{
                         position: 'absolute',
                         left: tooltip.x,
-                        top: tooltip.y - 80,
+                        top: tooltip.y - 90,
                         transform: 'translateX(-50%)',
-                        background: 'rgba(10,15,30,0.92)',
+                        background: 'rgba(8,12,24,0.92)',
                         backdropFilter: 'blur(12px)',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: '6px',
-                        padding: '0.5rem 0.75rem',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '8px',
+                        padding: '0.6rem 1rem',
                         pointerEvents: 'none',
                         zIndex: 10,
-                        minWidth: '120px',
+                        minWidth: '140px',
                         textAlign: 'center',
                     }}
                 >
-                    <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '1.1rem', color: tooltip.anomaly >= 0 ? '#ef8a62' : '#4393c3' }}>
+                    {/* Year — title */}
+                    <p style={{
+                        fontFamily: "'Raleway', sans-serif",
+                        fontWeight: 800,
+                        fontSize: '1.4rem',
+                        color: '#f0ece3',
+                        lineHeight: 1,
+                        marginBottom: '0.3rem',
+                        letterSpacing: '-0.02em',
+                    }}>
                         {tooltip.year}
                     </p>
-                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
+                    {/* Anomaly */}
+                    <p style={{
+                        fontFamily: "'Raleway', sans-serif",
+                        fontWeight: 600,
+                        fontSize: '0.9rem',
+                        color: tooltip.anomaly >= 0 ? '#ef8a62' : '#4393c3',
+                        marginBottom: '0.15rem',
+                    }}>
                         {tooltip.anomaly >= 0 ? '+' : ''}{tooltip.anomaly.toFixed(2)}°C
                     </p>
-                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
+                    {/* Mean temp */}
+                    <p style={{
+                        fontFamily: "'Raleway', sans-serif",
+                        fontSize: '0.75rem',
+                        color: 'rgba(255,255,255,0.45)',
+                    }}>
                         média {tooltip.temp.toFixed(1)}°C
                     </p>
                 </div>

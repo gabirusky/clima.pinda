@@ -152,7 +152,20 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         textTransform: 'uppercase',
                         textAlign: 'center',
                     }}>
-                        Coordenadas analisadas: −22.9250°, −45.4620° · 554 m · DADOS Open-Meteo Historical Weather API · 1940-2025(ERA5 reanalysis data)
+                        Coordenadas analisadas: −22.9250°, −45.4620° · 554 m
+                    </p>
+
+                    <p style={{
+                        marginTop: '0.5rem',
+                        fontFamily: "'Raleway', sans-serif",
+                        fontSize: 'var(--text-caption, 0.875rem)',
+                        color: 'rgba(240,236,227,0.88)',
+                        textShadow: '0 2px 24px rgba(0,0,0,0.6)',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        textAlign: 'center',
+                    }}>
+                        DADOS Open-Meteo Historical Weather API · 1940-2025 (ERA5 reanalysis data)
                     </p>
 
                     {/* Scroll indicator removed from here — now pinned below */}
