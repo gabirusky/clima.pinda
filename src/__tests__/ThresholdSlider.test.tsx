@@ -46,7 +46,7 @@ describe('ThresholdSlider', () => {
 
     it('shows the default threshold of 30°C', () => {
         render(<ThresholdSlider dailyData={records} metrics={metrics} />);
-        expect(screen.getByText(/30\.0°C/)).toBeInTheDocument();
+        expect(screen.getAllByText(/30\.0°C/)[0]).toBeInTheDocument();
     });
 
     it('has correct min/max/step attributes', () => {
@@ -61,6 +61,6 @@ describe('ThresholdSlider', () => {
         render(<ThresholdSlider dailyData={records} metrics={metrics} />);
         const slider = screen.getByRole('slider');
         fireEvent.change(slider, { target: { value: '32' } });
-        expect(screen.getByText(/32\.0°C/)).toBeInTheDocument();
+        expect(screen.getAllByText(/32\.0°C/)[0]).toBeInTheDocument();
     });
 });
