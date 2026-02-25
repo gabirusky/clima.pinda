@@ -1,2 +1,2 @@
-// CSS module mock for Jest — returns empty object
-module.exports = {};
+// CSS module mock for Jest (ESM-compatible)
+export default {};

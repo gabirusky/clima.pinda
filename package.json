@@ -1,13 +1,13 @@
 {
-  "name": "pindamonhangaba-climate",
-  "version": "0.1.0",
+  "name": "clima-pinda",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint src --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint src --max-warnings 0",
     "format": "prettier --write src/**/*.{ts,tsx,css}",
     "test": "jest --coverage"
   },
@@ -44,6 +44,8 @@
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "@vitejs/plugin-react": "^4.3.0",
     "eslint": "^9.0.0",
     "eslint-plugin-react": "^7.37.0",

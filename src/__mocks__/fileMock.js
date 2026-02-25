@@ -1,2 +1,2 @@
-// Static file mock for Jest — returns filename string
-module.exports = 'test-file-stub';
+// Static file mock for Jest (ESM-compatible)
+export default 'test-file-stub';
