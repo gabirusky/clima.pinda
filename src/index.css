@@ -45,9 +45,12 @@
     --color-danger: #b2182b;
 
     /* --- Fonts — "A City's Memory of Heat" typography --- */
-    --font-display: 'Syne', sans-serif;       /* Geometric, unsettling at 160px */
-    --font-body: 'DM Sans', sans-serif;       /* Warm, readable */
-    --font-mono: 'JetBrains Mono', monospace; /* Receipt-style calculator */
+    --font-display: 'Syne', sans-serif;
+    /* Geometric, unsettling at 160px */
+    --font-body: 'DM Sans', sans-serif;
+    /* Warm, readable */
+    --font-mono: 'JetBrains Mono', monospace;
+    /* Receipt-style calculator */
 
     /* --- Type Scale (Fluid CSS clamp) --- */
     --text-display-xl: clamp(80px, 12vw, 160px);
@@ -78,11 +81,9 @@ body {
     font-family: var(--font-body);
     /* Scroll-driven background: --scroll-heat is set by useScrollProgress hook (0=past cool → 1=present hot) */
     background-color: var(--color-base);
-    background-image: radial-gradient(
-        ellipse at 50% 0%,
-        color-mix(in srgb, #2166ac calc(100% - var(--scroll-heat, 0) * 100%), #67001f) 0%,
-        transparent 70%
-    );
+    background-image: radial-gradient(ellipse at 50% 0%,
+            color-mix(in srgb, #2166ac calc(100% - var(--scroll-heat, 0) * 100%), #67001f) 0%,
+            transparent 70%);
     background-attachment: fixed;
     color: var(--color-text-primary);
     line-height: 1.6;
@@ -107,9 +108,71 @@ kbd {
     font-family: var(--font-mono);
 }
 
-/* Focus styles for accessibility */
+/* ============================================================
+   FOCUS STYLES — Visible keyboard focus audit
+   WCAG 2.1 AA compliant — 4.5:1 contrast minimum.
+   Uses :focus-visible so mouse users don't see the ring.
+   ============================================================ */
+
+/* Global default: high-contrast orange ring (matches --color-text-accent) */
 :focus-visible {
-    outline: 2px solid var(--color-stripe-cool);
+    outline: 2px solid var(--color-text-accent, #ef8a62);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+
+/* Interactive anchors */
+a:focus-visible {
+    outline: 2px solid var(--color-text-accent, #ef8a62);
+    outline-offset: 3px;
+    border-radius: 3px;
+    text-decoration: underline;
+}
+
+/* Buttons */
+button:focus-visible {
+    outline: 2px solid var(--color-text-accent, #ef8a62);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Text inputs, textareas, selects */
+input:not([type='range']):focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--color-text-accent, #ef8a62);
+    outline-offset: 0;
+    border-radius: 4px;
+    box-shadow: 0 0 0 4px rgba(239, 138, 98, 0.18);
+}
+
+/* Range slider — custom focus indicator */
+input[type='range']:focus-visible {
+    outline: 2px solid var(--color-text-accent, #ef8a62);
+    outline-offset: 4px;
+    border-radius: 999px;
+}
+
+/* Skip navigation link — visible only on focus */
+.skip-link {
+    position: fixed;
+    top: -100%;
+    left: 1rem;
+    z-index: 9999;
+    padding: 0.5rem 1rem;
+    background: var(--color-text-accent, #ef8a62);
+    color: var(--color-base, #0a0f1e);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+    top: 1rem;
+    outline: 2px solid white;
     outline-offset: 2px;
 }
 
@@ -209,7 +272,9 @@ kbd {
 
 /* Count-up shimmer — used on StatCallout numbers */
 @keyframes heatShimmer {
-    0%, 100% {
+
+    0%,
+    100% {
         color: var(--color-text-primary);
         text-shadow: none;
     }
@@ -360,11 +425,12 @@ kbd {
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
 }
 
@@ -372,6 +438,7 @@ kbd {
    All animations degrade to instant state changes.
    This is non-negotiable — the design must work without motion. */
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {

@@ -85,23 +85,9 @@ export default function App() {
                     overflowX: 'hidden',
                 }}
             >
-                {/* ── Skip link for keyboard navigation (Phase 10) ───────────── */}
-                <a
-                    href="#main-content"
-                    style={{
-                        position: 'absolute',
-                        top: -40,
-                        left: 0,
-                        background: '#ef8a62',
-                        color: '#0a0f1e',
-                        padding: '0.5rem 1rem',
-                        fontFamily: "'DM Sans', sans-serif",
-                        zIndex: 9999,
-                        transition: 'top 0.2s',
-                    }}
-                    onFocus={e => { (e.target as HTMLElement).style.top = '0'; }}
-                    onBlur={e => { (e.target as HTMLElement).style.top = '-40px'; }}
-                >
+                {/* ── Skip link for keyboard navigation (Phase 10)
+                       CSS .skip-link class shows on :focus, hides off-screen otherwise */}
+                <a href="#main-content" className="skip-link">
                     Pular para o conteúdo
                 </a>
 
