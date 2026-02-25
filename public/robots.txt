@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://YOUR_USERNAME.github.io/pindamonhangaba-climate/sitemap.xml
+Sitemap: https://gabirusky.github.io/clima.pinda/sitemap.xml

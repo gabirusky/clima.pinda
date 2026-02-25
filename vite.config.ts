@@ -14,7 +14,7 @@ export default defineConfig({
             strategies: 'generateSW',
             registerType: 'autoUpdate',
             // IMPORTANT: Must match the GitHub Pages base path
-            base: '/pindamonhangaba-climate/',
+            base: '/clima.pinda/',
             // Include all files in build for pre-caching
             includeAssets: ['favicon.svg', 'images/og-image.png'],
             manifest: {
@@ -24,11 +24,11 @@ export default defineConfig({
                 theme_color: '#0a0f1e',
                 background_color: '#0a0f1e',
                 display: 'standalone',
-                scope: '/pindamonhangaba-climate/',
-                start_url: '/pindamonhangaba-climate/',
+                scope: '/clima.pinda/',
+                start_url: '/clima.pinda/',
                 icons: [
                     {
-                        src: '/pindamonhangaba-climate/favicon.svg',
+                        src: '/clima.pinda/favicon.svg',
                         sizes: 'any',
                         type: 'image/svg+xml',
                         purpose: 'any maskable',
@@ -40,7 +40,7 @@ export default defineConfig({
                 runtimeCaching: [
                     {
                         // Cache all three climate JSON data files
-                        urlPattern: /\/pindamonhangaba-climate\/data\/(climate_data|metrics|summary)\.json$/,
+                        urlPattern: /\/clima\.pinda\/data\/(climate_data|metrics|summary)\.json$/,
                         handler: 'StaleWhileRevalidate',
                         options: {
                             cacheName: 'climate-data-cache',
@@ -79,7 +79,7 @@ export default defineConfig({
     ],
 
     // IMPORTANT: Must match the GitHub repository name exactly (case-sensitive)
-    base: '/pindamonhangaba-climate/',
+    base: '/clima.pinda/',
 
     resolve: {
         alias: {
