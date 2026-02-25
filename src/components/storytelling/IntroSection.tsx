@@ -143,7 +143,8 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         marginTop: '2rem',
                         fontFamily: "'Raleway', sans-serif",
                         fontSize: 'var(--text-caption, 0.875rem)',
-                        color: 'rgba(240,236,227,0.45)',
+                        color: 'rgba(240,236,227,0.88)',
+                        textShadow: '0 2px 24px rgba(0,0,0,0.6)',
                         letterSpacing: '0.1em',
                         textTransform: 'uppercase',
                     }}>
