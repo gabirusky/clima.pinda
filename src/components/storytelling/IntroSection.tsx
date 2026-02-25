@@ -152,16 +152,35 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         textTransform: 'uppercase',
                         textAlign: 'center',
                     }}>
-                        −22.9250°, −45.4620° · 554 m · 1940–2025
+                        Coordenadas analisadas: −22.9250°, −45.4620° · 554 m · DADOS Open-Meteo Historical Weather API · 1940-2025(ERA5 reanalysis data)
                     </p>
 
-                    {/* Scroll indicator */}
-                    <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.7rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                            Role para explorar
-                        </span>
-                        <ChevronDown />
-                    </div>
+                    {/* Scroll indicator removed from here — now pinned below */}
+                </div>
+
+                {/* Scroll indicator — pinned to bottom of hero */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '2rem',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 10,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    pointerEvents: 'none',
+                }}>
+                    <span style={{
+                        fontFamily: "'Raleway', sans-serif",
+                        fontSize: '0.65rem',
+                        color: 'rgba(255,255,255,0.35)',
+                        letterSpacing: '0.14em',
+                        textTransform: 'uppercase',
+                    }}>
+                        Role para explorar
+                    </span>
+                    <ChevronDown />
                 </div>
             </div>
 
