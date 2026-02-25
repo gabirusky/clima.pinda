@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import type { DailyRecord, AnnualMetrics, ClimateSummary } from '../types/climate.ts';
 
 const DATA_BASE_URL = `${import.meta.env.BASE_URL}data/`;
+<<<<<<< HEAD
 
 export interface ClimateDataState {
+=======
+interface ClimateDataState {
+>>>>>>> 004c615 (feat: new plan and frontend foundation)
     dailyData: DailyRecord[] | null;
     metrics: Record<number, AnnualMetrics> | null;
     summary: ClimateSummary | null;

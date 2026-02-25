@@ -1,7 +1,10 @@
-# TASKS.md — Pindamonhangaba Climate Visualization
+# TASKS.md — *A City's Memory of Heat*
+### Pindamonhangaba Climate Visualization
 
 > Atomized coding tasks. Each task is a single, completable unit of work.
 > Status: `[ ]` todo · `[/]` in progress · `[x]` done
+
+> **Design rule** woven into every task: *If a user can read the whole page without feeling the heat — the design has failed.*
 
 ---
 
@@ -40,188 +43,86 @@
 
 ### 2.1 Fetch Script (`data/scripts/fetch_climate_data.py`)
 - [x] Define constants: `LAT = -22.9250`, `LON = -45.4620`, `START_DATE = '1940-01-01'`, `END_DATE = '2025-12-31'`
-- [x] Define `PARAMETERS` list: `['temperature_2m_max', 'temperature_2m_min', 'temperature_2m_mean', 'precipitation_sum', 'relative_humidity_2m_mean', 'windspeed_10m_max']`
-- [x] Implement `fetch_year(year)` function that calls Open-Meteo archive API for a single year
-- [x] Add `requests.get()` call with params: `latitude`, `longitude`, `start_date`, `end_date`, `daily`, `timezone='America/Sao_Paulo'`
-- [x] Add HTTP status check: raise on non-200 response
-- [x] Add JSON parsing and return as dict
-- [x] Implement retry logic: 3 attempts with exponential backoff (1s, 2s, 4s)
-- [x] Implement `save_raw_year(year, data)` to write JSON to `data/raw/year_{year}.json`
-- [x] Implement `load_raw_year(year)` to read cached JSON (skip API call if file exists)
-- [x] Implement `merge_years_to_dataframe(years)` that concatenates all year DataFrames
-- [x] Convert `time` column to `pd.to_datetime` (CoW-safe `.assign()` — pandas 2.x/3.x compatible)
-- [x] Rename columns to: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
+- [x] Implement `fetch_year(year)` with retry logic (3 attempts, exponential backoff: 1s, 2s, 4s)
+- [x] Implement `save_raw_year(year, data)` and `load_raw_year(year)` (cache to `data/raw/year_{year}.json`)
+- [x] Implement `merge_years_to_dataframe(years)` → concat all year DataFrames
+- [x] Convert `time` column to `pd.to_datetime` (CoW-safe `.assign()`)
+- [x] Rename columns: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
 - [x] Save merged DataFrame to `data/raw/pindamonhangaba_1940_2025.csv` (index=False)
-- [x] Add `__main__` block that fetches all years 1940–2025 with progress bar (tqdm)
-- [x] Add logging to console: year fetched, rows returned, any errors
+- [x] Add `__main__` block with progress bar (tqdm)
 
 **Result**: 31,047 rows · 1940-01-01 → 2025-12-31 · T_max 9.4–38.2°C · T_min 1.3–24.7°C · 1 NaN total
 
 ### 2.2 Exploratory Notebook (`data/notebooks/exploratory_analysis.ipynb`)
-- [x] Cell 1: Load raw CSV, display `.head()`, `.info()`, `.describe()`
+- [x] Cell 1: Load raw CSV, `.head()`, `.info()`, `.describe()`
 - [x] Cell 2: Plot missing values heatmap (seaborn)
 - [x] Cell 3: Plot annual T_max distribution (boxplot by decade)
 - [x] Cell 4: Quick HD30 count per year bar chart
-- [x] Cell 5: Validate T_min ≤ T_mean ≤ T_max — **✅ 0 violations found across all 31,047 rows**
+- [x] Cell 5: Validate T_min ≤ T_mean ≤ T_max — **✅ 0 violations across 31,047 rows**
 
 ### 2.3 Cross-Source Validation (`data/scripts/validate_cross_source.py`)
-- [x] Fetch NASA POWER (MERRA-2) for 10 sample years (1985–2024) via free public API — no key required
-- [x] Merge with ERA5 CSV on date; compute Pearson r, RMSE, MAE, bias per year for T_max and T_min
+- [x] Fetch NASA POWER (MERRA-2) for 10 sample years (1985–2024)
+- [x] Compute Pearson r, RMSE, MAE, bias per year for T_max and T_min
 - [x] Check seasonal correctness (DJF > JJA — Southern Hemisphere)
-- [x] Save results to `data/raw/cross_validation_results.csv`
-- [x] Save scatter plot to `data/notebooks/cross_validation_plot.png`
+- [x] Save results to `data/raw/cross_validation_results.csv` and `data/notebooks/cross_validation_plot.png`
 
-**Results** (3,653 daily records, 10 years spanning 4 decades):
-| Metric | Result | Benchmark | Status |
-|---|---|---|---|
-| r T_max (ERA5 vs MERRA-2) | 0.893 | > 0.85 | ✅ |
-| r T_min (ERA5 vs MERRA-2) | 0.926 | > 0.88 | ✅ |
-| RMSE T_max | 1.75°C | < 3.0°C | ✅ |
-| RMSE T_min | 1.98°C | < 3.0°C | ✅ |
-| Seasons (DJF > JJA) | 27.7°C vs 23.5°C | correct | ✅ |
-| T_min bias ERA5 vs MERRA-2 | +1.51°C | known difference for valley topography | ℹ️ |
+**Results** (3,653 records): r T_max=0.893 ✅ · r T_min=0.926 ✅ · RMSE T_max=1.75°C ✅ · RMSE T_min=1.98°C ✅ · T_min bias +1.51°C (known ERA5 characteristic) ℹ️
 
 ---
 
-## PHASE 3 — Data Processing (Python)
+## PHASE 3 — Data Processing (Python) ✅ Complete
 
 ### 3.1 Cleaning Script (`data/scripts/process_climate_data.py`)
-- [x] Load `data/raw/pindamonhangaba_1940_2025.csv`
-- [x] Assert `date` column has no duplicates
-- [x] Assert date range is complete (no missing calendar days)
-- [x] Identify missing value rows (NaN in any column)
-- [x] For gaps ≤3 consecutive days: apply linear interpolation (`df.interpolate(method='linear')`)
-- [x] For gaps >3 days: flag with `data_quality` column value `'interpolated_long'`
-- [x] Validate: assert `temp_min <= temp_mean` for all rows; log violations
-- [x] Validate: assert `temp_mean <= temp_max` for all rows; log violations
-- [x] Validate: assert `precipitation >= 0` for all rows
-- [x] Validate: assert `temp_max < 50` and `temp_min > -10` (sanity bounds for region)
-- [x] Round `temp_max`, `temp_min`, `temp_mean` to 1 decimal place
-- [x] Round `precipitation` to 2 decimal places
+- [x] Load raw CSV; assert no duplicate dates, complete date range
+- [x] Interpolate gaps ≤3 days; flag longer gaps with `data_quality = 'interpolated_long'`
+- [x] Validate T_min ≤ T_mean ≤ T_max; T_max < 50; T_min > -10; precipitation ≥ 0
+- [x] Round temperatures to 1dp, precipitation to 2dp
 - [x] Add `year`, `month`, `day_of_year` derived columns
 - [x] Save to `data/processed/pindamonhangaba_clean.csv` (index=False)
-- [x] Print summary: total rows, missing rows found, rows interpolated, validation violations
 
 ### 3.2 Metrics Script (`data/scripts/calculate_metrics.py`)
 
-> **ETCCDI Alignment**: All indices are defined according to, or are direct adaptations of, the Expert Team on Climate Change Detection and Indices (ETCCDI) 27-index standard. This ensures findings are directly comparable to peer-reviewed literature.
+> **ETCCDI Alignment**: All indices follow or adapt the ETCCDI 27-index standard.
 
-#### Core Metrics (per year)
-- [x] Load `data/processed/pindamonhangaba_clean.csv`
-- [x] Group by `year`
-- [x] Calculate `su25`: count rows where `temp_max >= 25` — **ETCCDI SU25** (exact standard index; extended warm-season baseline)
-- [x] Calculate `su30`: count rows where `temp_max >= 30` — **ETCCDI SU30** (modified Summer Days index; locally meaningful heat threshold for Pindamonhangaba's valley climate)
-- [x] Calculate `tr20`: count rows where `temp_min >= 20` — **ETCCDI TR20** (exact standard index; tropical nights)
-- [x] Calculate `dtr_mean`: mean of `(temp_max - temp_min)` per year — **ETCCDI DTR** (Diurnal Temperature Range; a sustained long-term decrease is the scientific fingerprint of Urban Heat Island expansion)
-- [x] Calculate `temp_max_mean`: mean of `temp_max` per year
-- [x] Calculate `temp_min_mean`: mean of `temp_min` per year
-- [x] Calculate `temp_mean_annual`: mean of `temp_mean` per year
-- [x] Calculate `precip_total`: sum of `precipitation` per year
-- [x] Calculate `precip_days`: count rows where `precipitation >= 1` per year
+- [x] SU25, SU30, TR20, DTR, temp_max_mean, temp_min_mean, temp_mean_annual, precip_total, precip_days
+- [x] `calculate_wsdi()` — WSDI: ≥6 consecutive days where T_max > calendar-day p90 (1961–1990 baseline)
+- [x] `calculate_tx90p()` — TX90p: % days where T_max > calendar-day p90 baseline
+- [x] `calculate_tn90p()` — TN90p: % nights where T_min > calendar-day p90 baseline
+- [x] `calculate_cdd()`, `calculate_cwd()` — max consecutive dry/wet days per year
+- [x] GDD: `SUM(MAX(0, (T_max+T_min)/2 - 10))` per year
+- [x] P95: days above 95th percentile of full historical T_max distribution
+- [x] `first_hot_day`, `last_hot_day`, `hot_season_length` (null if no days ≥ 30°C)
+- [x] Decadal averages (group by `year // 10 * 10`)
+- [x] Mann-Kendall test + OLS linear regression for SU30, TR20, DTR, WSDI
+- [x] Save `data/processed/annual_metrics.csv` and `data/processed/decadal_metrics.csv`
 
-#### Advanced Metrics
-- [x] Implement `calculate_wsdi(df, baseline_start=1961, baseline_end=1990, min_duration=6)` — **ETCCDI WSDI** (Warm Spell Duration Index). Annual count of days contributing to warm spells: periods of **≥6 consecutive days** where `temp_max` exceeds the **calendar-day 90th percentile** of the 1961–1990 baseline. This replaces the fixed-threshold HWDI; the percentile-based approach adapts to the region's own historical climate.
-  - Step 1: Compute per-calendar-day 90th percentile T_max from baseline years (5-day bootstrap window per ETCCDI recommendation)
-  - Step 2: Flag days where `temp_max > p90[day_of_year]`
-  - Step 3: Count days belonging to streaks of ≥6 consecutive flagged days per year
-  - Return: `wsdi_days` (total days in warm spells per year)
-- [x] Implement `calculate_tx90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TX90p** (Warm Days). Annual percentage of days where `temp_max > calendar-day 90th percentile` of the baseline.
-- [x] Implement `calculate_tn90p(df, baseline_start=1961, baseline_end=1990)` — **ETCCDI TN90p** (Warm Nights). Annual percentage of nights where `temp_min > calendar-day 90th percentile` of the baseline.
-- [x] Implement `calculate_cdd(precip_series)` returning max consecutive dry days (precip < 1mm) — **ETCCDI CDD**
-- [x] Apply `calculate_cdd` per year
-- [x] Implement `calculate_cwd(precip_series)` returning max consecutive wet days (precip >= 1mm) — **ETCCDI CWD** (paired with CDD to cover both ends of precipitation extremes: drought/fire risk and flood/landslide risk)
-- [x] Apply `calculate_cwd` per year
-- [x] Calculate `gdd`: `SUM(MAX(0, (temp_max + temp_min)/2 - 10))` per year (Growing Degree Days — agricultural productivity indicator)
-- [x] Calculate `p95_days`: days above 95th percentile of the full historical T_max distribution (supplementary extreme threshold)
+**Results** (86 years · 1940–2025):
 
-#### Temporal / Seasonal Analysis
-- [x] Calculate `first_hot_day`: first day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
-- [x] Calculate `last_hot_day`: last day of year where `temp_max >= 30` (day_of_year); set to `null` if no hot days
-- [x] Calculate `hot_season_length`: `last_hot_day - first_hot_day` (0 if no hot days)
-- [x] Calculate decadal averages for all metrics (group by `year // 10 * 10`)
-
-#### Statistical Tests
-- [x] Implement Mann-Kendall trend test for `su30` series (use `scipy.stats.kendalltau`)
-- [x] Implement linear regression slope for `su30`, `tr20`, `dtr_mean`, `wsdi_days` (use `scipy.stats.linregress`)
-- [x] Store trend results: `slope`, `p_value`, `r_squared` per metric
-
-#### Output
-- [x] Assemble annual metrics DataFrame with all columns above
-- [x] Save to `data/processed/annual_metrics.csv`
-- [x] Save decadal metrics to `data/processed/decadal_metrics.csv`
-
-**Results** (86 years · 1940–2025 · runtime ~3s):
-| Metric | Full-period avg | Record | Trend (slope/decade) | p-value |
+| Metric | Full-period avg | Record | Trend/decade | p-value |
 |---|---|---|---|---|
-| SU25 (days ≥25°C) | 224.8 /yr | 303 — **2024** | — | — |
-| SU30 (days ≥30°C) | 43.3 /yr | 140 — **2024** | **+7.1 days** | < 0.0001 ✅ |
-| TR20 (nights ≥20°C) | 31.6 /yr | 99 — **2017** | **+5.0 nights** | < 0.0001 ✅ |
+| SU30 | 43.3 /yr | 140 — **2024** | **+7.1 days** | < 0.0001 ✅ |
+| TR20 | 31.6 /yr | 99 — **2017** | **+5.0 nights** | < 0.0001 ✅ |
 | DTR mean | 9.75°C /yr | — | **+0.11°C** | < 0.0001 ✅ |
-| WSDI days | 13.3 /yr | 82 — **2018** | **+3.9 days** | < 0.0001 ✅ |
-| TX90p | 13.3% /yr | — | — | — |
-| TN90p | 14.6% /yr | — | — | — |
-| CDD max | 24.7 /yr | 49 — **2025** | — | — |
-| CWD max | 20.7 /yr | 55 — **1965** | — | — |
-| p90 T_max baseline range | 25.1–31.7°C | — | — | — |
-| p95 T_max (full historical) | 31.3°C | — | — | — |
+| WSDI | 13.3 d/yr | 82 — **2018** | **+3.9 days** | < 0.0001 ✅ |
 
-Decade comparison (SU30 · WSDI · TR20):
 | Decade | SU30 | WSDI | TR20 |
 |---|---|---|---|
-| 1940s | 23.2 d/yr | 4.2 d/yr | 36.8 n/yr |
-| 1950s | 31.4 | 7.3 | 11.7 |
-| 1960s | 38.0 | 11.5 | 15.7 |
-| 1970s | 32.1 | 3.7 | 17.1 |
+| 1940s | 23.2 | 4.2 | 36.8 |
 | 1980s | 32.7 | 7.1 | 25.9 |
-| 1990s | 36.3 | 6.4 | 31.9 |
-| 2000s | 38.7 | 12.5 | 30.1 |
 | **2010s** | **75.4** | **32.6** | **61.5** |
 | **2020s** | **108.2** | **49.2** | **68.0** |
 
 ### 3.3 Web Data Generator (`data/scripts/generate_web_data.py`) ✅ Complete
-
-#### climate_data.json
-- [x] Load `data/processed/pindamonhangaba_clean.csv`
-- [x] Select columns: `date`, `temp_max`, `temp_min`, `temp_mean`, `precipitation`, `humidity`, `wind_max`
-- [x] Convert `date` to string format `YYYY-MM-DD`
-- [x] Convert to list of dicts (records orientation)
-- [x] Write to `public/data/climate_data.json`
-- [x] Check file size; if >500KB, gzip compress to `climate_data.json.gz`
-
-#### metrics.json
-- [x] Load `data/processed/annual_metrics.csv`
-- [x] Convert to dict keyed by year: `{1940: {...}, 1941: {...}, ...}`
-- [x] Write to `public/data/metrics.json`
-
-#### summary.json
-- [x] Find hottest day: row with max `temp_max` → `{date, temp_max, temp_min}`
-- [x] Find coldest day: row with min `temp_min`
-- [x] Find wettest day: row with max `precipitation`
-- [x] Find longest warm spell: from annual metrics `wsdi_days` max (WSDI)
-- [x] Find year with most SU30 days
-- [x] Calculate overall trend: SU30 slope per decade
-- [x] Calculate decade comparison table: 1940s vs 2020s for SU30, TR20, WSDI, CDD, CWD
-- [x] Calculate `temp_anomaly_by_year`: deviation from 1940–1980 baseline mean
-- [x] Write to `public/data/summary.json`
-
-**Results** (31,412 daily records · runtime ~4s):
-| Output file | Size | Contents |
-|---|---|---|
-| `climate_data.json` (`.gz`) | 4,309 KB raw → **425 KB gzip** | 31,412 daily records · auto-compressed (>500 KB threshold) |
-| `metrics.json` | 28.8 KB | 86 annual ETCCDI metric records |
-| `summary.json` | 2.0 KB | Headline stats: hottest day, coldest day, wettest day, WSDI record, SU30 trend, decade comparison, temp anomaly by year |
-
-Key stats surfaced in `summary.json`:
-- **Hottest day**: 1961-09-28 · T_max = 38.2°C
-- **Coldest day**: 1979-06-01 · T_min = 1.3°C
-- **Longest warm spell (WSDI)**: 82 days in 2018
-- **SU30 trend**: +7.09 days/decade (p < 0.0001)
+- [x] `public/data/climate_data.json` — 31,412 daily records (4,309 KB raw → **425 KB gzip**)
+- [x] `public/data/metrics.json` — 86 annual metric records keyed by year (28.8 KB)
+- [x] `public/data/summary.json` — hottest day (1961-09-28 · 38.2°C), longest WSDI (82 days · 2018), SU30 trend (+7.09/decade), decade comparison, anomaly series (2.0 KB)
 
 ---
 
-## PHASE 4 — Frontend Foundation
+## PHASE 4 — Frontend Foundation ✅ Complete
 
 ### 4.1 Entry Point & Root
+<<<<<<< HEAD
 - [x] Edit `src/main.tsx`: import React, ReactDOM, App, `./index.css`; render `<App />`
 - [x] Edit `index.html`: set `<title>`, add meta description, OG tags, Twitter Card tags, Google Fonts (Syne, DM Sans, JetBrains Mono)
 - [x] Add Schema.org Dataset JSON-LD script in `index.html`
@@ -254,231 +155,265 @@ Key stats surfaced in `summary.json`:
 - [x] Create `src/hooks/useClimateData.ts`: fetch `climate_data.json`, `metrics.json`, `summary.json` in parallel; return typed `{dailyData: DailyRecord[], metrics: Record<number, AnnualMetrics>, summary: ClimateSummary, loading: boolean, error: Error | null}` — metrics string keys auto-converted to number keys
 - [x] Create `src/hooks/useScrollPosition.ts`: return `scrollY: number` via rAF-throttled scroll listener
 - [x] Create `src/hooks/useWindowSize.ts`: return `{width: number, height: number}` with 200ms debounce
+=======
+- [x] `src/main.tsx` — already correct: strict mode, App, index.css
+- [x] `index.html` — title updated to *"A Memória de Calor de uma Cidade | Pindamonhangaba"*; all meta/OG/Twitter tags, Google Fonts (Syne 400/700/800, DM Sans 300–700 italic, JetBrains Mono), CSP already present
+- [x] Schema.org Dataset JSON-LD present in `index.html`
+
+### 4.2 CSS Design System (Tailwind v4 CSS-first) ✅
+- [x] `src/index.css` — full `@theme {}` block with complete Ed Hawkins stripe palette (`--color-stripe-deep-cold` → `--color-stripe-extreme`), `--color-base`, `--color-surface-*`, `--color-text-primary/secondary/accent`, all `--color-temp-*`, all three font vars, and full type scale (`--text-display-xl` clamped 80–160px through `--text-caption`)
+- [x] `@custom-variant dark` — present
+- [x] Keyframes: `stripeReveal`, `slideUp`, `pulseHot`, `fadeIn`, **`drawLine`** (stroke-dashoffset for timeline reveal), **`heatShimmer`** (count-up glow for StatCallout)
+- [x] Base styles: `background: var(--color-base)`, Syne for `h1–h6`, DM Sans for `body`, warm `--color-text-primary` (#f0ece3) instead of flat white
+- [x] `prefers-reduced-motion` block — all durations set to 0.01ms
+- [x] Scroll-driven background on `body` — `radial-gradient` using `color-mix(in srgb, ...)` with `var(--scroll-heat, 0)`; shifts from cool blue (#2166ac) to burning red (#67001f) as user scrolls
+- [x] Scrollytelling utilities: `.sticky-viz`, `.scroll-steps`, `.scroll-step` (min-height 100vh), `.section-block`, `.prose-block`, `.glass` (backdrop-blur tooltip surface)
+
+### 4.3 TypeScript Types ✅
+- [x] `src/types/climate.ts` — fully rewritten to match actual JSON output:
+  - `DailyRecord`: date, temp_max/min/mean, precipitation, humidity, wind_max, data_quality
+  - `AnnualMetrics`: ETCCDI-aligned (su25, su30, tr20, dtr_mean, wsdi_days, tx90p, tn90p, cdd, cwd, gdd, p95_days, first/last_hot_day, hot_season_length, anomaly, precip_total/days)
+  - `DecadalMetrics`: su30/tr20/wsdi/cdd/cwd/temp_mean/anomaly decade means
+  - `ClimateSummary`: hottest_day, coldest_day, wettest_day, **longest_warm_spell** (WSDI record), year_most_su30, su30_trend_slope_per_decade, decade_comparison dict, temp_anomaly_by_year
+
+### 4.4 Constants ✅
+- [x] `src/constants/config.ts` — LAT, LON, START_YEAR, END_YEAR, OPEN_METEO_BASE_URL, DATA_BASE_URL, REPO_BASE, OPEN_METEO_PARAMS, TIMEZONE
+- [x] `src/constants/thresholds.ts` — rewritten with ETCCDI names: SU30_THRESHOLD, SU25_THRESHOLD, TR20_THRESHOLD, WSDI_MIN_DURATION=6, WSDI_BASELINE_START=1961, WSDI_BASELINE_END=1990, **STRIPES_BASELINE_START=1940**, **STRIPES_BASELINE_END=1980** (Ed Hawkins convention, distinct from WSDI baseline), CDD/CWD thresholds, GDD_BASE_TEMP, AC_THRESHOLD, AC_HOURS_PER_HOT_DAY, DEFAULT_ELECTRICITY_RATE_BRL, AC_POWER_KW
+
+### 4.5 Utility Functions ✅
+- [x] `src/utils/colors.ts` — Ed Hawkins 10-stop palette interpolation with proper RGB lerp (`anomalyToStripeColor`); `tempToStripeColor` (raw temp + baseline mean); `tempToHeatmapColor` (8-stop heatmap scale 10–40°C); `computeBaselineMean`; `decadeToColor` (maps 1940s–2020s to stripe palette)
+- [x] `src/utils/formatters.ts` — `formatTemp`, `formatAnomaly` (Unicode minus), `formatDate` / `formatDateShort` (pt-BR locale), `formatDecade` / `formatDecadeShort`, `formatDays`, `formatNights`, `formatPrecip`, `formatPercent`, `formatBRL`, `formatSlope`, `getYear`
+- [x] `src/utils/calculations.ts` — OLS `linearRegression` (returns slope, intercept, r²); `predictRegression`; `movingAverage` (centered window); `percentile` (linear interpolation); **`kernelDensityEstimate`** (Gaussian KDE with Silverman bandwidth — needed for RidgelinePlot); `clamp`, `lerp`
+- [x] `src/utils/dataProcessing.ts` — `groupByYear`, `groupByDecade`, `groupMetricsByDecade` (Map-based for D3); `filterByYear`, `filterByYearRange`, `filterMetricsByYearRange`; `metricsToArray`; `decadalAverage` (per metric key); `findRecordYear`; `dayOfWeek`
+- [x] `src/lib/utils.ts` — `cn()` shadcn helper (generated by shadcn init)
+
+### 4.6 Custom Hooks ✅
+- [x] `src/hooks/useClimateData.ts` — parallel fetch of all 3 JSON files; typed return; cancellable on unmount; `import.meta.env.BASE_URL` paths
+- [x] `src/hooks/useScrollProgress.ts` — **new hook** (note: distinct from `useScrollPosition`). Writes `--scroll-heat` CSS property to `document.documentElement` via rAF, no React re-renders. Called once from `App.tsx`.
+- [x] `src/hooks/useWindowSize.ts` — `{ width, height }` with 200ms debounce
+
+**Verification**: `npx tsc --noEmit` → **0 errors**
+>>>>>>> 004c615 (feat: new plan and frontend foundation)
 
 ---
 
 ## PHASE 5 — Layout Components
 
 ### 5.1 Header (`src/components/layout/Header.tsx`)
-- [ ] Render sticky header with project title and subtitle
-- [ ] Add navigation links: #stripes, #summer, #nights, #heatwaves, #hottest, #cost, #future
-- [ ] Highlight active section based on scroll position
-- [ ] Collapse to hamburger menu on mobile (<768px)
-- [ ] Add smooth scroll behavior on nav link click
-- [ ] Use shadcn/ui `Button` for nav CTAs
+- [ ] Sticky header; dark, semi-transparent; backdrop-blur
+- [ ] Navigation links: #stripes, #summer, #nights, #heatwaves, #hottest, #cost, #future
+- [ ] Active section highlight via IntersectionObserver
+- [ ] Hamburger menu on mobile (<768px)
+- [ ] Smooth scroll on nav click
 
 ### 5.2 Footer (`src/components/layout/Footer.tsx`)
-- [ ] Render attribution: "Climate data: Open-Meteo (ERA5 / Copernicus/ECMWF)"
-- [ ] Render attribution: "Visualization inspired by Ed Hawkins' Climate Stripes"
-- [ ] Add GitHub repository link
-- [ ] Add data download links (CSV, JSON)
-- [ ] Add license info (MIT code, CC BY 4.0 data)
+- [ ] Attribution: Open-Meteo (ERA5/Copernicus), Ed Hawkins Climate Stripes, OpenStreetMap
+- [ ] GitHub repository link; data download links (CSV, JSON)
+- [ ] License: MIT (code) · CC BY 4.0 (data)
 
-### 5.3 Navigation (`src/components/layout/Navigation.tsx`)
-- [ ] Extract nav logic into reusable component
-- [ ] Accept `sections` prop (array of `{id: string; label: string}`)
-- [ ] Highlight active section using IntersectionObserver
-
-### 5.4 Common Components
-- [ ] Create `src/components/common/LoadingSpinner.tsx`: animated SVG spinner with "Carregando dados climáticos..." text
-- [ ] Create `src/components/common/ErrorBoundary.tsx`: class component catching render errors, showing fallback UI
-- [ ] Create `src/components/common/Tooltip.tsx`: positioned tooltip div, accepts `x`, `y`, `content` props
-- [ ] Create `src/components/common/DataTable.tsx`: accessible `<table>` alternative for chart data (screen readers)
-- [ ] Create `src/components/common/SectionTitle.tsx`: styled `<h2>` with decorative underline animation
-- [ ] shadcn/ui components to add: `npx shadcn add card badge separator tabs slider select`
+### 5.3 Common Components
+- [x] `src/components/common/LoadingSpinner.tsx` — **upgraded** to Framer Motion heat-pulse: three concentric rings breathing warm orange-red, replaces generic blue spinner
+- [x] `src/components/common/ErrorBoundary.tsx` — class component with project palette fallback UI
+- [x] `src/components/common/SectionTitle.tsx` — Syne 800 at `--text-display-md`; animated underline bar `scaleX` 0→1 on viewport entry; accepts `id`, `sub`, `accentColor`
+- [x] `src/components/common/StatCallout.tsx` — massive number display at `--text-display-xl` (80–160px); IntersectionObserver + rAF count-up (1200ms cubic ease-out); warm glow `text-shadow`; Framer Motion entrance
+- [ ] `src/components/common/Tooltip.tsx`: absolutely-positioned div, dark glass background
+- [ ] `src/components/common/DataTable.tsx`: visually-hidden accessible table alternative for all charts
+- [ ] shadcn components: `npx shadcn add card badge separator tabs slider select`
 
 ---
 
 ## PHASE 6 — Visualization Components
 
-### 6.1 Climate Stripes (`src/components/visualizations/ClimateStripes.jsx`)
-- [ ] Accept `data` prop: array of `{year, temp_mean_annual, anomaly}`
-- [ ] Create SVG element with width=100%, height=200px
-- [ ] Map each year to a `<rect>` with x=index*(width/85), width=width/85, height=200
-- [ ] Compute color using diverging scale: `d3.scaleSequential(d3.interpolateRdBu)` centered on baseline mean
-- [ ] Add `<title>` element inside each rect for accessibility
-- [ ] Implement mouse hover: show Tooltip with year and temperature
-- [ ] Animate stripes on mount: staggered reveal left-to-right using Framer Motion
-- [ ] Add x-axis labels for decade markers (1940, 1950, ..., 2020)
-- [ ] Make responsive: recalculate on window resize
+### 6.1 Climate Stripes (`src/components/visualizations/ClimateStripes.tsx`)
+> **Design intent**: Not a chart. A *painting*. The user should want to touch it.
 
-### 6.2 Calendar Heatmap (`src/components/visualizations/CalendarHeatmap.jsx`)
-- [ ] Accept `data` prop: array of daily records; `year` prop: selected year
-- [ ] Filter records to selected year
-- [ ] Create SVG grid: 53 columns (weeks) × 7 rows (days)
-- [ ] Position each day cell using `d3.timeWeek` and `d3.timeDay`
-- [ ] Color each cell by `temp_max` using `d3.scaleSequential(d3.interpolateRdYlBu).domain([10, 40])`
-- [ ] Add month labels above grid
-- [ ] Add day-of-week labels (Mon, Wed, Fri)
-- [ ] Implement hover: show Tooltip with date, T_max, T_min, precipitation
-- [ ] Implement click: open modal with full day details
-- [ ] Add year selector dropdown above chart
-- [ ] Highlight cells where `temp_max >= 30` with a dot marker
-- [ ] Highlight cells where `temp_min >= 20` with a border
-- [ ] Add color legend below chart
-- [ ] Make responsive: scale SVG viewBox
+- [ ] Accept `data: Array<{year, temp_mean_annual, anomaly}>`
+- [ ] SVG 100% width × 100vh. One `<rect>` per year (1940–2025), zero gap between.
+- [ ] Color: `d3.scaleSequential(d3.interpolateRdBu)` — baseline = mean of 1940–1980 (not full range)
+- [ ] Apply `filter: blur(0.5px)` via CSS to give slight painterly blur
+- [ ] On hover: year label fades in below stripe; brightness lifts (CSS filter)
+- [ ] **Animation**: stripes reveal left-to-right, 8ms per stripe stagger (~700ms total). Use `stripeReveal` keyframe.
+- [ ] Accessibility: `role="img"`, `aria-label="Climate stripes 1940–2025"`, `<title>` per rect with year + temp
+- [ ] Decade labels (1940, 1950, …, 2020) floating below stripes, DM Sans, semi-transparent
+- [ ] Responsive: recalculate on `useWindowSize` change
 
-### 6.3 Ridgeline Plot (`src/components/visualizations/RidgelinePlot.jsx`)
-- [ ] Accept `data` prop: daily records
-- [ ] Group records by decade
-- [ ] For each decade, compute kernel density estimate of `temp_max` distribution (D3 `d3.kde`)
-- [ ] Create SVG with shared x-axis (temperature) and y-axis (decades, stacked)
-- [ ] Draw each decade as a filled area path using `d3.area`
-- [ ] Color fill by decade (cool → warm gradient)
-- [ ] Add overlap between ridges (Joy Division style)
-- [ ] Add decade labels on y-axis
-- [ ] Add x-axis with temperature ticks
-- [ ] Add vertical reference line at 30°C
-- [ ] Animate on scroll entry (Framer Motion)
+### 6.2 Calendar Heatmap (`src/components/visualizations/CalendarHeatmap.tsx`)
+> **Design intent**: Fills day-by-day like a timelapse of a summer getting longer.
 
-### 6.4 Time Series Chart (`src/components/visualizations/TimeSeriesChart.jsx`)
-- [ ] Accept `metrics` prop: annual metrics object; `activeMetric` prop
-- [ ] Render Recharts `<LineChart>` with `<CartesianGrid>`, `<XAxis>`, `<YAxis>`, `<Tooltip>`, `<Legend>`
-- [ ] Plot selected metric as `<Line>` with dot on hover
-- [ ] Add trend line as second `<Line>` (dashed, computed from linear regression)
-- [ ] Add `<Brush>` for zoom/pan
-- [ ] Add metric toggle buttons: SU30, TR20, DTR, WSDI, CDD, CWD (above chart)
-- [ ] Highlight record year (highest value) with custom dot
-- [ ] Add `<ReferenceLine>` at decade boundaries
-- [ ] Make responsive with `<ResponsiveContainer>`
+- [ ] Accept `data: DailyRecord[]`, `year: number`; filter to selected year
+- [ ] SVG grid: 53 columns × 7 rows; `d3.timeMonday` (Brazilian week start)
+- [ ] Color: `d3.scaleSequential(d3.interpolateRdYlBu).domain([10, 40])` reversed
+- [ ] SU30 days (T_max ≥ 30°C): small dot marker at cell center, `--color-stripe-extreme`
+- [ ] TR20 nights (T_min ≥ 20°C): 1px border highlight, `--color-stripe-warm`
+- [ ] Month labels above grid (DM Sans)
+- [ ] Hover tooltip: date, T_max, T_min, precipitation
+- [ ] Click: modal with full day details
+- [ ] **Animation on scroll entry**: cells fill chronologically (day 1 → day 365), 2ms/day delay
+- [ ] Year selector dropdown (shadcn `Select`)
+- [ ] Color legend below chart
+- [ ] Responsive: scale `viewBox`
 
-### 6.5 Comparative Bar Chart (`src/components/visualizations/ComparativeBarChart.jsx`)
-- [ ] Accept `decadalData` prop: decadal averages object
-- [ ] Render Recharts `<BarChart>` with grouped bars
-- [ ] X-axis: decades (1940s–2020s)
-- [ ] Y-axis: metric value
-- [ ] Bars: SU30 (red), TR20 (orange), WSDI (dark red)
-- [ ] Add `<Tooltip>` with all three values
-- [ ] Add `<Legend>`
-- [ ] Animate bars on scroll entry
-- [ ] Make responsive with `<ResponsiveContainer>`
+### 6.3 Ridgeline Plot (`src/components/visualizations/RidgelinePlot.tsx`)
+> **Design intent**: The rightward drift of decades reveals one at a time — oldest to newest.
 
-### 6.6 Interactive Map (`src/components/visualizations/InteractiveMap.jsx`)
-- [ ] Import Leaflet CSS in component
-- [ ] Render `<MapContainer>` centered on `[-22.9250, -45.4620]`, zoom=12
-- [ ] Add `<TileLayer>` with OpenStreetMap tiles
-- [ ] Add `<Marker>` at coordinates with `<Popup>` showing location name and data coverage
-- [ ] Add attribution: "© OpenStreetMap contributors"
-- [ ] Set fixed height (400px) and width 100%
-- [ ] Disable scroll zoom to prevent page scroll hijacking (enable on click)
+- [ ] Accept `data: DailyRecord[]`; group by decade
+- [ ] For each decade, compute KDE of `temp_max` distribution (D3 KDE)
+- [ ] SVG: shared x-axis (temperature), stacked y-axis (decades, Joy Division style)
+- [ ] Fill color by decade: cool blues → warm reds (same stripe palette)
+- [ ] Overlap between ridges (Joy Division aesthetic — earlier decades peek through)
+- [ ] Decade labels on left y-axis (Syne, small)
+- [ ] X-axis temperature ticks; 30°C reference line in `--color-stripe-burning`
+- [ ] **Animation**: decades reveal oldest → newest on scroll entry, 300ms each
+- [ ] Accessibility: `role="img"`, aria-label
 
-### 6.7 Radial Chart (`src/components/visualizations/RadialChart.jsx`)
-- [ ] Accept `data` prop: monthly averages by decade
-- [ ] Create D3 radial/polar chart: 12 segments (months), radius = temperature
-- [ ] Draw one path per decade (overlay)
-- [ ] Color paths by decade
-- [ ] Add month labels around perimeter
-- [ ] Add radial grid lines at 10°C, 20°C, 30°C
-- [ ] Add legend
-- [ ] Animate on mount
+### 6.4 Time Series Chart (`src/components/visualizations/TimeSeriesChart.tsx`)
+- [ ] Accept `metrics: Record<number, AnnualMetrics>`, `activeMetric: string`
+- [ ] Recharts `LineChart` with dark grid (`stroke: rgba(255,255,255,0.1)`)
+- [ ] Main metric line in `--color-stripe-hot`; trend line dashed in `--color-text-secondary`
+- [ ] Metric toggle buttons: SU30, TR20, DTR, WSDI, CDD, CWD
+- [ ] Record year: custom `<Dot>` in `--color-stripe-extreme`, larger radius
+- [ ] `<Brush>` for zoom/pan
+- [ ] `<ReferenceLine>` at decade boundaries (1950, 1960, …)
+- [ ] `<ResponsiveContainer width="100%" height={400}>`
+
+### 6.5 Comparative Bar Chart (`src/components/visualizations/ComparativeBarChart.tsx`)
+- [ ] Accept `decadalData: DecadalMetrics[]`
+- [ ] Recharts grouped `BarChart`; X-axis: decades; Y-axis: metric value
+- [ ] SU30 bars: `--color-stripe-hot`; TR20: `--color-stripe-warm`; WSDI: `--color-stripe-burning`
+- [ ] **Animation**: bars grow from baseline on scroll entry (Framer Motion `whileInView`)
+- [ ] `<Tooltip>` with dark glass style matching site palette
+
+### 6.6 Interactive Map (`src/components/visualizations/InteractiveMap.tsx`)
+- [ ] Import `leaflet/dist/leaflet.css` in component
+- [ ] Dark tile layer (CartoDB dark matter or similar) to match palette
+- [ ] Centered on `[-22.9250, -45.4620]`, zoom=12
+- [ ] Marker popup: "Pindamonhangaba · 85 years of data · ERA5 reanalysis"
+- [ ] Attribution: "© OpenStreetMap contributors"
+- [ ] Disable scroll zoom (enable on map click to prevent scroll hijacking)
+
+### 6.7 Radial Chart (`src/components/visualizations/RadialChart.tsx`)
+- [ ] D3 polar chart: 12 monthly segments, radius = temperature
+- [ ] One path per decade, color cool → hot by decade
+- [ ] Radial grid lines at 10°C, 20°C, 30°C (subtle, dark)
+- [ ] Month labels around perimeter (DM Sans, small)
+- [ ] Animate on scroll entry
 
 ---
 
 ## PHASE 7 — Storytelling Sections
 
-### 7.1 ScrollySection Wrapper (`src/components/storytelling/ScrollySection.jsx`)
-- [ ] Import and initialize Scrollama
-- [ ] Accept `steps` prop (array of step content), `onStepEnter` callback, `onStepExit` callback
-- [ ] Render sticky visualization container (position: sticky, top: 0)
-- [ ] Render scrollable steps container with step divs
-- [ ] Set `offset: 0.5` for trigger at viewport midpoint
-- [ ] Call `onStepEnter({index, direction})` on step enter
-- [ ] Resize observer to handle layout changes
-- [ ] Clean up Scrollama instance on unmount
+### 7.1 ScrollySection Wrapper (`src/components/storytelling/ScrollySection.tsx`)
+- [ ] Initialize Scrollama; `offset: 0.5`
+- [ ] Accept `steps: ReactNode[]`, `onStepEnter`, `onStepExit` callbacks
+- [ ] Sticky visualization container: `position: sticky; top: 0; height: 100vh`
+- [ ] Scrollable steps column: prose text, max-width 600px, DM Sans
+- [ ] `min-height: 100vh` on each step div (required for Scrollama mobile)
+- [ ] Never set `overflow: hidden` on the Scrollama parent
+- [ ] Clean up scroller on unmount; call `scroller.resize()` on window resize
 
-### 7.2 Intro Section (`src/components/storytelling/IntroSection.jsx`)
-- [ ] Render hero with title "Pindamonhangaba: 85 Years of Warming"
-- [ ] Show animated Climate Stripes on scroll
-- [ ] Display stat: "Average temperature has increased by X°C since 1940" (from summary.json)
-- [ ] Add map showing location of Pindamonhangaba
-- [ ] Scroll step 1: stripes appear one by one
-- [ ] Scroll step 2: highlight recent years (red stripes)
-- [ ] Scroll step 3: show temperature anomaly label
+### 7.2 Hero / Intro Section (`src/components/storytelling/IntroSection.tsx`)
+> *"Pindamonhangaba is warming. Here is the proof."*
 
-### 7.3 Summer Section (`src/components/storytelling/SummerSection.jsx`)
-- [ ] Render section title "The Summer That Never Ends"
-- [ ] Show HD30 bar chart (animated)
-- [ ] Scroll step 1: show 1940s bars
-- [ ] Scroll step 2: animate through decades
-- [ ] Scroll step 3: highlight 2020s bars, show comparison text
-- [ ] Display stat: "In the 1980s, summer lasted X days. In 2024, it lasted Y days."
-- [ ] Show ThresholdSlider widget below chart
+- [ ] Full-bleed ClimateStripes hero (100vw × 100vh)
+- [ ] Headline floats over stripes: Syne 800, `--text-display-lg`, text: "Pindamonhangaba está esquentando. Aqui está a prova."
+- [ ] Sub-text: coordinates (-22.9250, -45.4620) · altitude · 85 years · DM Sans, small, semi-transparent
+- [ ] Scroll indicator: animated chevron, `pulseHot` keyframe, slow
+- [ ] Steps: (1) stripes appear; (2) highlight recent red stripes; (3) anomaly label fades in
+- [ ] Stat callout: `StatCallout` component with anomaly since 1940
 
-### 7.4 Tropical Nights Section (`src/components/storytelling/TropicalNightsSection.jsx`)
-- [ ] Render section title "Sleepless Nights"
-- [ ] Show Calendar Heatmap with TR20 nights highlighted
-- [ ] Scroll step 1: show 1960 calendar
-- [ ] Scroll step 2: show 2000 calendar
-- [ ] Scroll step 3: show 2024 calendar
-- [ ] Display stat: "Tropical nights have increased by X% since 1940"
-- [ ] Add explanatory text about health impacts
+### 7.3 Summer Section (`src/components/storytelling/SummerSection.tsx`)
+> *"The Summer That Never Ends"*
 
-### 7.5 Heat Wave Section (`src/components/storytelling/HeatWaveSection.jsx`)
-- [ ] Render section title "Heat Waves: The New Normal"
-- [ ] Show heat wave timeline (horizontal bar chart, one bar per event)
-- [ ] Scroll step 1: show pre-1980 events
-- [ ] Scroll step 2: show 1980–2000 events
-- [ ] Scroll step 3: show 2000–2024 events (more frequent, longer)
-- [ ] Display stat: "The longest heat wave lasted X days in [year]"
-- [ ] Show HWDI time series chart
+- [ ] SectionTitle: "The Summer That Never Ends"
+- [ ] Sticky: SU30 bar chart (ComparativeBarChart) by decade
+- [ ] Steps: (1) 1940s–1970s bars; (2) 1980s–2000s; (3) 2010s–2020s — bars animate in
+- [ ] StatCallout: "In the 1940s, summer lasted 23 days. In the 2020s: **108 days**." — stat at `--text-display-xl`
+- [ ] ThresholdSlider widget below chart
 
-### 7.6 Hottest Day Section (`src/components/storytelling/HottestDaySection.jsx`)
-- [ ] Render section title "The Hottest Day on Record"
-- [ ] Show special card: date, temperature, context paragraph
-- [ ] Animate card entrance (scale + fade)
-- [ ] Show Calendar Heatmap for that specific year, highlighting the hottest day
-- [ ] Add "Where were you on this day?" interactive prompt with birth year input
-- [ ] Show PersonalTimeline widget
+### 7.4 Tropical Nights Section (`src/components/storytelling/TropicalNightsSection.tsx`)
+> *"Sleepless Nights"*
 
-### 7.7 Cost Section (`src/components/storytelling/CostSection.jsx`)
-- [ ] Render section title "The Cost of Heat"
-- [ ] Show AC Calculator widget
-- [ ] Show comparison: estimated AC hours 1990 vs 2024
-- [ ] Add bar chart: hours above 25°C per year
-- [ ] Add text about energy consumption and health implications
+- [ ] SectionTitle: "Sleepless Nights"
+- [ ] Sticky: CalendarHeatmap with TR20 nights highlighted
+- [ ] Steps: (1) show 1960 calendar; (2) 2000 calendar; (3) 2024 calendar — year updates on step enter
+- [ ] StatCallout: TR20 increase since 1940 at `--text-display-xl`
+- [ ] Explanatory text about sleep health and nocturnal temperature
 
-### 7.8 Future Section (`src/components/storytelling/FutureSection.jsx`)
-- [ ] Render section title "What's Next?"
-- [ ] Show trend extrapolation chart (HD30 projected to 2050)
-- [ ] Add uncertainty band (shaded area)
-- [ ] Display projected HD30 by 2050 based on linear trend
-- [ ] Add climate action links
-- [ ] Add data download buttons (CSV, JSON)
-- [ ] Add social sharing buttons
+### 7.5 Heat Wave Section (`src/components/storytelling/HeatWaveSection.tsx`)
+> *"Heat Waves: The New Normal"*
+
+- [ ] SectionTitle: "Heat Waves: A Nova Normal"
+- [ ] Sticky: WSDI time series + horizontal heat wave event bars
+- [ ] Steps: (1) pre-1980 events (rare, short); (2) 1980–2000; (3) 2000–2025 (frequent, long)
+- [ ] StatCallout: "Longest heat wave: **82 days** in 2018" at `--text-display-xl`
+- [ ] Text: health impacts, outdoor work, agriculture
+
+### 7.6 Hottest Day Section (`src/components/storytelling/HottestDaySection.tsx`)
+> *A record card. Intimate scale.*
+
+- [ ] SectionTitle: "The Hottest Day on Record"
+- [ ] Record card: date "28 de setembro de 1961", temperature "38.2°C" — Syne 800, `--text-display-lg`, `--color-stripe-extreme`; animate with scale + fade
+- [ ] CalendarHeatmap for 1961, programmatically highlighting September 28
+- [ ] "Where were you on this day?" — birth year input → PersonalTimeline widget
+- [ ] Design shift on PersonalTimeline activation: typography scales down, section softens
+
+### 7.7 Cost Section (`src/components/storytelling/CostSection.tsx`)
+> *The AC Calculator. Make it feel like a receipt.*
+
+- [ ] SectionTitle: "The Cost of Heat"
+- [ ] ACCalculator widget: JetBrains Mono, receipt-style layout
+- [ ] Side-by-side comparison: estimated AC hours 1990 vs 2024
+- [ ] Bar chart: hours above 25°C per year (T_max ≥ 25°C × 8h/day proxy)
+- [ ] Text: energy consumption, electricity grid load, equity implications
+
+### 7.8 Future Section (`src/components/storytelling/FutureSection.tsx`)
+> *A question left open.*
+
+- [ ] SectionTitle: "What's Next?"
+- [ ] Trend extrapolation chart: SU30 projected to 2050, OLS regression + uncertainty band (shaded)
+- [ ] StatCallout: projected SU30 by 2050 at `--text-display-xl`
+- [ ] Climate action links
+- [ ] Data download buttons (CSV, JSON)
+- [ ] Social sharing buttons
+- [ ] Acknowledgment of model limitations
 
 ---
 
 ## PHASE 8 — Interactive Widgets
 
-### 8.1 Year Selector (`src/components/widgets/YearSelector.jsx`)
-- [ ] Render two `<select>` dropdowns: Year A (default 1980), Year B (default 2024)
-- [ ] Populate options from 1940–2025
-- [ ] Render comparison table with rows: SU25, SU30, SU32, TR20, DTR, WSDI, TX90p, TN90p, CDD, CWD, GDD
-- [ ] Highlight cells where Year B > Year A (red) or < Year A (blue)
-- [ ] Add "Reset" button to restore defaults
+### 8.1 Year Selector (`src/components/widgets/YearSelector.tsx`)
+- [ ] Two shadcn `<Select>` dropdowns: Year A (default 1980), Year B (default 2024)
+- [ ] Options: 1940–2025
+- [ ] Comparison table rows: SU25, SU30, TR20, DTR, WSDI, TX90p, TN90p, CDD, CWD, GDD
+- [ ] Cell color: red = B > A, blue = B < A, DM Sans
+- [ ] "Reset" button
 
-### 8.2 Threshold Slider (`src/components/widgets/ThresholdSlider.jsx`)
-- [ ] Render `<input type="range">` min=25, max=35, step=0.5
-- [ ] Display current threshold value
-- [ ] On change: recalculate days above threshold for each year from `dailyData`
-- [ ] Update time series chart in real time
-- [ ] Show current count for most recent year
+### 8.2 Threshold Slider (`src/components/widgets/ThresholdSlider.tsx`)
+- [ ] shadcn `Slider`, min=25, max=35, step=0.5
+- [ ] Display current threshold value at `--text-display-md` in Syne
+- [ ] Real-time recalculation from `dailyData`
+- [ ] Update TimeSeriesChart or a local count display
 
-### 8.3 AC Calculator (`src/components/widgets/ACCalculator.jsx`)
-- [ ] Render year selector (1940–2025)
-- [ ] On year change: filter daily records for that year
-- [ ] Calculate `hours_above_25 = count(temp_max >= 25) * 8` (approximate daytime hours)
-- [ ] Display: "Estimated AC hours needed: X"
-- [ ] Display comparison to 1990 baseline
-- [ ] Add cost estimate: `hours * 0.5kW * electricity_rate_BRL`
-- [ ] Allow user to input electricity rate (default: R$0.80/kWh)
+### 8.3 AC Calculator (`src/components/widgets/ACCalculator.tsx`)
+> *A receipt. JetBrains Mono. The total lands with uncomfortable clarity.*
 
-### 8.4 Personal Timeline (`src/components/widgets/PersonalTimeline.jsx`)
-- [ ] Render birth year input (number, min=1940, max=2025)
-- [ ] On submit: filter metrics from birth year to 2025
-- [ ] Display: "In your lifetime, HD30 has increased from X to Y days/year"
-- [ ] Display: "The hottest year of your life was [year] with X days above 30°C"
-- [ ] Show mini time series chart for user's lifetime span
+- [ ] Year selector → filter daily records for that year
+- [ ] Calculate `hours_above_25 = count(temp_max ≥ 25) × 8` (approximate daytime hours)
+- [ ] Itemized rows: kWh consumption, monthly breakdown
+- [ ] Hairline `border-top` before TOTAL row
+- [ ] `TOTAL AC HOURS:` and cost in JetBrains Mono, `--color-text-accent`, `pulseHot` blink on compute
+- [ ] Editable electricity rate input (default R$0.80/kWh)
+- [ ] Comparison to 1990 baseline shown below the receipt
+
+### 8.4 Personal Timeline (`src/components/widgets/PersonalTimeline.tsx`)
+> *Intimate register. Smaller type. Softer light. A private record.*
+
+- [ ] Birth year input (number, min=1940, max=2025), large DM Sans italic prompt
+- [ ] On submit: `motion.div` transition → smaller type, softer background
+- [ ] Filter metrics from birth year to 2025
+- [ ] `drawLine` animation: stroke-dashoffset trick for the lifetime chart line
+- [ ] Output: "In your lifetime, hot days went from `X` to `Y` per year. Your hottest year: `[Z]` with `N` days above 30°C."
+- [ ] If birth year = current year: show "Check back next year." message instead of chart
 
 ---
 
@@ -486,127 +421,108 @@ Key stats surfaced in `summary.json`:
 
 ### 9.1 App Component (`src/App.tsx`)
 - [ ] Import `useClimateData` hook (typed)
-- [ ] Show `<LoadingSpinner />` while loading
-- [ ] Wrap in `<ErrorBoundary>` for render error fallback
-- [ ] Render `<Header />` at top
-- [ ] Render all storytelling sections in order: Intro, Summer, TropicalNights, HeatWave, HottestDay, Cost, Future
-- [ ] Render `<Footer />` at bottom
-- [ ] Pass typed `dailyData`, `metrics`, `summary` as props to sections
+- [ ] Import `useScrollProgress` hook; update `--scroll-heat` on `document.documentElement`
+- [ ] Show `<LoadingSpinner />` while loading (heat pulse animation)
+- [ ] Wrap in `<ErrorBoundary>`
+- [ ] Render sections in order: Hero → Summer → TropicalNights → HeatWave → HottestDay → Cost → Future
 - [ ] Wrap visualization-heavy sections in `React.lazy` + `<Suspense>`
+- [ ] Pass typed `dailyData`, `metrics`, `summary` as props to all sections
 
-### 9.2 Data Flow
-- [ ] Verify `useClimateData` fetches from correct paths (relative to `base` in vite.config)
-- [ ] Verify all components receive correct data shape (TypeScript will catch mismatches)
-- [ ] Ensure all component props are typed with interfaces from `src/types/climate.ts`
+### 9.2 Data Flow Verification
+- [ ] Verify `useClimateData` fetches from correct base paths (uses `import.meta.env.BASE_URL`)
+- [ ] Verify all components receive correct typed data shapes
+- [ ] Verify TypeScript strict compilation passes: `npm run build` with no errors
+
+### 9.3 Scroll-Driven Background
+- [ ] `useScrollProgress` sets `--scroll-heat: <0–1>` on `document.documentElement` via rAF
+- [ ] `body` background gradient transitions from cool blue to burning red via `color-mix()` in CSS
+- [ ] Test: scroll to bottom of page → body should visibly shift toward reds
 
 ---
 
 ## PHASE 10 — Accessibility & SEO
 
 ### 10.1 Accessibility Audit
-- [ ] Add `role="img"` and `aria-label` to all SVG charts
-- [ ] Add `<title>` and `<desc>` inside each SVG
-- [ ] Add `<DataTable>` hidden alternative for each chart (visually hidden, screen reader accessible)
-- [ ] Verify all interactive elements have visible focus styles
-- [ ] Verify all form inputs have associated `<label>` elements
-- [ ] Verify color contrast: run axe DevTools check
-- [ ] Add `aria-live="polite"` region for dynamic content updates (threshold slider, year selector)
-- [ ] Test keyboard navigation: Tab through all interactive elements
-- [ ] Test with VoiceOver (macOS) or NVDA (Windows)
+- [ ] All SVG charts: `role="img"`, `aria-label`, `<title>`, `<desc>` inside
+- [ ] `<DataTable>` visually-hidden alternative for every chart
+- [ ] Visible focus styles on all interactive elements (not just outline removal)
+- [ ] All form inputs have associated `<label>` elements
+- [ ] `aria-live="polite"` regions for dynamic content (threshold slider, year selector output)
+- [ ] Keyboard navigation: Tab through all interactive elements
+- [ ] `prefers-reduced-motion`: all animations → instant state changes
 
 ### 10.2 SEO
-- [ ] Set `<title>` to "Pindamonhangaba Climate Data | 85 Years of Temperature Trends"
-- [ ] Set `<meta name="description">` (150–160 chars)
-- [ ] Add `<meta property="og:title">`, `og:description`, `og:image`, `og:url`
-- [ ] Add `<meta name="twitter:card">`, `twitter:title`, `twitter:description`, `twitter:image`
-- [ ] Generate `og-image.png` (1200×630px) with key stats
-- [ ] Add Schema.org Dataset JSON-LD in `index.html`
-- [ ] Create `public/sitemap.xml`
-- [ ] Create `public/robots.txt` (allow all)
+- [ ] `<title>`: "A City's Memory of Heat | Pindamonhangaba — 85 Years of Climate Data"
+- [ ] `<meta name="description">`: 150–160 chars, compelling summary
+- [ ] `og:title`, `og:description`, `og:image` (1200×630px with key stats), `og:url`
+- [ ] `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`
+- [ ] Schema.org Dataset JSON-LD in `index.html`
+- [ ] `public/sitemap.xml`, `public/robots.txt`
 
 ---
 
 ## PHASE 11 — Performance Optimization
 
-- [ ] Wrap all visualization components in `React.lazy(() => import(...))`
-- [ ] Add `<Suspense fallback={<LoadingSpinner />}>` around lazy components
-- [ ] Implement service worker with Vite PWA plugin (`vite-plugin-pwa`)
-- [ ] Configure PWA to cache `public/data/*.json` files
-- [ ] Convert any PNG images to WebP format
-- [ ] Add `<picture>` elements with WebP + PNG fallback
-- [ ] Debounce scroll event handler (16ms / rAF)
-- [ ] Debounce window resize handler (200ms)
-- [ ] Use `useMemo` for expensive calculations in components (regression, density estimation)
-- [ ] Use `useCallback` for event handlers passed as props
-- [ ] Profile with React DevTools: identify unnecessary re-renders
-- [ ] Switch Calendar Heatmap to Canvas if >1000 cells cause jank
-- [ ] Run `npm run build` and check bundle size; split if >500KB
+- [ ] `React.lazy(() => import(...))` + `<Suspense>` for all visualization components
+- [ ] Service worker via `vite-plugin-pwa`; cache `public/data/*.json`
+- [ ] `useMemo` for expensive calcs (OLS regression, KDE, groupByDecade)
+- [ ] `useCallback` for event handlers passed as props
+- [ ] Debounce scroll handler (rAF, 16ms cap); debounce resize (200ms)
+- [ ] Calendar Heatmap → Canvas if >1000 cells cause jank (profile first)
+- [ ] Bundle size check: `npm run build` → split if >500KB
+- [ ] Lighthouse targets: FCP <1.5s · LCP <2.5s · TTI <3.5s · CLS <0.1
 
 ---
 
 ## PHASE 12 — Testing
 
 ### 12.1 Unit Tests (Jest + React Testing Library)
-- [ ] Set up Jest config in `package.json`
-- [ ] Install: `npm install -D jest @testing-library/react @testing-library/jest-dom jest-environment-jsdom`
-- [ ] Test `linearRegression(xArr, yArr)`: known input → expected slope/intercept
-- [ ] Test `movingAverage(arr, window)`: known input → expected output
-- [ ] Test `percentile(arr, p)`: known input → expected value
-- [ ] Test `groupByYear(records)`: verify correct grouping
-- [ ] Test `calculate_wsdi` Python function: streak of ≥6 consecutive days above p90 → days counted correctly; streak of 5 → not counted
-- [ ] Test `calculate_tx90p` Python function: known dataset with known percentiles → correct annual percentage
-- [ ] Test `calculate_tn90p` Python function: known dataset with known percentiles → correct annual percentage
-- [ ] Test `calculate_cdd` Python function: known dry streak → correct max
-- [ ] Test `calculate_cwd` Python function: known wet streak → correct max
-- [ ] Test `ClimateStripes` renders correct number of `<rect>` elements
+- [ ] Setup Jest config; install `jest @testing-library/react @testing-library/jest-dom`
+- [ ] Test `linearRegression`, `movingAverage`, `percentile` with known inputs
+- [ ] Test `groupByYear`, `groupByDecade`, `filterByYear`
+- [ ] Test Python: `calculate_wsdi`, `calculate_tx90p`, `calculate_tn90p`, `calculate_cdd`, `calculate_cwd`
+- [ ] Test `ClimateStripes` renders correct number of `<rect>` elements (85)
 - [ ] Test `TimeSeriesChart` renders without crashing with mock data
-- [ ] Test `ThresholdSlider` updates displayed count on change
+- [ ] Test `ThresholdSlider` updates count on change
 - [ ] Test `ACCalculator` computes correct hours for mock year data
 
 ### 12.2 Integration Tests
-- [ ] Test `useClimateData` hook: mock fetch, verify state transitions (loading → data)
-- [ ] Test full App render: mock data, verify sections render
-- [ ] Test scroll trigger: simulate scroll, verify section state changes
+- [ ] `useClimateData` hook: mock fetch, verify loading → data state transitions
+- [ ] Full App render with mock data: verify all sections mount
+- [ ] Scroll trigger: simulate scroll, verify Scrollama step state changes
 
-### 12.3 Python Tests
-- [ ] Create `data/tests/test_process.py`
-- [ ] Test missing value interpolation: inject NaN, verify filled
-- [ ] Test validation: inject T_min > T_max, verify error logged
-- [ ] Test metric calculations: known dataset → expected SU30 count
-- [ ] Test WSDI baseline: verify p90 is computed only from 1961–1990 and not from the full dataset
-- [ ] Test CWD/CDD edge case: all-dry year → CWD=0, CDD=365
+### 12.3 Python Tests (`data/tests/`)
+- [ ] `test_process.py`: missing value interpolation, T_min > T_max swap, metric calculations
+- [ ] `test_wsdi_baseline.py`: verify p90 computed only from 1961–1990, not full dataset
+- [ ] `test_cwd_cdd_edge.py`: all-dry year → CWD=0, CDD=365
 
 ---
 
 ## PHASE 13 — CI/CD & Deployment
 
 ### 13.1 GitHub Actions
-- [ ] Create `.github/workflows/deploy.yml`
-- [ ] Configure trigger: `push` to `main`, `workflow_dispatch`
-- [ ] Add scheduled trigger: `cron: '0 6 1 1 *'` (annual data refresh)
-- [ ] Job `build`: checkout, setup Node 20, `npm ci`, `npm run build`, upload artifact
-- [ ] Job `deploy`: deploy to GitHub Pages using `actions/deploy-pages@v4`
+- [ ] Create `.github/workflows/deploy.yml`: push to main + annual cron + workflow_dispatch
+- [ ] Jobs: `build` (Node 20, `npm ci`, `npm run build`, upload artifact) → `deploy` (deploy-pages)
 - [ ] Add `permissions: pages: write, id-token: write`
-- [ ] Create `.github/workflows/ci.yml` for PRs: lint + test on every PR
-- [ ] Add Lighthouse CI step in CI workflow
+- [ ] Create `.github/workflows/ci.yml`: lint + test on every PR
+- [ ] Add Lighthouse CI step
 
 ### 13.2 Repository Settings
-- [ ] Enable GitHub Pages: Settings → Pages → Source → GitHub Actions
-- [ ] Add `.nojekyll` file to `public/` to prevent Jekyll processing
-- [ ] Verify `base` in `vite.config.ts` matches repository name
+- [ ] GitHub Pages: Settings → Pages → Source → GitHub Actions
+- [ ] Add `public/.nojekyll` (prevent Jekyll processing)
+- [ ] Verify `base` in `vite.config.ts` matches repo name exactly (case-sensitive)
 
 ### 13.3 Monitoring
-- [ ] Add Lighthouse CI config (`lighthouserc.json`): assert FCP <1500ms, LCP <2500ms, score >90
-- [ ] Add Lighthouse CI step to CI workflow
+- [ ] `lighthouserc.json`: assert FCP <1500ms, LCP <2500ms, score >90
 
 ---
 
 ## PHASE 14 — Documentation
 
-- [ ] Update `README.md`: project description, live link, screenshots, data sources, local setup instructions
-- [ ] Create `docs/API.md`: document Open-Meteo API usage, parameters, rate limits
-- [ ] Create `docs/DATA_SOURCES.md`: document all data sources, comparison table, attribution
+- [ ] Update `README.md`: live link, screenshots, data sources, local setup *(design concept is the lead)*
+- [ ] Create `docs/API.md`: Open-Meteo usage, parameters, rate limits
+- [ ] Create `docs/DATA_SOURCES.md`: all data sources, comparison table, attribution
 - [ ] Create `docs/DEPLOYMENT.md`: step-by-step deployment guide
 - [ ] Add JSDoc comments to all utility functions
-- [ ] Add inline comments to complex D3 code
-- [ ] Update `CHANGELOG.md` with v1.0.0 entry
+- [ ] Add inline comments to complex D3 animations
+- [ ] Update `CHANGELOG.md` with v1.0.0 entry when site launches

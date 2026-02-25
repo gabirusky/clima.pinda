@@ -1,5 +1,6 @@
 /* ============================================================
-   Pindamonhangaba Climate Visualization — Global Styles
+   A Cidade's Memory of Heat — Design System
+   Pindamonhangaba Climate Visualization
    Tailwind CSS v4 (CSS-first config — no tailwind.config.js)
    ============================================================ */
 
@@ -18,23 +19,44 @@
     --color-temp-hot: #ef8a62;
     --color-temp-very-hot: #b2182b;
 
-    /* --- Climate Stripes (Diverging, Ed Hawkins palette) --- */
-    --color-stripe-cold: #08519c;
-    --color-stripe-cool: #3182bd;
-    --color-stripe-neutral: #ffffff;
-    --color-stripe-warm: #de2d26;
-    --color-stripe-hot: #a50f15;
+    /* --- Climate Stripes (Full Ed Hawkins palette) --- */
+    --color-stripe-deep-cold: #08306b;
+    --color-stripe-cold: #2166ac;
+    --color-stripe-cool: #4393c3;
+    --color-stripe-neutral: #f7f7f7;
+    --color-stripe-warm: #ef8a62;
+    --color-stripe-hot: #d6604d;
+    --color-stripe-burning: #b2182b;
+    --color-stripe-extreme: #67001f;
+
+    /* --- Background & Surface --- */
+    --color-base: #0a0f1e;
+    --color-surface-1: rgba(255, 255, 255, 0.04);
+    --color-surface-2: rgba(255, 255, 255, 0.08);
+
+    /* --- Text --- */
+    --color-text-primary: #f0ece3;
+    --color-text-secondary: #a09080;
+    --color-text-accent: #ef8a62;
 
     /* --- UI Colors --- */
-    --color-primary: #1e40af;
-    --color-primary-light: #3b82f6;
-    --color-accent: #f59e0b;
-    --color-danger: #dc2626;
+    --color-primary: #2166ac;
+    --color-primary-light: #4393c3;
+    --color-danger: #b2182b;
 
-    /* --- Fonts (distinctive, per SKILL.md — avoid Inter/Roboto) --- */
-    --font-display: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    /* --- Fonts — "A City's Memory of Heat" typography --- */
+    --font-display: 'Syne', sans-serif;       /* Geometric, unsettling at 160px */
+    --font-body: 'DM Sans', sans-serif;       /* Warm, readable */
+    --font-mono: 'JetBrains Mono', monospace; /* Receipt-style calculator */
+
+    /* --- Type Scale (Fluid CSS clamp) --- */
+    --text-display-xl: clamp(80px, 12vw, 160px);
+    --text-display-lg: clamp(48px, 7vw, 96px);
+    --text-display-md: clamp(32px, 4.5vw, 56px);
+    --text-body-lg: 1.25rem;
+    --text-body: 1.125rem;
+    --text-caption: 0.875rem;
+    --text-mono: 0.9rem;
 }
 
 /* Dark mode via class strategy */
@@ -54,8 +76,15 @@ html {
 
 body {
     font-family: var(--font-body);
-    background-color: #0a0f1e;
-    color: #f1f5f9;
+    /* Scroll-driven background: --scroll-heat is set by useScrollProgress hook (0=past cool → 1=present hot) */
+    background-color: var(--color-base);
+    background-image: radial-gradient(
+        ellipse at 50% 0%,
+        color-mix(in srgb, #2166ac calc(100% - var(--scroll-heat, 0) * 100%), #67001f) 0%,
+        transparent 70%
+    );
+    background-attachment: fixed;
+    color: var(--color-text-primary);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -80,7 +109,7 @@ kbd {
 
 /* Focus styles for accessibility */
 :focus-visible {
-    outline: 2px solid var(--color-primary-light);
+    outline: 2px solid var(--color-stripe-cool);
     outline-offset: 2px;
 }
 
@@ -167,6 +196,30 @@ kbd {
     }
 }
 
+/* stroke-dashoffset trick — used for PersonalTimeline chart line reveal */
+@keyframes drawLine {
+    from {
+        stroke-dashoffset: 1;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Count-up shimmer — used on StatCallout numbers */
+@keyframes heatShimmer {
+    0%, 100% {
+        color: var(--color-text-primary);
+        text-shadow: none;
+    }
+
+    50% {
+        color: var(--color-stripe-warm);
+        text-shadow: 0 0 40px rgba(239, 138, 98, 0.4);
+    }
+}
+
 /* --- Animation Utility Classes --- */
 .animate-fade-in {
     animation: fadeIn 0.4s ease forwards;
@@ -186,6 +239,14 @@ kbd {
 
 .animate-spin {
     animation: spin 1s linear infinite;
+}
+
+.animate-draw-line {
+    animation: drawLine 1.4s ease-out forwards;
+}
+
+.animate-heat-shimmer {
+    animation: heatShimmer 1.2s ease-out forwards;
 }
 
 @theme inline {
@@ -305,4 +366,69 @@ kbd {
   body {
     @apply bg-background text-foreground;
     }
+}
+
+/* === Reduced Motion Safety Net ===
+   All animations degrade to instant state changes.
+   This is non-negotiable — the design must work without motion. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* === Scrollytelling Layout Utilities === */
+
+/* Sticky visualization pane */
+.sticky-viz {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Step prose column */
+.scroll-steps {
+    position: relative;
+    z-index: 10;
+}
+
+.scroll-step {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(48px, 8vh, 96px);
+    padding-inline: clamp(24px, 5vw, 64px);
+    max-width: 600px;
+}
+
+/* Section vertical rhythm */
+.section-block {
+    padding-block: clamp(80px, 12vh, 160px);
+}
+
+/* Text constraints */
+.prose-block {
+    max-width: 68ch;
+    font-size: var(--text-body);
+    line-height: 1.75;
+    color: var(--color-text-secondary);
+}
+
+.prose-block strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+}
+
+/* Glass surface (used by tooltips, cards) */
+.glass {
+    background: rgba(10, 15, 30, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }

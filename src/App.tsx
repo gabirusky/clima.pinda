@@ -1,8 +1,10 @@
 import { useClimateData } from './hooks/useClimateData.ts';
+import { useScrollProgress } from './hooks/useScrollProgress.ts';
 import LoadingSpinner from './components/common/LoadingSpinner.tsx';
 import ErrorBoundary from './components/common/ErrorBoundary.tsx';
 
 /**
+<<<<<<< HEAD
  * App root component.
  *
  * Fetches climate data on mount and passes it to section components.
@@ -10,12 +12,27 @@ import ErrorBoundary from './components/common/ErrorBoundary.tsx';
  *
  * Phase 4: Shows a placeholder while sections are built in Phase 5+.
  * Phase 9: Replace the placeholder with the full section layout.
+=======
+ * App — root component for "A City's Memory of Heat"
+ *
+ * Responsibilities:
+ * 1. Fetch all climate data via useClimateData
+ * 2. Drive the ambient scroll-heat background via useScrollProgress
+ * 3. Render the full scrollytelling narrative (phases 5–8)
+ *
+ * Storytelling sections will be added in Phase 5.
+>>>>>>> 004c615 (feat: new plan and frontend foundation)
  */
 export default function App() {
-    const { summary, loading, error } = useClimateData();
+    // Drives --scroll-heat CSS custom property on document.documentElement.
+    // This powers the ambient background gradient (cool blue → burning red).
+    useScrollProgress();
+
+    const { dailyData, metrics, summary, loading, error } = useClimateData();
 
     if (loading) return <LoadingSpinner />;
 
+<<<<<<< HEAD
     if (error) {
         return (
             <div
@@ -50,12 +67,96 @@ export default function App() {
                             <p>
                                 Dia mais quente:{' '}
                                 <strong className="text-white/70">
+=======
+    if (error) return (
+        <div
+            role="alert"
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh',
+                gap: '1rem',
+                padding: '2rem',
+                background: '#0a0f1e',
+                fontFamily: "'DM Sans', sans-serif",
+                color: '#a09080',
+                textAlign: 'center',
+            }}
+        >
+            <p style={{ fontSize: '2rem' }}>⚠️</p>
+            <p>Falha ao carregar dados climáticos: <strong style={{ color: '#ef8a62' }}>{error.message}</strong></p>
+        </div>
+    );
+
+    return (
+        <ErrorBoundary>
+            <div style={{ minHeight: '100vh', color: 'var(--color-text-primary)' }}>
+
+                {/* ── PLACEHOLDER header ── */}
+                <header
+                    style={{
+                        padding: '2rem',
+                        textAlign: 'center',
+                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    }}
+                >
+                    <h1
+                        style={{
+                            fontFamily: "'Syne', sans-serif",
+                            fontWeight: 800,
+                            fontSize: 'clamp(1.5rem, 4vw, 2.5rem)',
+                            letterSpacing: '-0.03em',
+                            color: 'var(--color-text-primary)',
+                        }}
+                    >
+                        A Memória de Calor de uma Cidade
+                    </h1>
+                    <p
+                        style={{
+                            marginTop: '0.5rem',
+                            fontFamily: "'DM Sans', sans-serif",
+                            fontSize: '0.875rem',
+                            color: 'var(--color-text-secondary)',
+                            letterSpacing: '0.06em',
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        Pindamonhangaba, SP · 1940–2025 · ERA5 Reanalysis
+                    </p>
+                </header>
+
+                {/* ── Data smoke test ── */}
+                <main style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+                    <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem' }}>
+                        Dados carregados com sucesso. Visualizações em desenvolvimento — Fase 5.
+                    </p>
+
+                    {summary && (
+                        <div
+                            style={{
+                                marginTop: '2rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.5rem',
+                                alignItems: 'center',
+                                fontFamily: "'DM Sans', sans-serif",
+                                fontSize: '0.875rem',
+                                color: 'var(--color-text-secondary)',
+                            }}
+                        >
+                            <p>
+                                Dia mais quente:{' '}
+                                <strong style={{ color: 'var(--color-stripe-warm)' }}>
+>>>>>>> 004c615 (feat: new plan and frontend foundation)
                                     {summary.hottest_day?.date}
                                 </strong>{' '}
                                 — {summary.hottest_day?.temp_max}°C
                             </p>
                             <p>
                                 Tendência SU30:{' '}
+<<<<<<< HEAD
                                 <strong className="text-amber-400">
                                     +{summary.su30_trend_slope_per_decade} dias/década
                                 </strong>
@@ -65,11 +166,26 @@ export default function App() {
                                 <strong className="text-red-400">
                                     {summary.longest_warm_spell?.days} dias em{' '}
                                     {summary.longest_warm_spell?.year}
+=======
+                                <strong style={{ color: 'var(--color-stripe-warm)' }}>
+                                    +{summary.su30_trend_slope_per_decade?.toFixed(1)} dias/década
+                                </strong>
+                            </p>
+                            <p>
+                                Dados carregados:{' '}
+                                <strong style={{ color: 'var(--color-text-primary)' }}>
+                                    {dailyData?.length?.toLocaleString('pt-BR')} registros diários
+                                </strong>
+                                {' · '}
+                                <strong style={{ color: 'var(--color-text-primary)' }}>
+                                    {metrics ? Object.keys(metrics).length : 0} anos de métricas
+>>>>>>> 004c615 (feat: new plan and frontend foundation)
                                 </strong>
                             </p>
                         </div>
                     )}
                 </main>
+
             </div>
         </ErrorBoundary>
     );

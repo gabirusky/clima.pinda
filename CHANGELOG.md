@@ -14,9 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Python data pipeline structure: `data/scripts/`, `data/notebooks/`, `data/raw/`, `data/processed/`
 - Python dependencies: `data/requirements.txt`, `data/environment.yml`
 - Planning documents: `PLAN.md`, `TASKS.md`, `CONTEXT.md`
-- **Task 3.3** — `data/scripts/generate_web_data.py`: web data generator producing three JSON files for the React frontend
-  - `public/data/climate_data.json` — 31,412 daily records; auto-gzip compressed from 4,309 KB → 425 KB (`.json.gz`)
+- **Task 3.3** — `data/scripts/generate_web_data.py`: web data generator producing three JSON files:
+  - `public/data/climate_data.json` — 31,412 daily records; auto-gzip from 4,309 KB → 425 KB
   - `public/data/metrics.json` — 86 annual ETCCDI metric entries keyed by year
+<<<<<<< HEAD
   - `public/data/summary.json` — headline stats: hottest day (1961-09-28, 38.2°C), coldest day (1979-06-01, 1.3°C), longest warm spell (82 days · 2018 · WSDI), SU30 trend (+7.09 days/decade, p < 0.0001), decade comparison table, temperature anomaly series
   - Fixed `ROOT` path resolution (`parent × 3`) so the script correctly locates processed CSVs from `data/scripts/`
 - **Phase 4 — Frontend Foundation** (all tasks complete):
@@ -43,6 +44,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Phase 3 now complete**: all three data-processing scripts (3.1 clean, 3.2 metrics, 3.3 web data) are done; `public/data/` is ready for frontend consumption
 - **Phase 4 now complete**: full TypeScript frontend foundation is in place; dev server smoke-test confirms data loads and renders correctly
+=======
+  - `public/data/summary.json` — hottest day (1961-09-28, 38.2°C), coldest day (1979-06-01, 1.3°C), longest warm spell (82 days · 2018 · WSDI), SU30 trend (+7.09 days/decade, p < 0.0001), decade comparison, anomaly series
+  - Fixed `ROOT` path resolution so script correctly locates processed CSVs from `data/scripts/`
+
+### Changed
+- **Design concept adopted**: *"A City's Memory of Heat"* — scrollytelling data experience treating time as geological strata. Ambient background gradient shifts with scroll position (cool blues → burning reds). Typography: Syne (display) + DM Sans (body) + JetBrains Mono (calculator). Key stats at 120–160px.
+- **Phase 3 now complete**: all three data-processing scripts (clean · metrics · web data) are done; `public/data/` is ready for frontend consumption
+- `README.md`, `PLAN.md`, `TASKS.md`, `CONTEXT.md`, `SKILL.md` updated to reflect the new design direction
+
+### Phase 4 — Frontend Foundation ✅ Complete
+
+**Entry point & HTML**
+- `index.html` — title updated to *"A Memória de Calor de uma Cidade"*; OG/Twitter tags, Google Fonts (Syne + DM Sans + JetBrains Mono), Schema.org JSON-LD, CSP meta
+- `src/App.tsx` — wired `useScrollProgress` (scroll-driven ambient background); smoke-test layout with design language typography
+
+**CSS Design System (`src/index.css`)**
+- Full `@theme {}` with Ed Hawkins 8-stop stripe palette (`--color-stripe-deep-cold` → `--color-stripe-extreme`), text tokens (`--color-text-primary` #f0ece3, `--color-text-secondary`, `--color-text-accent`), surface tokens, complete type scale (`--text-display-xl` 80–160px clamp → `--text-caption`)
+- New keyframes: `drawLine` (stroke-dashoffset for timeline charts) and `heatShimmer` (count-up glow for StatCallout)
+- Scroll-driven body background: `radial-gradient` with `color-mix(in srgb, ...)` consuming `--scroll-heat` — shifts from cool blue (#2166ac) to burning red (#67001f)
+- Scrollytelling CSS utilities: `.sticky-viz`, `.scroll-step` (min-height 100vh), `.section-block`, `.prose-block`, `.glass` (backdrop-blur)
+- `prefers-reduced-motion`: all animation durations → 0.01ms
+
+**TypeScript Types (`src/types/climate.ts`)** — complete rewrite
+- `AnnualMetrics` aligned to actual JSON: WSDI/CDD/CWD/TX90p/TN90p replace old HWDI fields
+- `ClimateSummary` aligned: `longest_warm_spell` (WSDI record), `decade_comparison` dict with correct columns
+
+**Constants (`src/constants/thresholds.ts`)** — rewritten
+- ETCCDI-named exports: `SU30_THRESHOLD`, `WSDI_MIN_DURATION=6`, `WSDI_BASELINE_START/END` (1961–1990), `STRIPES_BASELINE_START/END` (1940–1980, Ed Hawkins convention)
+
+**Utilities (all new)**
+- `src/utils/colors.ts` — Ed Hawkins 10-stop RGB interpolation, `tempToHeatmapColor` (8-stop scale 10–40°C), `computeBaselineMean`, `decadeToColor`
+- `src/utils/formatters.ts` — pt-BR locale formatters: dates, temperatures, anomalies, BRL currency, % and slope
+- `src/utils/calculations.ts` — OLS regression, moving average, percentile (linear interpolation), **Gaussian KDE** (Silverman bandwidth, for RidgelinePlot), `clamp`, `lerp`
+- `src/utils/dataProcessing.ts` — `groupByYear/Decade`, `filterByYear/Range`, `metricsToArray`, `decadalAverage`, `findRecordYear`, `dayOfWeek`
+
+**New hook**
+- `src/hooks/useScrollProgress.ts` — writes `--scroll-heat` to `document.documentElement` via rAF; no React re-renders; distinct from `useScrollPosition`
+
+**Common components (partially Phase 5)**
+- `LoadingSpinner.tsx` — upgraded to Framer Motion heat-pulse (three concentric warm rings)
+- `SectionTitle.tsx` — Syne 800 at `--text-display-md`; animated underline `scaleX` on viewport entry
+- `StatCallout.tsx` — massive number at `--text-display-xl` (80–160px); rAF count-up (1200ms cubic ease-out); warm glow `text-shadow`
+
+**Verification**: `npx tsc --noEmit` → 0 errors
+
+>>>>>>> 004c615 (feat: new plan and frontend foundation)
 
 ---
 
