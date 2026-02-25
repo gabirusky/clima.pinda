@@ -36,7 +36,8 @@
 
     /* --- Text --- */
     --color-text-primary: #f0ece3;
-    --color-text-secondary: #a09080;
+    --color-text-secondary: #c4b8a8;
+    /* Lightened for better readability */
     --color-text-accent: #ef8a62;
 
     /* --- UI Colors --- */
@@ -44,13 +45,11 @@
     --color-primary-light: #4393c3;
     --color-danger: #b2182b;
 
-    /* --- Fonts — "A City's Memory of Heat" typography --- */
-    --font-display: 'Syne', sans-serif;
-    /* Geometric, unsettling at 160px */
-    --font-body: 'DM Sans', sans-serif;
-    /* Warm, readable */
+    /* --- Fonts — Raleway throughout --- */
+    --font-display: 'Raleway', sans-serif;
+    --font-body: 'Raleway', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
-    /* Receipt-style calculator */
+    /* Calculator / data labels */
 
     /* --- Type Scale (Fluid CSS clamp) --- */
     --text-display-xl: clamp(80px, 12vw, 160px);
@@ -429,9 +428,8 @@ input[type='range']:focus-visible {
         @apply border-border outline-ring/50;
     }
 
-    body {
-        @apply bg-background text-foreground;
-    }
+    /* NOTE: body background/color is set by the project dark theme above.
+       Do NOT apply bg-background here — it maps to :root white (#fff) from shadcn. */
 }
 
 /* === Reduced Motion Safety Net ===
@@ -483,13 +481,19 @@ input[type='range']:focus-visible {
 .prose-block {
     max-width: 68ch;
     font-size: var(--text-body);
-    line-height: 1.75;
-    color: var(--color-text-secondary);
+    line-height: 1.8;
+    color: var(--color-text-primary);
+    /* Primary — fully readable on dark bg */
 }
 
-.prose-block strong {
-    color: var(--color-text-primary);
-    font-weight: 600;
+.prose-block p {
+    margin-bottom: 1em;
+}
+
+.prose-block strong,
+.prose-block b {
+    color: var(--color-text-accent);
+    font-weight: 700;
 }
 
 /* Glass surface (used by tooltips, cards) */
