@@ -82,7 +82,6 @@ export default function App() {
                 style={{
                     minHeight: '100vh',
                     color: 'var(--color-text-primary)',
-                    overflowX: 'hidden',
                 }}
             >
                 {/* ── Skip link for keyboard navigation (Phase 10)

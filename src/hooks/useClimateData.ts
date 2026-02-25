@@ -58,7 +58,11 @@ export function useClimateData(): ClimateDataState {
                 // metrics.json uses string keys — convert to number keys
                 const metrics: Record<number, AnnualMetrics> = {};
                 for (const [yearStr, val] of Object.entries(metricsRaw)) {
-                    metrics[parseInt(yearStr, 10)] = val;
+                    const yearNum = parseInt(yearStr, 10);
+                    metrics[yearNum] = {
+                        ...val,
+                        year: yearNum,
+                    };
                 }
 
                 if (!cancelled) {
