@@ -113,7 +113,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 id="future-title"
                 kicker="ANOMALIAS E PROJEÇÕES"
                 accentColor="#67001f"
-                sub="A partir de 2026, comparamos a tendência linear das anomalias climáticas com a extrapolação ancorada no período da OMM (1991-2020)."
+                sub="A partir de 2026, comparamos a tendência linear com a extrapolação ancorada no período da OMM (1991-2020)."
             >
                 O Que Vem Depois?
             </SectionTitle>
@@ -122,8 +122,8 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                    gap: '3rem',
-                    marginBottom: '3rem',
+                    gap: '1rem',
+                    marginBottom: '1rem',
                 }}
             >
                 <div style={{ gridColumn: '1 / -1' }}>

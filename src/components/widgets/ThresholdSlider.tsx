@@ -35,15 +35,24 @@ export default function ThresholdSlider({ dailyData, metrics: _metrics }: Thresh
         [years, yearGroups, threshold]
     );
 
-    // Simple trend: compare first decade avg vs last decade avg
-    const firstDecadeAvg = useMemo(() => {
-        const first = countsByYear.filter(d => d.year < 1950);
-        return first.length ? first.reduce((s, d) => s + d.count, 0) / first.length : 0;
-    }, [countsByYear]);
-
-    const lastDecadeAvg = useMemo(() => {
-        const last = countsByYear.filter(d => d.year >= 2015);
-        return last.length ? last.reduce((s, d) => s + d.count, 0) / last.length : 0;
+    const decadeStats = useMemo(() => {
+        const decades = [
+            { start: 1940, label: '1940s', color: '#4393c3' },
+            { start: 1980, label: '1980s', color: '#72bae6ff' },
+            { start: 1990, label: '1990s', color: '#83c7f1ff' },
+            { start: 2000, label: '2000s', color: '#e2283eff' },
+            { start: 2010, label: '2010s', color: '#b2182b' },
+            { start: 2020, label: '2020s', color: '#8c0013ff' },
+        ];
+        return decades.map(dec => {
+            const decYears = countsByYear.filter(d => d.year >= dec.start && d.year < dec.start + 10);
+            const avg = decYears.length ? decYears.reduce((s, d) => s + d.count, 0) / decYears.length : 0;
+            return {
+                decade: dec.label,
+                su30: Math.round(avg * 10) / 10,
+                color: dec.color,
+            };
+        });
     }, [countsByYear]);
 
     return (
@@ -114,17 +123,30 @@ export default function ThresholdSlider({ dailyData, metrics: _metrics }: Thresh
                 }}>
                     {countForLatest} dias
                 </p>
+            </div>
 
-                <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.35)' }}>
-                        Anos 1940–1949: média{' '}
-                        <strong style={{ fontFamily: "'JetBrains Mono', monospace", color: '#4393c3' }}>{firstDecadeAvg.toFixed(0)} dias</strong>
-                    </p>
-                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.35)', marginTop: '0.25rem' }}>
-                        Anos 2015–2025: média{' '}
-                        <strong style={{ fontFamily: "'JetBrains Mono', monospace", color: '#b2182b' }}>{lastDecadeAvg.toFixed(0)} dias</strong>
-                    </p>
-                </div>
+            {/* Decade cards */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                gap: '1rem',
+                marginTop: '1.5rem',
+            }}>
+                {decadeStats.map(d => (
+                    <div key={d.decade} style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.07)',
+                        borderRadius: '8px',
+                        padding: '1rem',
+                    }}>
+                        <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.75rem', color: d.color, lineHeight: 1 }}>
+                            {d.su30}
+                        </p>
+                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.25rem' }}>
+                            dias/ano · {d.decade}
+                        </p>
+                    </div>
+                ))}
             </div>
         </div>
     );

@@ -13,12 +13,7 @@ interface SummerSectionProps {
     dailyData: DailyRecord[];
 }
 
-const DECADE_STATS = [
-    { decade: '1940s', su30: 23.2, era: 'preEra' },
-    { decade: '1980s', su30: 32.7, era: 'midEra' },
-    { decade: '2010s', su30: 75.4, era: 'recent' },
-    { decade: '2020s', su30: 108.2, era: 'recent' },
-];
+
 
 /**
  * SummerSection — "The Summer That Never Ends"
@@ -110,38 +105,13 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
                     letterSpacing: '0.04em',
                     textTransform: 'uppercase',
                 }}>
-                    Experimente — ajuste o limiar:
+                    Experimente ajustar o limiar:
                 </p>
                 <Suspense fallback={<div />}>
                     <ThresholdSlider dailyData={dailyData} metrics={metrics} />
                 </Suspense>
             </div>
 
-            {/* Decade cards */}
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-                gap: '1rem',
-                maxWidth: '700px',
-                margin: '3rem auto 0',
-                padding: '0 1.5rem',
-            }}>
-                {DECADE_STATS.map(d => (
-                    <div key={d.decade} style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.07)',
-                        borderRadius: '8px',
-                        padding: '1rem',
-                    }}>
-                        <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.75rem', color: d.era === 'recent' ? '#b2182b' : '#4393c3', lineHeight: 1 }}>
-                            {d.su30}
-                        </p>
-                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.25rem' }}>
-                            dias/ano · {d.decade}
-                        </p>
-                    </div>
-                ))}
-            </div>
         </div>
     );
 }
