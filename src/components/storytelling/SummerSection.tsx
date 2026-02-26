@@ -42,7 +42,7 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
         <div key="s2">
             <p>
                 Nas décadas seguintes, os números começaram a subir.
-                Lentamente no início — depois, sem frear.
+                Após a decada de 2010, percebemos uma aceleração acentuada.
             </p>
             <p style={{ marginTop: '1rem' }}>
                 A cada década, o verão ficava alguns dias mais longo.
@@ -50,7 +50,7 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
         </div>,
         <div key="s3">
             <p>
-                Nos anos 2020:
+                Nos anos 2020
             </p>
             <StatCallout
                 value={108}

@@ -66,10 +66,13 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
             </p>
         </div>,
         <div key="step-3">
+            <SectionTitle id="em-2025" accentColor="#b2182b" hideUnderline className="!mb-2">
+                Em 2025
+            </SectionTitle>
             <StatCallout
                 value={Math.abs(latestAnomaly)}
                 unit="°C"
-                label={`acima da média histórica (1940–1980) — apenas no último ano`}
+                label={`acima da média histórica (1940–1980)`}
                 showSign={latestAnomaly >= 0}
                 decimals={1}
                 accentColor="#b2182b"

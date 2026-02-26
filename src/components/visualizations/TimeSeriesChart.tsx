@@ -44,10 +44,17 @@ export default function TimeSeriesChart({ metrics, defaultMetric = 'su30' }: Tim
         const regression = linearRegression(xs, ys);
         const trendYs = predictRegression(xs, regression);
 
+        const ma5Ys = ys.map((_, i) => {
+            if (i < 4) return null; // Not enough data for a 5-year average
+            const sum = ys.slice(i - 4, i + 1).reduce((a, b) => a + b, 0);
+            return sum / 5;
+        });
+
         return arr.map((m, i) => ({
             year: m.year,
-            value: m[activeMetric] as number,
+            value: Math.round((m[activeMetric] as number) * 10) / 10,
             trend: Math.round(trendYs[i] * 10) / 10,
+            ma5: ma5Ys[i] !== null ? Math.round(ma5Ys[i]! * 10) / 10 : null,
         }));
     }, [metrics, activeMetric]);
 
@@ -77,6 +84,7 @@ export default function TimeSeriesChart({ metrics, defaultMetric = 'su30' }: Tim
         String(d.year),
         String(d.value),
         String(d.trend),
+        d.ma5 !== null ? String(d.ma5) : '-',
     ]);
 
     return (
@@ -128,10 +136,11 @@ export default function TimeSeriesChart({ metrics, defaultMetric = 'su30' }: Tim
                     <RechartsTooltip
                         contentStyle={tooltipStyle}
                         labelStyle={{ color: 'rgba(240,236,227,0.7)', marginBottom: 4 }}
-                        formatter={(v: number, name: string) => [
-                            `${v} ${config.unit}`,
-                            name === 'value' ? config.label : 'Tendência',
-                        ]}
+                        formatter={(v: number, name: string) => {
+                            if (name === 'value') return [`${v} ${config.unit}`, config.label];
+                            if (name === 'ma5') return [`${v} ${config.unit}`, 'Média Móvel (5a)'];
+                            return [`${v} ${config.unit}`, 'Tendência'];
+                        }}
                     />
                     {/* Decade reference lines */}
                     {DECADE_BOUNDARIES.map(year => (
@@ -163,6 +172,17 @@ export default function TimeSeriesChart({ metrics, defaultMetric = 'su30' }: Tim
                         dot={false}
                         isAnimationActive={false}
                     />
+                    {/* 5-Year MA line */}
+                    <Line
+                        type="monotone"
+                        dataKey="ma5"
+                        stroke="#f0ece3"
+                        strokeWidth={2}
+                        strokeOpacity={0.8}
+                        dot={false}
+                        strokeDasharray="3 3"
+                        isAnimationActive={true}
+                    />
                     <Brush
                         dataKey="year"
                         height={20}
@@ -186,7 +206,7 @@ export default function TimeSeriesChart({ metrics, defaultMetric = 'su30' }: Tim
 
             <DataTable
                 caption={`Série temporal — ${config.label}`}
-                headers={['Ano', config.label, 'Tendência']}
+                headers={['Ano', config.label, 'Tendência', 'MM (5a)']}
                 rows={tableRows}
             />
         </div>

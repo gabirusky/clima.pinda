@@ -16,6 +16,8 @@ interface SectionTitleProps {
     description?: ReactNode;
     /** Optional additional class names for the wrapper */
     className?: string;
+    /** Hide the animated underline */
+    hideUnderline?: boolean;
 }
 
 /**
@@ -33,6 +35,7 @@ export default function SectionTitle({
     kicker,
     description,
     className = '',
+    hideUnderline = false,
 }: SectionTitleProps) {
     const color = accentColor ?? '#d6604d'; // --color-stripe-hot
 
@@ -68,20 +71,22 @@ export default function SectionTitle({
             </motion.h2>
 
             {/* Animated underline — draws from left */}
-            <motion.div
-                initial={{ scaleX: 0, originX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                style={{
-                    height: 3,
-                    width: 64,
-                    background: color,
-                    borderRadius: 2,
-                    transformOrigin: 'left center',
-                }}
-                aria-hidden="true"
-            />
+            {!hideUnderline && (
+                <motion.div
+                    initial={{ scaleX: 0, originX: 0 }}
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    style={{
+                        height: 3,
+                        width: 64,
+                        background: color,
+                        borderRadius: 2,
+                        transformOrigin: 'left center',
+                    }}
+                    aria-hidden="true"
+                />
+            )}
 
             {sub && (
                 <motion.p
