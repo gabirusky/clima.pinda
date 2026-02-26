@@ -24,7 +24,7 @@ export default function Footer() {
                     color: 'var(--color-text-accent, #ef8a62)',
                     marginBottom: '0.5rem',
                 }}>
-                    GLOBAL HEATMAP: Pindamonhangaba
+                    LOCAL HEATMAP: Pindamonhangaba
                 </p>
                 <p style={{
                     fontFamily: "'DM Sans', sans-serif",

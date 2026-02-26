@@ -503,3 +503,308 @@ input[type='range']:focus-visible {
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.06);
 }
+
+/* ============================================================
+   GLOBE HERO — spinning 3-D globe section
+   ============================================================ */
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes globeSlideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes globeFadeUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes globeTapeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ── Section layout ────────────────────────────────────────── */
+.globe-hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    overflow: hidden;
+    padding: 0 8vw;
+    gap: 2rem;
+    background: #0a0a0f;
+}
+
+/* Grain texture overlay */
+.globe-hero__grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Ambient radial glow behind globe */
+.globe-hero__glow {
+    position: absolute;
+    right: -5vw;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60vw;
+    height: 60vw;
+    max-width: 900px;
+    max-height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(244, 115, 42, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Left: text ────────────────────────────────────────────── */
+.globe-hero__text {
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.globe-hero__text--visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.globe-hero__eyebrow {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: clamp(0.62rem, 1vw, 0.8rem);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #ff8c42;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.globe-hero__eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: #ff8c42;
+    flex-shrink: 0;
+}
+
+.globe-hero__title {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 4.5vw, 5rem);
+    line-height: 1.05;
+    color: #f0e6d8;
+    margin-bottom: 1.4rem;
+    letter-spacing: -0.03em;
+}
+
+.globe-hero__title em {
+    font-style: normal;
+    color: #ff8c42;
+}
+
+.globe-hero__divider {
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, #ff8c42, transparent);
+    margin-bottom: 2.5rem;
+}
+
+.globe-hero__sub {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+    color: rgba(240, 230, 216, 0.55);
+    max-width: 38ch;
+    line-height: 1.65;
+    margin-bottom: 2.2rem;
+}
+
+.globe-hero__meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.globe-hero__meta-item {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: rgba(240, 230, 216, 0.45);
+    letter-spacing: 0.06em;
+}
+
+.globe-hero__meta-item strong {
+    display: block;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #f0e6d8;
+    margin-bottom: 0.15rem;
+}
+
+.globe-hero__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #ff8c42;
+    border: 1px solid rgba(244, 115, 42, 0.4);
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease;
+    text-decoration: none;
+}
+
+.globe-hero__cta:hover,
+.globe-hero__cta:focus-visible {
+    background: rgba(244, 115, 42, 0.08);
+    border-color: #ff8c42;
+    outline-offset: 4px;
+}
+
+/* ── Right: globe ──────────────────────────────────────────── */
+.globe-hero__globe-wrap {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.globe-hero__svg {
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: drop-shadow(0 0 60px rgba(244, 115, 42, 0.15));
+}
+
+/* Coordinates badge */
+.globe-hero__coords-badge {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: #ff8c42;
+    background: rgba(10, 10, 15, 0.75);
+    border: 1px solid rgba(244, 115, 42, 0.25);
+    padding: 0.45rem 1rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.globe-hero__coords-badge--visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ── Bottom data tape ──────────────────────────────────────── */
+.globe-hero__tape {
+    position: absolute;
+    bottom: 2.2rem;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    grid-column: 1 / -1;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: rgba(244, 115, 42, 0.4);
+    text-transform: uppercase;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.globe-hero__tape--visible {
+    opacity: 1;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 860px) {
+    .globe-hero {
+        grid-template-columns: 1fr;
+        padding: 5rem 6vw 4rem;
+        text-align: center;
+    }
+
+    .globe-hero__text {
+        order: 2;
+    }
+
+    .globe-hero__globe-wrap {
+        order: 1;
+    }
+
+    .globe-hero__title {
+        font-size: clamp(2rem, 8vw, 3rem);
+    }
+
+    .globe-hero__sub {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .globe-hero__meta-grid {
+        max-width: 360px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .globe-hero__eyebrow {
+        justify-content: center;
+    }
+
+    .globe-hero__cta {
+        margin: 0 auto;
+    }
+
+    .globe-hero__divider {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .globe-hero__svg {
+        max-width: 340px;
+    }
+
+    .globe-hero__glow {
+        right: 50%;
+        transform: translate(50%, -50%);
+        width: 80vw;
+        height: 80vw;
+    }
+}
