@@ -14,6 +14,7 @@ const SummerSection = lazy(() => import('./components/storytelling/SummerSection
 const TropicalNightsSection = lazy(() => import('./components/storytelling/TropicalNightsSection.tsx'));
 const HeatWaveSection = lazy(() => import('./components/storytelling/HeatWaveSection.tsx'));
 const HottestDaySection = lazy(() => import('./components/storytelling/HottestDaySection.tsx'));
+const RainSection = lazy(() => import('./components/storytelling/RainSection.tsx'));
 const CostSection = lazy(() => import('./components/storytelling/CostSection.tsx'));
 const FutureSection = lazy(() => import('./components/storytelling/FutureSection.tsx'));
 
@@ -38,7 +39,7 @@ export default function App() {
         window.scrollTo({ top: 0, behavior: 'instant' });
     }, []);
 
-    const { dailyData, metrics, summary, loading, error } = useClimateData();
+    const { dailyData, metrics, summary, rainMetrics, loading, error } = useClimateData();
 
     if (loading) return <LoadingSpinner />;
 
@@ -78,9 +79,10 @@ export default function App() {
     // At this point loading=false and error=null, so safe to coerce.
     const safeData = dailyData ?? [];
     const safeMetrics = metrics ?? {};
+    const safeRainMetrics = rainMetrics ?? {};
 
     // If any required data is missing, still render gracefully
-    const hasData = safeData.length > 0 && Object.keys(safeMetrics).length > 0;
+    const hasData = safeData.length > 0 && Object.keys(safeMetrics).length > 0 && Object.keys(safeRainMetrics).length > 0;
 
     return (
         <ErrorBoundary>
@@ -150,6 +152,11 @@ export default function App() {
                             {/* ── HottestDaySection: record day & personal timeline */}
                             <Suspense fallback={<SectionLoader />}>
                                 <HottestDaySection dailyData={safeData} summary={summary!} metrics={safeMetrics} />
+                            </Suspense>
+
+                            {/* ── RainSection: Chuvas e Extremos */}
+                            <Suspense fallback={<SectionLoader />}>
+                                <RainSection rainMetrics={safeRainMetrics} summary={summary!} />
                             </Suspense>
 
                             {/* ── CostSection: AC Calculator ────────────────── */}

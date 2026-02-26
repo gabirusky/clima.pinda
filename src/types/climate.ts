@@ -105,3 +105,22 @@ export interface ClimateSummary {
     };
     temp_anomaly_by_year: Record<number, number>;  // year → anomaly (°C vs 1940–1980 baseline)
 }
+
+/** Rain-specific metrics — from public/data/rain_metrics.json */
+export interface RainMetrics {
+    annual: {
+        precip_total: number | null;
+        precip_days: number | null;
+        r10mm: number | null;
+        r20mm: number | null;
+        sdii: number | null;
+        rx1day: number | null;
+        cdd: number | null;
+        cwd: number | null;
+    };
+    monthly: Record<string, {
+        precip_total: number | null;
+        r10mm: number | null;
+        wet_days: number | null;
+    }>;
+}

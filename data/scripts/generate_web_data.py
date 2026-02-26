@@ -146,6 +146,48 @@ def generate_metrics(annual_csv: Path, out_dir: Path):
 
 
 # ---------------------------------------------------------------------------
+# 2.5. rain_metrics.json  — Annual and Monthly rain metrics
+# ---------------------------------------------------------------------------
+def generate_rain_metrics(annual_csv: Path, monthly_csv: Path, out_dir: Path):
+    log.info("Generating rain_metrics.json …")
+    annual = pd.read_csv(annual_csv)
+    monthly = pd.read_csv(monthly_csv)
+
+    rain_metrics = {}
+    
+    # Process annual
+    for _, row in annual.iterrows():
+        year = int(row["year"])
+        rain_metrics[year] = {
+            "annual": {
+                "precip_total": _round_floats(row.get("precip_total")),
+                "precip_days": int(row.get("precip_days")) if pd.notna(row.get("precip_days")) else None,
+                "r10mm": int(row.get("r10mm")) if pd.notna(row.get("r10mm")) else None,
+                "r20mm": int(row.get("r20mm")) if pd.notna(row.get("r20mm")) else None,
+                "sdii": _round_floats(row.get("sdii")),
+                "rx1day": _round_floats(row.get("rx1day")),
+                "cdd": int(row.get("cdd")) if pd.notna(row.get("cdd")) else None,
+                "cwd": int(row.get("cwd")) if pd.notna(row.get("cwd")) else None,
+            },
+            "monthly": {}
+        }
+    
+    # Process monthly
+    for _, row in monthly.iterrows():
+        year = int(row["year"])
+        month = int(row["month"])
+        if year in rain_metrics:
+            rain_metrics[year]["monthly"][str(month)] = {
+                "precip_total": _round_floats(row.get("precip_total")),
+                "r10mm": int(row.get("r10mm")) if pd.notna(row.get("r10mm")) else None,
+                "wet_days": int(row.get("wet_days")) if pd.notna(row.get("wet_days")) else None,
+            }
+
+    _write_json(out_dir / "rain_metrics.json", rain_metrics)
+    log.info("  %d years of rain metrics written.", len(rain_metrics))
+
+
+# ---------------------------------------------------------------------------
 # 3. summary.json  — Headline stats
 # ---------------------------------------------------------------------------
 def generate_summary(clean_csv: Path, annual_csv: Path, out_dir: Path):
@@ -256,13 +298,18 @@ def generate_summary(clean_csv: Path, annual_csv: Path, out_dir: Path):
 if __name__ == "__main__":
     clean_csv = PROCESSED_DIR / "pindamonhangaba_clean.csv"
     annual_csv = PROCESSED_DIR / "annual_metrics.csv"
+    monthly_csv = PROCESSED_DIR / "monthly_rain_metrics.csv"
 
-    for path in (clean_csv, annual_csv):
+    for path in (clean_csv, annual_csv, monthly_csv):
         if not path.exists():
-            raise FileNotFoundError(f"Required input not found: {path}")
+            log.warning(f"Required input not found: {path}. Please run calculate_metrics.py first.")
 
-    generate_climate_data(clean_csv, PUBLIC_DATA_DIR)
-    generate_metrics(annual_csv, PUBLIC_DATA_DIR)
-    generate_summary(clean_csv, annual_csv, PUBLIC_DATA_DIR)
+    if clean_csv.exists() and annual_csv.exists():
+        generate_climate_data(clean_csv, PUBLIC_DATA_DIR)
+        generate_metrics(annual_csv, PUBLIC_DATA_DIR)
+        generate_summary(clean_csv, annual_csv, PUBLIC_DATA_DIR)
+        
+    if annual_csv.exists() and monthly_csv.exists():
+        generate_rain_metrics(annual_csv, monthly_csv, PUBLIC_DATA_DIR)
 
     log.info("✅  All web data files written to %s", PUBLIC_DATA_DIR)

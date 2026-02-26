@@ -29,6 +29,7 @@ PROCESSED_DIR = DATA_DIR / "processed"
 INPUT_CSV = PROCESSED_DIR / "pindamonhangaba_clean.csv"
 OUTPUT_ANNUAL = PROCESSED_DIR / "annual_metrics.csv"
 OUTPUT_DECADAL = PROCESSED_DIR / "decadal_metrics.csv"
+OUTPUT_MONTHLY_RAIN = PROCESSED_DIR / "monthly_rain_metrics.csv"
 
 # ── ETCCDI baseline for percentile indices ─────────────────────────────────────
 BASELINE_START = 1961
@@ -343,6 +344,12 @@ def main() -> None:
         precip_total = round(float(ydf["precipitation"].sum()), 1)
         precip_days  = int((ydf["precipitation"] >= WET_DAY_THRESHOLD).sum())
 
+        # Rain metrics (ETCCDI)
+        r10mm  = int((ydf["precipitation"] >= 10.0).sum())
+        r20mm  = int((ydf["precipitation"] >= 20.0).sum())
+        sdii   = round(precip_total / precip_days, 2) if precip_days > 0 else 0.0
+        rx1day = round(float(ydf["precipitation"].max()), 1) if not ydf["precipitation"].isna().all() else 0.0
+
         # ── Advanced / percentile-based metrics ───────────────────────────────
         wsdi_days = calculate_wsdi(ydf, p90_tmax)
         tx90p     = calculate_tx90p(ydf, p90_tmax)
@@ -380,6 +387,10 @@ def main() -> None:
             "temp_mean_annual": temp_mean_annual,
             "precip_total":    precip_total,
             "precip_days":     precip_days,
+            "r10mm":           r10mm,
+            "r20mm":           r20mm,
+            "sdii":            sdii,
+            "rx1day":          rx1day,
             # Advanced / percentile-based
             "wsdi_days":       wsdi_days,
             "tx90p":           tx90p,
@@ -434,7 +445,7 @@ def main() -> None:
     numeric_cols = [
         "su25", "su30", "tr20", "dtr_mean",
         "temp_max_mean", "temp_min_mean", "temp_mean_annual",
-        "precip_total", "precip_days",
+        "precip_total", "precip_days", "r10mm", "r20mm", "sdii", "rx1day",
         "wsdi_days", "tx90p", "tn90p",
         "cdd", "cwd", "gdd", "p95_days",
         "hot_season_length", "anomaly",
@@ -446,14 +457,25 @@ def main() -> None:
         .reset_index()
     )
 
+    # ── 6.5. Monthly Rain Aggregation ─────────────────────────────────────────
+    log.info("Computing monthly rain aggregations …")
+    monthly_rain = df.groupby(["year", "month"]).agg(
+        precip_total=("precipitation", "sum"),
+        r10mm=("precipitation", lambda x: (x >= 10.0).sum()),
+        wet_days=("precipitation", lambda x: (x >= WET_DAY_THRESHOLD).sum())
+    ).reset_index()
+    monthly_rain["precip_total"] = monthly_rain["precip_total"].round(1)
+
     # ── 7. Save outputs ───────────────────────────────────────────────────────
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
     annual.to_csv(OUTPUT_ANNUAL, index=False)
     decadal.to_csv(OUTPUT_DECADAL, index=False)
+    monthly_rain.to_csv(OUTPUT_MONTHLY_RAIN, index=False)
 
     log.info("Saved → %s  (%d rows)", OUTPUT_ANNUAL, len(annual))
     log.info("Saved → %s  (%d rows)", OUTPUT_DECADAL, len(decadal))
+    log.info("Saved → %s  (%d rows)", OUTPUT_MONTHLY_RAIN, len(monthly_rain))
 
     # ── 8. Summary report ─────────────────────────────────────────────────────
     log.info("")

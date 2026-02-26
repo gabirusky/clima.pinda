@@ -126,6 +126,7 @@ export default function StatCallout({
                         color: 'var(--color-text-primary)',
                         maxWidth: '34ch',
                         lineHeight: 1.6,
+                        marginTop: '0.5rem',
                     }}
                 >
                     {label}
