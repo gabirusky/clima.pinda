@@ -79,8 +79,13 @@ export default function ScrollySection({
         <section
             id={id}
             ref={containerRef}
-            style={{ position: 'relative', width: '100%' }}
-        // IMPORTANT: do NOT set overflow: hidden — breaks Scrollama
+            style={{
+                position: 'relative',
+                width: '100%',
+                // Fluid horizontal margins — breathing room from viewport edges.
+                // IMPORTANT: do NOT use overflow: hidden — breaks Scrollama.
+                paddingInline: 'clamp(24px, 6vw, 120px)',
+            }}
         >
             <div style={{
                 display: 'flex',
@@ -108,7 +113,9 @@ export default function ScrollySection({
                                 display: 'flex',
                                 alignItems: 'center',
                                 paddingBlock: 'clamp(48px, 8vh, 96px)',
-                                paddingInline: 'clamp(24px, 4vw, 48px)',
+                                // Inline padding is now smaller because the outer section
+                                // already provides horizontal breathing room.
+                                paddingInline: 'clamp(16px, 2vw, 32px)',
                             }}
                         >
                             <div

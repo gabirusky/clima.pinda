@@ -81,30 +81,32 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
             <GlobeHero />
 
             {/* ── Scrollytelling section ─────────────────────────────────── */}
-            <ScrollySection
-                id="stripes-scrolly"
-                visualization={
-                    <div style={{ width: '100%', height: '80vh', position: 'relative' }}>
-                        <Suspense fallback={<LoadingSpinner />}>
-                            <ClimateStripes data={metricsArray} height="100%" />
-                        </Suspense>
-                        {highlightRecent && (
-                            <div style={{
-                                position: 'absolute',
-                                right: 0,
-                                top: 0,
-                                bottom: 0,
-                                width: '30%',
-                                background: 'linear-gradient(to right, transparent, rgba(178,24,43,0.15))',
-                                pointerEvents: 'none',
-                                transition: 'opacity 0.5s',
-                            }} />
-                        )}
-                    </div>
-                }
-                steps={steps}
-                onStepEnter={handleStepEnter}
-            />
+            <div style={{ paddingBlockStart: 'clamp(80px, 12vh, 160px)' }}>
+                <ScrollySection
+                    id="stripes-scrolly"
+                    visualization={
+                        <div style={{ width: '100%', height: '60vh', position: 'relative' }}>
+                            <Suspense fallback={<LoadingSpinner />}>
+                                <ClimateStripes data={metricsArray} height="100%" />
+                            </Suspense>
+                            {highlightRecent && (
+                                <div style={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 0,
+                                    bottom: 0,
+                                    width: '30%',
+                                    background: 'linear-gradient(to right, transparent, rgba(178,24,43,0.15))',
+                                    pointerEvents: 'none',
+                                    transition: 'opacity 0.5s',
+                                }} />
+                            )}
+                        </div>
+                    }
+                    steps={steps}
+                    onStepEnter={handleStepEnter}
+                />
+            </div>
         </div>
     );
 }

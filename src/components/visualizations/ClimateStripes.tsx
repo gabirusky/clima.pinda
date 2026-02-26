@@ -19,6 +19,8 @@ interface TooltipState {
     year: number;
     anomaly: number;
     temp: number;
+    /** Width of the container — used to clamp tooltip so it never overflows */
+    containerW: number;
 }
 
 /**
@@ -33,7 +35,7 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const { width } = useWindowSize();
-    const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, year: 0, anomaly: 0, temp: 0 });
+    const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, year: 0, anomaly: 0, temp: 0, containerW: 0 });
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -45,6 +47,7 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
         const W = svgRef.current.clientWidth || window.innerWidth;
         const H = svgRef.current.clientHeight || 400;
         const stripeWidth = W / data.length;
+        const containerW = containerRef.current?.clientWidth ?? W;
         const sorted = [...data].sort((a, b) => a.year - b.year);
 
         // Decade labels
@@ -59,7 +62,7 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
             .attr('x', (_, i) => i * stripeWidth)
             .attr('y', 0)
             .attr('width', stripeWidth + 0.5) // tiny overlap to prevent gaps
-            .attr('height', H * 0.88)
+            .attr('height', H)
             .attr('fill', d => anomalyToStripeColor(d.anomaly))
             .attr('opacity', 0)
             .style('cursor', 'crosshair')
@@ -72,10 +75,11 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
                 setTooltip({
                     visible: true,
                     x: rect.left - (container?.left ?? 0) + stripeWidth / 2,
-                    y: rect.bottom - (container?.top ?? 0) - H * 0.12,
+                    y: 420,  // fixed 80px from container top — safe anchor for full-height stripes
                     year: d.year,
                     anomaly: d.anomaly,
                     temp: d.temp_mean_annual,
+                    containerW,
                 });
             })
             .on('mouseleave', function () {
@@ -83,9 +87,10 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
                 setTooltip(t => ({ ...t, visible: false }));
             });
 
-        // SVG native title — shows year on hover (accessibility + browser tooltip)
-        stripes.append('title')
-            .text(d => `${d.year} · ${d.anomaly >= 0 ? '+' : ''}${d.anomaly.toFixed(2)}°C · média ${d.temp_mean_annual.toFixed(1)}°C`);
+        // NOTE: We intentionally do NOT append <title> to each stripe rect.
+        // Doing so triggers the native browser tooltip which creates a double-tooltip
+        // bug alongside our custom React tooltip. The aria-label on each rect already
+        // covers screen-reader accessibility without the native floating label.
 
         // Staggered reveal animation — 8ms per stripe
         stripes.each(function (_, i) {
@@ -96,7 +101,25 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
                 .attr('opacity', 1);
         });
 
-        // Decade labels
+        // Dark fade behind decade labels so they read over any stripe colour
+        svg.append('rect')
+            .attr('x', 0)
+            .attr('y', H * 0.88)
+            .attr('width', W)
+            .attr('height', H * 0.12)
+            .attr('fill', 'url(#labelFade)')
+            .attr('pointer-events', 'none');
+
+        // Gradient def for the label fade
+        const defs = svg.append('defs');
+        const grad = defs.append('linearGradient')
+            .attr('id', 'labelFade')
+            .attr('x1', '0').attr('y1', '0')
+            .attr('x2', '0').attr('y2', '1');
+        grad.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(10,10,15,0)').attr('stop-opacity', 0);
+        grad.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(10,10,15,0.82)').attr('stop-opacity', 1);
+
+        // Decade labels — overlaid on top of the fade rect
         svg.selectAll<SVGTextElement, AnnualMetrics>('text.decade-label')
             .data(decades)
             .enter()
@@ -106,9 +129,9 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
                 const idx = sorted.findIndex(s => s.year === d.year);
                 return idx * stripeWidth + stripeWidth / 2;
             })
-            .attr('y', H * 0.93)
+            .attr('y', H * 0.955)
             .attr('text-anchor', 'middle')
-            .attr('fill', 'rgba(240,236,227,0.45)')
+            .attr('fill', 'rgba(240,236,227,0.6)')
             .attr('font-family', "'Raleway', sans-serif")
             .attr('font-size', Math.max(10, Math.min(14, stripeWidth * 6)))
             .attr('pointer-events', 'none')
@@ -145,71 +168,81 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
                 <desc>Visualização das anomalias de temperatura de 1940 a 2025. Azul = abaixo da média 1940–1980; vermelho = acima da média.</desc>
             </svg>
 
-            {/* Gradient fade at top */}
+            {/* Light gradient at top — softens entry edge */}
             <div style={{
                 position: 'absolute', top: 0, left: 0, right: 0, height: '80px',
-                background: 'linear-gradient(to bottom, rgba(10,15,30,0.6), transparent)',
+                background: 'linear-gradient(to bottom, rgba(10,15,30,0.55), transparent)',
                 pointerEvents: 'none',
             }} />
-            {/* Gradient fade at bottom */}
+            {/* Light gradient at bottom — softens exit edge only; label
+                 readability is handled by the SVG fade rect, not this div */}
             <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px',
-                background: 'linear-gradient(to top, rgba(10,15,30,0.8), transparent)',
+                position: 'absolute', bottom: 0, left: 0, right: 0, height: '60px',
+                background: 'linear-gradient(to top, rgba(10,10,15,0.5), transparent)',
                 pointerEvents: 'none',
             }} />
 
-            {/* Tooltip */}
-            {tooltip.visible && (
-                <div
-                    role="tooltip"
-                    style={{
-                        position: 'absolute',
-                        left: tooltip.x,
-                        top: tooltip.y - 90,
-                        transform: 'translateX(-50%)',
-                        background: 'rgba(8,12,24,0.92)',
-                        backdropFilter: 'blur(12px)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '8px',
-                        padding: '0.6rem 1rem',
-                        pointerEvents: 'none',
-                        zIndex: 10,
-                        minWidth: '140px',
-                        textAlign: 'center',
-                    }}
-                >
-                    {/* Year — title */}
-                    <p style={{
-                        fontFamily: "'Raleway', sans-serif",
-                        fontWeight: 800,
-                        fontSize: '1.4rem',
-                        color: '#f0ece3',
-                        lineHeight: 1,
-                        marginBottom: '0.3rem',
-                        letterSpacing: '-0.02em',
-                    }}>
-                        {tooltip.year}
-                    </p>
-                    {/* Anomaly */}
-                    <p style={{
-                        fontFamily: "'Raleway', sans-serif",
-                        fontWeight: 600,
-                        fontSize: '0.9rem',
-                        color: tooltip.anomaly >= 0 ? '#ef8a62' : '#4393c3',
-                        marginBottom: '0.15rem',
-                    }}>
-                        {tooltip.anomaly >= 0 ? '+' : ''}{tooltip.anomaly.toFixed(2)}°C
-                    </p>
-                    {/* Mean temp */}
-                    <p style={{
-                        fontFamily: "'Raleway', sans-serif",
-                        fontSize: '0.75rem',
-                        color: 'rgba(255,255,255,0.45)',
-                    }}>
-                        média {tooltip.temp.toFixed(1)}°C
-                    </p>
-                </div>
-            )}
+            {/* Tooltip — clamped so it never overflows left/right container edges */}
+            {tooltip.visible && (() => {
+                const TOOLTIP_HALF_W = 80; // half of minWidth (160px)
+                const EDGE_MARGIN = 8;
+                const rawLeft = tooltip.x;
+                const clampedLeft = Math.max(
+                    TOOLTIP_HALF_W + EDGE_MARGIN,
+                    Math.min(rawLeft, (tooltip.containerW || window.innerWidth) - TOOLTIP_HALF_W - EDGE_MARGIN)
+                );
+                return (
+                    <div
+                        role="tooltip"
+                        style={{
+                            position: 'absolute',
+                            left: clampedLeft,
+                            top: tooltip.y - 90,
+                            transform: 'translateX(-50%)',
+                            background: 'rgba(8,12,24,0.92)',
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: '8px',
+                            padding: '0.6rem 1rem',
+                            pointerEvents: 'none',
+                            zIndex: 10,
+                            minWidth: '160px',
+                            textAlign: 'center',
+                        }}
+                    >
+                        {/* Year — title */}
+                        <p style={{
+                            fontFamily: "'Raleway', sans-serif",
+                            fontWeight: 800,
+                            fontSize: '1.4rem',
+                            color: '#f0ece3',
+                            lineHeight: 1,
+                            marginBottom: '0.3rem',
+                            letterSpacing: '-0.02em',
+                        }}>
+                            {tooltip.year}
+                        </p>
+                        {/* Anomaly */}
+                        <p style={{
+                            fontFamily: "'Raleway', sans-serif",
+                            fontWeight: 600,
+                            fontSize: '0.9rem',
+                            color: tooltip.anomaly >= 0 ? '#ef8a62' : '#4393c3',
+                            marginBottom: '0.15rem',
+                        }}>
+                            {tooltip.anomaly >= 0 ? '+' : ''}{tooltip.anomaly.toFixed(2)}°C
+                        </p>
+                        {/* Mean temp */}
+                        <p style={{
+                            fontFamily: "'Raleway', sans-serif",
+                            fontSize: '0.75rem',
+                            color: 'rgba(255,255,255,0.45)',
+                        }}>
+                            média {tooltip.temp.toFixed(1)}°C
+                        </p>
+                    </div>
+                );
+            })()}
 
             {ready && (
                 <DataTable
