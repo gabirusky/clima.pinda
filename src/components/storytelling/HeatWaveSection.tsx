@@ -37,7 +37,7 @@ export default function HeatWaveSection({ metrics, summary }: HeatWaveSectionPro
                 accentColor="#b2182b"
                 sub="Os eventos de calor extremo estão se tornando mais frequentes, mais longos e mais intensos."
             >
-                Ondas de Calor: A Nova Normal
+                Ondas de Calor
             </SectionTitle>
 
             <div style={{
@@ -50,7 +50,7 @@ export default function HeatWaveSection({ metrics, summary }: HeatWaveSectionPro
                 {/* Chart */}
                 <div style={{ gridColumn: '1 / -1' }}>
                     <Suspense fallback={<LoadingSpinner />}>
-                        <TimeSeriesChart metrics={metrics} />
+                        <TimeSeriesChart metrics={metrics} defaultMetric="wsdi_days" />
                     </Suspense>
                 </div>
             </div>

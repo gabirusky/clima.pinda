@@ -10,6 +10,7 @@ import DataTable from '../common/DataTable.tsx';
 
 interface TimeSeriesChartProps {
     metrics: Record<number, AnnualMetrics>;
+    defaultMetric?: MetricKey;
 }
 
 type MetricKey = 'su30' | 'tr20' | 'dtr_mean' | 'wsdi_days' | 'cdd' | 'cwd';
@@ -33,8 +34,8 @@ const DECADE_BOUNDARIES = [1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020];
  * Brush for zoom/pan.
  * Decade reference lines.
  */
-export default function TimeSeriesChart({ metrics }: TimeSeriesChartProps) {
-    const [activeMetric, setActiveMetric] = useState<MetricKey>('su30');
+export default function TimeSeriesChart({ metrics, defaultMetric = 'su30' }: TimeSeriesChartProps) {
+    const [activeMetric, setActiveMetric] = useState<MetricKey>(defaultMetric);
 
     const seriesData = useMemo(() => {
         const arr = metricsToArray(metrics);
