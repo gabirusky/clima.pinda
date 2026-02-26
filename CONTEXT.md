@@ -232,6 +232,11 @@ On birth-year submit, the section transitions register:
 - **Week start**: `d3.timeMonday` (Brazilian convention — not `d3.timeWeek`)
 - **Colorblind safety**: Viridis alternative always available
 
+### Projection Methodology (Slope-Anchor)
+When extrapolating data into the future (e.g., in `ProjectionChart` or `FutureSection`), avoid naive full-timeline regressions on Moving Averages.
+- **Slope-Anchor**: Calculate the linear slope (growth rate) of the 5-year moving average *using only the most recent 30 years* to capture recent warming acceleration. Then, *anchor* that line to the very last real historical MA value. This guarantees zero gap visual continuity and avoids diluting the slope with cold mid-century decades.
+- **Metric Exclusion**: We do *not* project `dtr_mean` into the future on the user interface, as it is non-intuitive in a linear prediction context compared to heat extremes like SU30 or TR20.
+
 ---
 
 ## 4. Common Agent Errors

@@ -314,9 +314,10 @@
 ### 7.8 FutureSection (`src/components/storytelling/FutureSection.tsx`) ✅
 > *A question left open.*
 
-- [x] OLS extrapolation: `predictRegression([2040, 2050], reg)` → `StatCallout` for each
-- [x] `TimeSeriesChart` showing historical trend
-- [x] Model-limitation caveat block
+- [x] OLS extrapolation: `predictRegression([2040, 2050], reg)` + Slope-Anchor MM5 projection (slope from recent 30 years -> anchored to last point)
+- [x] Projection Callouts grid (OLS vs MM5) with `StatCallout` for each
+- [x] `ProjectionChart` showing historical + predicted lines (DTR removed, heat thematic colors)
+- [x] Model-limitation caveat block explaining methodological choices
 - [x] Climate action links (IPCC, INMET, INPE, Show Your Stripes)
 - [x] Data download buttons (daily JSON, metrics JSON)
 

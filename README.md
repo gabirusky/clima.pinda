@@ -25,6 +25,12 @@ Uma experiência de dados imersiva que transforma 85 anos de registros climátic
 
 > Todos os índices seguem o padrão ETCCDI. Tendências com p < 0,0001.
 
+### Metodologia de Projeção (Slope-Anchor)
+
+Para visualizar o futuro (2040 e 2050), não utilizamos modelos climáticos físicos, mas sim extrapolações matemáticas rigorosas sobre os dados históricos:
+1. **Modelagem OLS**: Uma regressão linear simples sobre toda a série histórica.
+2. **Média Móvel Extrapolada (Slope-Anchor)**: Para capturar a **aceleração recente** do aquecimento — que seria diluída ao considerar as décadas estáveis do século XX —, calculamos a inclinação (taxa de crescimento) da média móvel apenas sobre os **últimos 30 anos**. Em seguida, "ancoramos" essa projeção no último valor real para garantir uma continuidade visual e matemática perfeita.
+
 ---
 
 ## Como rodar localmente
