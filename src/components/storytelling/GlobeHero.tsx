@@ -343,7 +343,7 @@ export default function GlobeHero() {
                     className={`globe-hero__coords-badge${badgeVisible ? ' globe-hero__coords-badge--visible' : ''}`}
                     aria-live="polite"
                 >
-                    −22.9250°, −45.4620° · 554 m
+                    Localização confirmada · 31.412 dias de dados
                 </div>
             </div>
 
