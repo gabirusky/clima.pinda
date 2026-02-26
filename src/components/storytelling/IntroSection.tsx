@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, useMemo, lazy, Suspense } from 'react';
 import type { AnnualMetrics, DailyRecord, ClimateSummary } from '../../types/climate.ts';
 import ScrollySection from './ScrollySection.tsx';
 import SectionTitle from '../common/SectionTitle.tsx';
@@ -24,10 +24,18 @@ interface IntroSectionProps {
 export default function IntroSection({ metrics }: IntroSectionProps) {
     const [highlightRecent, setHighlightRecent] = useState(false);
 
-    const metricsArray = Object.values(metrics).sort((a, b) => a.year - b.year);
-    const latestAnomaly = metricsArray.length > 0
-        ? metricsArray[metricsArray.length - 1].anomaly
-        : 0;
+    // useMemo keeps the array reference stable across re-renders triggered by
+    // highlightRecent state changes. Without this, ClimateStripes receives a
+    // new `data` prop every render → its useEffect([data, width]) fires → the
+    // SVG is cleared and the entire stripe animation replays from scratch.
+    const metricsArray = useMemo(
+        () => Object.values(metrics).sort((a, b) => a.year - b.year),
+        [metrics]
+    );
+    const latestAnomaly = useMemo(
+        () => metricsArray.length > 0 ? metricsArray[metricsArray.length - 1].anomaly : 0,
+        [metricsArray]
+    );
 
     const steps = [
         <div key="step-1">

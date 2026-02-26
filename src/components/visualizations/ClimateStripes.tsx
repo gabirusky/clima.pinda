@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import type { AnnualMetrics } from '../../types/climate.ts';
 import { anomalyToStripeColor } from '../../utils/colors.ts';
@@ -30,8 +30,11 @@ interface TooltipState {
  * Color: Ed Hawkins diverging palette, baseline 1940–1980 mean.
  * Animation: stripes reveal left-to-right, staggered 8ms per stripe.
  * Hover: year label fades in; brightness lifts.
+ *
+ * memo() prevents re-renders (and therefore re-animation) when parent
+ * state changes (e.g. highlightRecent in IntroSection) while data is stable.
  */
-export default function ClimateStripes({ data, height = '100vh' }: ClimateStripesProps) {
+const ClimateStripes = memo(function ClimateStripes({ data, height = '100vh' }: ClimateStripesProps) {
     const svgRef = useRef<SVGSVGElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const { width } = useWindowSize();
@@ -253,4 +256,6 @@ export default function ClimateStripes({ data, height = '100vh' }: ClimateStripe
             )}
         </div>
     );
-}
+});
+
+export default ClimateStripes;
