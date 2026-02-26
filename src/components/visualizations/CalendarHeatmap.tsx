@@ -109,7 +109,7 @@ export default function CalendarHeatmap({
             .attr('stroke', d => {
                 const dateStr = d3.timeFormat('%Y-%m-%d')(d);
                 const rec = recordsByDate.get(dateStr);
-                return rec && rec.temp_min >= 20 ? '#ef8a62' : 'transparent';
+                return rec && rec.temp_min >= 20 ? '#d9d90dff' : 'transparent';
             })
             .attr('stroke-width', 1.5)
             .attr('opacity', 0)
@@ -128,51 +128,29 @@ export default function CalendarHeatmap({
             })
             .on('mouseleave', () => setTooltip(t => ({ ...t, visible: false })));
 
-        // TR20 dot overlays
-        svg.selectAll<SVGCircleElement, Date>('circle.tr20-dot')
+        // TR20 mark overlays
+        svg.selectAll<SVGPathElement, Date>('path.tr20-mark')
             .data(allDays.filter(d => {
                 const dateStr = d3.timeFormat('%Y-%m-%d')(d);
                 const rec = recordsByDate.get(dateStr);
                 return rec && rec.temp_min >= 20;
             }))
             .enter()
-            .append('circle')
-            .attr('class', 'tr20-dot')
-            .attr('cx', d => {
+            .append('path')
+            .attr('class', 'tr20-mark')
+            .attr('d', d => {
                 const weekNum = d3.timeMonday.count(firstMonday, d) + weekOffset;
-                return marginLeft + weekNum * cellStep + CELL_SIZE / 2;
+                const x = marginLeft + weekNum * cellStep;
+                const y = marginTop + ((d.getDay() + 6) % 7) * cellStep;
+                return `M ${x} ${y} L ${x + CELL_SIZE} ${y + CELL_SIZE} M ${x + CELL_SIZE} ${y} L ${x} ${y + CELL_SIZE}`;
             })
-            .attr('cy', d => {
-                const dow = (d.getDay() + 6) % 7;
-                return marginTop + dow * cellStep + CELL_SIZE / 2;
-            })
-            .attr('r', 2)
-            .attr('fill', '#ef8a62')
+            .attr('stroke', '#d9d90dff')
+            .attr('stroke-width', 2)
+            .attr('stroke-linecap', 'round')
             .attr('opacity', 0)
             .attr('pointer-events', 'none');
 
-        // SU30 dot overlays
-        svg.selectAll<SVGCircleElement, Date>('circle.su30-dot')
-            .data(allDays.filter(d => {
-                const dateStr = d3.timeFormat('%Y-%m-%d')(d);
-                const rec = recordsByDate.get(dateStr);
-                return rec && rec.temp_max >= 30;
-            }))
-            .enter()
-            .append('circle')
-            .attr('class', 'su30-dot')
-            .attr('cx', d => {
-                const weekNum = d3.timeMonday.count(firstMonday, d) + weekOffset;
-                return marginLeft + weekNum * cellStep + CELL_SIZE / 2;
-            })
-            .attr('cy', d => {
-                const dow = (d.getDay() + 6) % 7;
-                return marginTop + dow * cellStep + CELL_SIZE / 2;
-            })
-            .attr('r', 2)
-            .attr('fill', '#67001f')
-            .attr('opacity', 0)
-            .attr('pointer-events', 'none');
+
 
         // Month labels
         const format = d3.timeFormat('%Y-%m-%d');
@@ -209,8 +187,8 @@ export default function CalendarHeatmap({
                 .attr('opacity', 1);
         });
 
-        // Animate SU30 and TR20 dots after cells
-        svg.selectAll<SVGCircleElement, Date>('circle.su30-dot, circle.tr20-dot').each(function (d) {
+        // Animate TR20 marks after cells
+        svg.selectAll<SVGElement, Date>('path.tr20-mark').each(function (d) {
             const idx = allDays.findIndex(dd => format(dd) === format(d));
             d3.select(this)
                 .transition()
@@ -256,7 +234,7 @@ export default function CalendarHeatmap({
                     viewBox={`0 0 885 ${svgHeight}`}
                 >
                     <title>Calendário de Calor — {year}</title>
-                    <desc>Grade de 53 semanas × 7 dias mostrando temperaturas máximas diárias para {year}. Pontos vermelhos = dias acima de 30°C (SU30). Borda laranja = noites acima de 20°C (TR20).</desc>
+                    <desc>Grade de 53 semanas × 7 dias mostrando temperaturas máximas diárias para {year}. Cruz (×) e borda laranja = noites acima de 20°C (TR20).</desc>
                 </svg>
             </div>
 
@@ -295,14 +273,14 @@ export default function CalendarHeatmap({
                         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
                             <LegendItem color="#2166ac" label="10°C" />
                             <LegendItem color="#67a9cf" label="20°C" />
-                            <LegendItem color="#fddbc7" label="30°C" />
-                            <LegendItem color="#d6604d" label="36°C" />
-                            <LegendItem color="#b2182b" label="40°C" />
-                            <LegendItem color="#67001f" label="SU30 (≥30°C)" />
+                            <LegendItem color="#fddbc7" label="25°C" />
+                            <LegendItem color="#d6604d" label="30°C" />
+                            <LegendItem color="#b2182b" label="35°C" />
                             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 12, height: 12, border: '1.5px solid #ef8a62', borderRadius: 2, boxSizing: 'border-box' }}>
-                                    <span style={{ display: 'inline-block', width: 4, height: 4, borderRadius: '50%', background: '#ef8a62' }} />
-                                </span>
+                                <svg width="12" height="12" viewBox="0 0 12 12" style={{ display: 'block', overflow: 'visible' }}>
+                                    <rect x="0.75" y="0.75" width="10.5" height="10.5" rx="2" fill="none" stroke="#d9d90dff" strokeWidth="1.5" />
+                                    <path d="M 0.75 0.75 L 11.25 11.25 M 11.25 0.75 L 0.75 11.25" stroke="#d9d90dff" strokeWidth="1.5" strokeLinecap="round" />
+                                </svg>
                                 TR20 (noite ≥20°C)
                             </span>
                         </div>
@@ -322,7 +300,7 @@ export default function CalendarHeatmap({
                                 {formatDate(tooltip.record.date)}
                             </p>
                             <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
-                                Tmáx: <strong style={{ color: '#ef8a62' }}>{tooltip.record.temp_max.toFixed(1)}°C</strong>
+                                Tmáx: <strong style={{ color: '#ff0000ff' }}>{tooltip.record.temp_max.toFixed(1)}°C</strong>
                             </p>
                             <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
                                 Tmín: {tooltip.record.temp_min.toFixed(1)}°C

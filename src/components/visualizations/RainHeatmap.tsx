@@ -17,6 +17,14 @@ interface TooltipInfo {
     value: number | null;
 }
 
+interface CellData {
+    year: number;
+    month: number;
+    val: number;
+    x: number;
+    y: number;
+}
+
 const CELL_SIZE = 14;
 const CELL_MARGIN = 2;
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
@@ -83,7 +91,7 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
         const marginLeft = 36;
         const marginTop = 28;
 
-        const cellsData: any[] = [];
+        const cellsData: CellData[] = [];
         years.forEach((year, cIdx) => {
             const yData = rainMetrics[year]?.monthly || {};
             MONTHS.forEach((_, rIdx) => {
@@ -94,7 +102,7 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
         });
 
         // Draw cells
-        const cells = svg.selectAll<SVGRectElement, any>('rect.cell')
+        const cells = svg.selectAll<SVGRectElement, CellData>('rect.cell')
             .data(cellsData)
             .enter()
             .append('rect')

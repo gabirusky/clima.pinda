@@ -156,7 +156,7 @@ export default function App() {
 
                             {/* ── RainSection: Chuvas e Extremos */}
                             <Suspense fallback={<SectionLoader />}>
-                                <RainSection rainMetrics={safeRainMetrics} summary={summary!} />
+                                <RainSection rainMetrics={safeRainMetrics} summary={summary!} dailyData={safeData} />
                             </Suspense>
 
                             {/* ── CostSection: AC Calculator ────────────────── */}

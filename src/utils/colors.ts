@@ -109,12 +109,9 @@ export function tempToHeatmapColor(temp: number): string {
     const HEATMAP_STOPS = [
         { value: 10, hex: '#2166ac' },  // cold blue
         { value: 20, hex: '#67a9cf' },  // cool blue
-        { value: 25, hex: '#d1e5f0' },  // pale blue
-        { value: 28, hex: '#fef0d9' },  // warm white
-        { value: 30, hex: '#fddbc7' },  // light orange
-        { value: 33, hex: '#ef8a62' },  // orange
-        { value: 36, hex: '#d6604d' },  // red-orange
-        { value: 40, hex: '#b2182b' },  // dark red
+        { value: 25, hex: '#fddbc7' },  // pale orange/pink
+        { value: 30, hex: '#d6604d' },  // red-orange
+        { value: 35, hex: '#b2182b' },  // dark red
     ] as const;
 
     if (temp <= HEATMAP_STOPS[0].value) return HEATMAP_STOPS[0].hex;

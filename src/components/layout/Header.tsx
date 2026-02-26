@@ -26,8 +26,10 @@ export default function Header() {
     const observersRef = useRef<IntersectionObserver[]>([]);
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 40);
+        const handleScroll = () => setScrolled(window.scrollY > window.innerHeight - 56);
         window.addEventListener('scroll', handleScroll, { passive: true });
+        // Initial check in case of page reload halfway down
+        handleScroll();
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -54,7 +56,12 @@ export default function Header() {
     const handleNavClick = (href: string) => {
         setMenuOpen(false);
         const el = document.getElementById(href.slice(1));
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
+        if (el) {
+            // Header height is 56px, plus some breathing room = 70px offset
+            const offset = 100;
+            const y = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
     };
 
     return (

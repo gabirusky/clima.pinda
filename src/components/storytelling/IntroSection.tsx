@@ -40,11 +40,10 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
     const steps = [
         <div key="step-1">
             <SectionTitle id="stripes" accentColor="#ef8a62">
-                Entenda as mudanças climáticas:
+                Entenda as mudanças climáticas
             </SectionTitle>
             <p>
-                A partir de dados históricos disponibilizados pela <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo,</a>{' '}
-                <strong style={{ color: '#ef8a62' }}>conseguimos analisar como o clima mudou em 85 anos</strong>.
+                A partir de dados históricos disponibilizados pela <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo,</a>{' '}conseguimos analisar como a <strong style={{ color: '#ef8a62' }}> temperatura média aumentou em 85 anos</strong>.
                 Cada faixa à direita representa um ano.
             </p>
             <p>

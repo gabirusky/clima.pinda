@@ -42,7 +42,7 @@ export default function TropicalNightsSection({ metrics, dailyData }: TropicalNi
                 O corpo conseguia descansar.
             </p>
             <p style={{ marginTop: '1rem' }}>
-                Cada quadrado à direita com <strong style={{ color: '#ef8a62' }}>borda laranja</strong> é uma noite
+                Cada quadrado à direita marcado com um <strong style={{ color: '#d9d90dff' }}>[X]</strong> é uma noite
                 em que o termômetro não caiu abaixo de 20°C.
             </p>
         </div>,

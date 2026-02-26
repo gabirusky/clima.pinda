@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import type { RainMetrics, ClimateSummary } from '../../types/climate.ts';
+import type { RainMetrics, ClimateSummary, DailyRecord } from '../../types/climate.ts';
 import SectionTitle from '../common/SectionTitle.tsx';
 import StatCallout from '../common/StatCallout.tsx';
 import LoadingSpinner from '../common/LoadingSpinner.tsx';
@@ -12,6 +12,7 @@ const RainExtremesTimeline = lazy(() => import('../visualizations/RainExtremesTi
 interface RainSectionProps {
     rainMetrics: Record<number, RainMetrics>;
     summary: ClimateSummary;
+    dailyData: DailyRecord[];
 }
 
 /**
@@ -19,7 +20,7 @@ interface RainSectionProps {
  *
  * Shows precipitation trends in Pindamonhangaba including PRCPTOT, R10mm, R20mm, SDII, Rx1day.
  */
-export default function RainSection({ rainMetrics, summary }: RainSectionProps) {
+export default function RainSection({ rainMetrics, summary, dailyData }: RainSectionProps) {
     const wettestDay = summary.wettest_day;
 
     return (
@@ -77,7 +78,7 @@ export default function RainSection({ rainMetrics, summary }: RainSectionProps) 
                     </Suspense>
 
                     <Suspense fallback={<LoadingSpinner />}>
-                        <RainExtremesTimeline rainMetrics={rainMetrics} topCount={5} />
+                        <RainExtremesTimeline dailyData={dailyData} topCount={5} />
                     </Suspense>
                 </div>
 
