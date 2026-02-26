@@ -104,7 +104,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 id="future-title"
                 kicker="PROJEÇÃO OLS"
                 accentColor="#67001f"
-                sub="Se a tendência atual continuar — uma extrapolação linear, não um modelo climático."
+                sub="A partir de 2026, comparamos a tendência linear histórica com a extrapolação ancorada nos últimos 30 anos."
             >
                 O Que Vem Depois?
             </SectionTitle>
