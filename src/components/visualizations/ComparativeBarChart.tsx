@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
-    ResponsiveContainer, Cell,
+    ResponsiveContainer,
 } from 'recharts';
 import type { AnnualMetrics } from '../../types/climate.ts';
 import { decadalAverage } from '../../utils/dataProcessing.ts';
@@ -12,17 +12,7 @@ interface ComparativeBarChartProps {
     metrics: Record<number, AnnualMetrics>;
 }
 
-const DECADE_COLORS: Record<number, string> = {
-    1940: '#08306b',
-    1950: '#2166ac',
-    1960: '#4393c3',
-    1970: '#92c5de',
-    1980: '#fddbc7',
-    1990: '#ef8a62',
-    2000: '#d6604d',
-    2010: '#b2182b',
-    2020: '#67001f',
-};
+
 
 const tooltipStyle = {
     background: 'rgba(10,15,30,0.95)',
@@ -71,9 +61,9 @@ export default function ComparativeBarChart({ metrics }: ComparativeBarChartProp
         >
             {/* Legend */}
             <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-                <LegendItem color="#ef8a62" label="SU30 (dias ≥ 30°C)" />
+                <LegendItem color="#b2182b" label="SU30 (dias ≥ 30°C)" />
                 <LegendItem color="#d6604d" label="TR20 (noites ≥ 20°C)" />
-                <LegendItem color="#b2182b" label="WSDI (ondas de calor)" />
+                <LegendItem color="#ef8a62" label="WSDI (ondas de calor)" />
             </div>
 
             <ResponsiveContainer width="100%" height={340}>
@@ -101,13 +91,9 @@ export default function ComparativeBarChart({ metrics }: ComparativeBarChartProp
                             return [v, labels[name] ?? name];
                         }}
                     />
-                    <Bar dataKey="su30" name="su30" radius={[2, 2, 0, 0]} isAnimationActive={true} animationDuration={800}>
-                        {chartData.map(d => (
-                            <Cell key={d.decade} fill={DECADE_COLORS[d.decade] ?? '#ef8a62'} fillOpacity={0.85} />
-                        ))}
-                    </Bar>
-                    <Bar dataKey="tr20" name="tr20" radius={[2, 2, 0, 0]} fill="#d6604d" fillOpacity={0.6} isAnimationActive={true} animationDuration={800} animationBegin={200} />
-                    <Bar dataKey="wsdi" name="wsdi" radius={[2, 2, 0, 0]} fill="#b2182b" fillOpacity={0.5} isAnimationActive={true} animationDuration={800} animationBegin={400} />
+                    <Bar dataKey="su30" name="su30" fill="#b2182b" radius={[2, 2, 0, 0]} isAnimationActive={true} animationDuration={800} />
+                    <Bar dataKey="tr20" name="tr20" radius={[2, 2, 0, 0]} fill="#d6604d" isAnimationActive={true} animationDuration={800} animationBegin={200} />
+                    <Bar dataKey="wsdi" name="wsdi" radius={[2, 2, 0, 0]} fill="#ef8a62" isAnimationActive={true} animationDuration={800} animationBegin={400} />
                 </BarChart>
             </ResponsiveContainer>
 

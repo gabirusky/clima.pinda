@@ -27,7 +27,7 @@ Para visualizar os cenários de 2040 e 2050, aplicamos extrapolações matemáti
 
 **Tendência Linear Padrão**: Uma regressão linear simples calculada sobre toda a série histórica.
 
-**Extrapolação Recente (Slope-Anchor)**: Para capturar a aceleração do aquecimento — que seria mascarada pelas décadas estáveis do século XX, calculamos a taxa de crescimento da média móvel entre 1991-2020. Essa projeção é "ancorada" no último valor real da série, garantindo uma transição visual e matemática contínua para o futuro.
+**Extrapolação Recente (Slope-Anchor)**: Para capturar a aceleração do aquecimento, que seria mascarada pelas décadas estáveis do século XX, calculamos a taxa de crescimento da média móvel entre 1991-2020. Essa projeção é "ancorada" no último valor real da série, garantindo uma transição visual e matemática contínua para o futuro.
 
 O uso desse recorte temporal específico alinha-se às [**diretrizes da Organização Meteorológica Mundial (OMM)**](https://library.wmo.int/viewer/55797/download?file=1203_en.pdf&type=pdf&navigator=1).
 
