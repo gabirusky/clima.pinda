@@ -10,6 +10,7 @@ import DataTable from '../common/DataTable.tsx';
 
 interface ComparativeBarChartProps {
     metrics: Record<number, AnnualMetrics>;
+    stepIndex?: number;
 }
 
 
@@ -29,22 +30,28 @@ const tooltipStyle = {
  * Bars grow from baseline on scroll entry (Framer Motion whileInView).
  * Dark glass tooltip matching site palette.
  */
-export default function ComparativeBarChart({ metrics }: ComparativeBarChartProps) {
+export default function ComparativeBarChart({ metrics, stepIndex = 2 }: ComparativeBarChartProps) {
     const chartData = useMemo(() => {
         const su30 = decadalAverage(metrics, 'su30');
         const tr20 = decadalAverage(metrics, 'tr20');
         const wsdi = decadalAverage(metrics, 'wsdi_days');
 
-        return su30.map((d, i) => ({
-            decade: d.decade,
-            label: `${d.decade}s`,
-            su30: Math.round(d.value * 10) / 10,
-            tr20: Math.round((tr20[i]?.value ?? 0) * 10) / 10,
-            wsdi: Math.round((wsdi[i]?.value ?? 0) * 10) / 10,
-        }));
-    }, [metrics]);
+        return su30.map((d, i) => {
+            let visible = true;
+            if (stepIndex === 0 && i >= 3) visible = false; // until 1960s
+            if (stepIndex === 1 && i >= 6) visible = false; // until 1990s
 
-    const tableRows = chartData.map(d => [
+            return {
+                decade: d.decade,
+                label: `${d.decade}s`,
+                su30: visible ? Math.round(d.value * 10) / 10 : null,
+                tr20: visible ? Math.round((tr20[i]?.value ?? 0) * 10) / 10 : null,
+                wsdi: visible ? Math.round((wsdi[i]?.value ?? 0) * 10) / 10 : null,
+            };
+        });
+    }, [metrics, stepIndex]);
+
+    const tableRows = chartData.filter(d => d.su30 !== null).map(d => [
         d.label,
         `${d.su30} dias`,
         `${d.tr20} noites`,

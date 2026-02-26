@@ -74,7 +74,7 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
                 visualization={
                     <Suspense fallback={<LoadingSpinner />}>
                         <div style={{ width: '100%' }}>
-                            <ComparativeBarChart metrics={metrics} />
+                            <ComparativeBarChart metrics={metrics} stepIndex={activeDecadeRange} />
                             {/* Decade range highlight overlay */}
                             <div style={{
                                 marginTop: '1rem',
@@ -84,9 +84,9 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
                                 color: 'rgba(255,255,255,0.4)',
                                 textAlign: 'center',
                             }}>
-                                {activeDecadeRange === 0 && 'Décadas 1940–1970'}
-                                {activeDecadeRange === 1 && 'Décadas 1980–2000'}
-                                {activeDecadeRange === 2 && 'Décadas 2010–2020'}
+                                {activeDecadeRange === 0 && 'Décadas 1940–1960'}
+                                {activeDecadeRange === 1 && 'Décadas 1940–1990'}
+                                {activeDecadeRange === 2 && 'Décadas 1940–2020'}
                             </div>
                         </div>
                     </Suspense>

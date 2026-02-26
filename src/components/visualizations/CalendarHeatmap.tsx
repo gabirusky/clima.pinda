@@ -243,7 +243,7 @@ export default function CalendarHeatmap({
             WebkitBackdropFilter: 'blur(12px)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
             borderRadius: '16px',
-            padding: '1.5rem',
+            padding: '1rem',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
         }}>
 
