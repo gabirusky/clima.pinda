@@ -21,10 +21,19 @@ interface FutureSectionProps {
  */
 export default function FutureSection({ metrics }: FutureSectionProps) {
     // ── OLS projection for SU30 ──────────────────────────────────────────
+    const BASELINE_START = 1991;
+    const BASELINE_END = 2020;
+
     const arr = metricsToArray(metrics);
     const validArr = arr.filter(m => typeof m.su30 === 'number' && isFinite(m.su30));
+
+    const baselineData = validArr.filter(m => m.year >= BASELINE_START && m.year <= BASELINE_END);
+    const baselineValue = baselineData.length > 0
+        ? baselineData.reduce((acc, m) => acc + (m.su30 as number), 0) / baselineData.length
+        : 0;
+
     const xs = validArr.map(m => m.year);
-    const ys = validArr.map(m => m.su30);
+    const ys = validArr.map(m => (m.su30 as number) - baselineValue);
 
     const reg =
         xs.length >= 2
@@ -34,8 +43,8 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
     const rawOLS2040 = xs.length >= 2 ? Math.round(reg.slope * 2040 + reg.intercept) : 0;
     const rawOLS2050 = xs.length >= 2 ? Math.round(reg.slope * 2050 + reg.intercept) : 0;
 
-    const ols2040 = isNaN(rawOLS2040) ? 0 : Math.max(0, Math.min(365, rawOLS2040));
-    const ols2050 = isNaN(rawOLS2050) ? 0 : Math.max(0, Math.min(365, rawOLS2050));
+    const ols2040 = isNaN(rawOLS2040) ? 0 : rawOLS2040;
+    const ols2050 = isNaN(rawOLS2050) ? 0 : rawOLS2050;
 
     // ── Slope-anchor MM5 extrapolation (mirrors ProjectionChart exactly) ──
     //
@@ -48,9 +57,9 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
     const histMA5 = movingAverage(ys, MA_WINDOW);
 
     const halfWin = Math.floor(MA_WINDOW / 2);
-    // Only use the last 30 years of MM5 for slope — captures the accelerated
-    // warming trend and avoids dilution by the stable mid-20th century baseline.
-    const windowStart = lastYear - 30;
+    // Use the post-1991 period (WMO baseline) to capture the accelerated
+    // warming trend robustly, avoiding pre-acceleration decades.
+    const windowStart = BASELINE_START;
     const stableXs: number[] = [];
     const stableYs: number[] = [];
     for (let i = halfWin; i < xs.length - halfWin; i++) {
@@ -64,7 +73,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
 
     const getMA5proj = (targetYear: number): number | null => {
         const v = ma5Anchor + maReg.slope * (targetYear - lastYear);
-        return isNaN(v) ? null : Math.max(0, Math.min(365, Math.round(v * 10) / 10));
+        return isNaN(v) ? null : Math.round(v * 10) / 10;
     };
 
     const ma5_2040 = getMA5proj(2040);
@@ -80,10 +89,10 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
             const p2040 = vals.find(v => v.year === 2040);
             const p2050 = vals.find(v => v.year === 2050);
             setChartProj({
-                ols2040: p2040 ? Math.max(0, Math.min(365, Math.round(p2040.ols))) : ols2040,
-                ols2050: p2050 ? Math.max(0, Math.min(365, Math.round(p2050.ols))) : ols2050,
-                ma5_2040: p2040 ? Math.max(0, Math.min(365, Math.round(p2040.ma5proj * 10) / 10)) : ma5_2040,
-                ma5_2050: p2050 ? Math.max(0, Math.min(365, Math.round(p2050.ma5proj * 10) / 10)) : ma5_2050,
+                ols2040: p2040 ? Math.round(p2040.ols) : ols2040,
+                ols2050: p2050 ? Math.round(p2050.ols) : ols2050,
+                ma5_2040: p2040 ? Math.round(p2040.ma5proj * 10) / 10 : ma5_2040,
+                ma5_2050: p2050 ? Math.round(p2050.ma5proj * 10) / 10 : ma5_2050,
             });
         },
         [ols2040, ols2050, ma5_2040, ma5_2050],
@@ -102,9 +111,9 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
         >
             <SectionTitle
                 id="future-title"
-                kicker="PROJEÇÃO OLS"
+                kicker="ANOMALIAS E PROJEÇÕES"
                 accentColor="#67001f"
-                sub="A partir de 2026, comparamos a tendência linear histórica com a extrapolação ancorada nos últimos 30 anos."
+                sub="A partir de 2026, comparamos a tendência linear das anomalias climáticas com a extrapolação ancorada no período da OMM (1991-2020)."
             >
                 O Que Vem Depois?
             </SectionTitle>
@@ -128,6 +137,19 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
             </div>
 
             {/* Projection callouts — OLS + MM5 side by side, 2x2 grid */}
+            <h3
+                style={{
+                    fontFamily: "'Syne', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '1.25rem',
+                    color: 'var(--color-text-primary)',
+                    marginBottom: '1.5rem',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    paddingBottom: '0.5rem',
+                }}
+            >
+                Dias de Anomalia Projetados
+            </h3>
             <div
                 style={{
                     display: 'grid',
@@ -148,11 +170,11 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                             letterSpacing: '0.06em',
                         }}
                     >
-                        Projeção OLS — 2040
+                        Tendência Linear Padrão — 2040
                     </p>
                     <StatCallout
                         value={chartProj.ols2040}
-                        unit="DIAS"
+                        showSign={true}
                         label="regressão linear se a tendência continuar"
                         accentColor="#d6604d"
                     />
@@ -174,7 +196,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                     </p>
                     <StatCallout
                         value={chartProj.ma5_2040 ?? chartProj.ols2040}
-                        unit="DIAS"
+                        showSign={true}
                         label="estimativa suavizada pela média móvel projetada"
                         accentColor="#ca0020"
                     />
@@ -192,12 +214,12 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                             letterSpacing: '0.06em',
                         }}
                     >
-                        Projeção OLS — 2050
+                        Tendência Linear Padrão — 2050
                     </p>
                     <StatCallout
                         value={chartProj.ols2050}
-                        unit="DIAS"
-                        label="quase um terço do ano inteiro — tendência linear"
+                        showSign={true}
+                        label="desvio em relação à normal climatológica"
                         accentColor="#b2182b"
                     />
                 </div>
@@ -218,7 +240,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                     </p>
                     <StatCallout
                         value={chartProj.ma5_2050 ?? chartProj.ols2050}
-                        unit="DIAS"
+                        showSign={true}
                         label="estimativa suavizada pela média móvel projetada"
                         accentColor="#67001f"
                     />
@@ -240,10 +262,10 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 }}
             >
                 <strong style={{ color: 'rgba(255,255,255,0.6)' }}>⚠ Metodologia e Limitações:</strong>{' '}
-                São apresentadas duas extrapolações matemáticas, não modelos climáticos físicos.
-                A <strong>Projeção OLS</strong> traça uma linha de tendência sobre todo o histórico.
+                São apresentadas duas extrapolações matemáticas de anomalias (desvios em relação à normal climatológica 1991-2020), não modelos climáticos físicos.
+                A <strong>Tendência Linear Padrão</strong> traça uma linha de tendência sobre todo o histórico de anomalias.
                 Já a <strong>Média Móvel Extrapolada</strong> utiliza o método de <em>slope-anchor</em>:
-                a taxa de crescimento é calculada apenas sobre os últimos 30 anos da média (capturando a
+                a taxa de crescimento é calculada apenas desde o período de referência (capturando a
                 aceleração recente do aquecimento) e ancorada no valor real mais recente para garantir integração perfeita com o gráfico.
                 Nenhuma aborda dinâmicas complexas da atmosfera. Para previsões científicas completas, consensos do IPCC devem ser consultados.
             </div>

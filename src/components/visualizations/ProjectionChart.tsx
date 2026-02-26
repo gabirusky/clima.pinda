@@ -37,14 +37,8 @@ const METRIC_CONFIG: Record<MetricKey, { label: string; color: string; unit: str
 
 const PROJECTION_END = 2050;
 const MA_WINDOW = 5;
-/**
- * How many years to look back when computing the MM5 slope for extrapolation.
- * Using only the most recent period avoids diluting the accelerated warming
- * trend with the more stable mid-20th century baseline.
- * (WMO Guidelines on the Calculation of Climate Normals recommend using
- * recent sub-periods to detect non-linear regime shifts.)
- */
-const SLOPE_WINDOW_YEARS = 30;
+const BASELINE_START = 1991;
+const BASELINE_END = 2020;
 
 interface ChartPoint {
     year: number;
@@ -87,9 +81,9 @@ function extrapolateMA5(
 
     // Stable centre of the centred MA (skip first and last ⌊window/2⌋ entries)
     const halfWin = Math.floor(MA_WINDOW / 2);
-    // ── Restrict to the last SLOPE_WINDOW_YEARS to capture the accelerated
+    // ── Restrict to the post-1991 period (WMO baseline) to capture the accelerated
     //    warming trend rather than diluting it with pre-acceleration decades.
-    const windowStart = anchorYear - SLOPE_WINDOW_YEARS;
+    const windowStart = BASELINE_START;
     const stableXs: number[] = [];
     const stableYs: number[] = [];
     for (let i = halfWin; i < histYears.length - halfWin; i++) {
@@ -105,7 +99,7 @@ function extrapolateMA5(
             : 0;
 
     // Anchor: last historical MA5 value — guarantees zero gap at the boundary
-    return projYears.map(t => Math.max(0, anchorValue + slope * (t - anchorYear)));
+    return projYears.map(t => anchorValue + slope * (t - anchorYear));
 }
 
 export default function ProjectionChart({ metrics, onProjectionValues }: ProjectionChartProps) {
@@ -116,17 +110,22 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
         [onProjectionValues],
     );
 
-    const { chartData, recordYear, lastHistoricalYear } = useMemo(() => {
+    const { chartData, recordYear, lastHistoricalYear, baselineValue } = useMemo(() => {
         const arr = metricsToArray(metrics);
         const validArr = arr.filter(
             m => typeof m[activeMetric] === 'number' && isFinite(m[activeMetric] as number),
         );
 
+        const baselineData = validArr.filter(m => m.year >= BASELINE_START && m.year <= BASELINE_END);
+        const baselineValue = baselineData.length > 0
+            ? baselineData.reduce((acc, m) => acc + (m[activeMetric] as number), 0) / baselineData.length
+            : 0;
+
         const histYears = validArr.map(m => m.year);
-        const histVals = validArr.map(m => m[activeMetric] as number);
+        const histVals = validArr.map(m => (m[activeMetric] as number) - baselineValue);
 
         if (histYears.length < 2) {
-            return { chartData: [], recordYear: null, lastHistoricalYear: 2025 };
+            return { chartData: [], recordYear: null, lastHistoricalYear: 2025, baselineValue };
         }
 
         // ── 1. Raw OLS on historical data ────────────────────────────────────
@@ -141,9 +140,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
         for (let yr = lastYear + 1; yr <= PROJECTION_END; yr++) projYears.push(yr);
 
         // ── 4. OLS projection for each future year ───────────────────────────
-        const projOLS = projYears.map(yr =>
-            Math.max(0, olsReg.slope * yr + olsReg.intercept),
-        );
+        const projOLS = projYears.map(yr => olsReg.slope * yr + olsReg.intercept);
 
         // ── 5. MM5 slope-anchor extrapolation ────────────────────────────────
         //
@@ -170,7 +167,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
         // ── 7. Build chart data arrays ───────────────────────────────────────
         const historicalPoints: ChartPoint[] = validArr.map((m, i) => ({
             year: m.year,
-            historical: m[activeMetric] as number,
+            historical: histVals[i],
             projected: undefined,
             ma5: !isNaN(histMA5[i]) ? Math.round(histMA5[i] * 10) / 10 : undefined,
             // On the LAST historical year: also set ma5proj = anchor so the
@@ -203,7 +200,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
             null,
         );
 
-        return { chartData: allData, recordYear: recordPt, lastHistoricalYear: lastYear };
+        return { chartData: allData, recordYear: recordPt, lastHistoricalYear: lastYear, baselineValue };
     }, [metrics, activeMetric, stableCallback]);
 
     const config = METRIC_CONFIG[activeMetric];
@@ -249,14 +246,20 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     {label}
                     {isFuture && ' (projeção)'}
                 </p>
-                {payload.map(p => (
-                    <p key={p.name} style={{ color: p.color, margin: '2px 0' }}>
-                        {p.name}:{' '}
-                        <strong>
-                            {p.value} {config.unit}
-                        </strong>
-                    </p>
-                ))}
+                <p style={{ color: 'rgba(255,255,255,0.5)', margin: '0 0 4px 0', fontSize: '10px' }}>
+                    Anomalia vs {BASELINE_START}-{BASELINE_END}
+                </p>
+                {payload.map(p => {
+                    const val = p.value > 0 ? `+${p.value}` : p.value;
+                    return (
+                        <p key={p.name} style={{ color: p.color, margin: '2px 0' }}>
+                            {p.name}:{' '}
+                            <strong>
+                                {val} {config.unit}
+                            </strong>
+                        </p>
+                    )
+                })}
             </div>
         );
     };
@@ -305,7 +308,6 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                 })}
             </div>
 
-            {/* Visual legend */}
             <div
                 style={{
                     display: 'flex',
@@ -317,11 +319,14 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     color: 'rgba(255,255,255,0.5)',
                 }}
             >
+                <div style={{ width: '100%', marginBottom: '0.25rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
+                    Valores em Anomalia (Linha de base {BASELINE_START}-{BASELINE_END}: {Math.round(baselineValue * 10) / 10} {config.unit})
+                </div>
                 <LegendItem color={config.color} label="Dados históricos" />
                 <LegendItem
                     color="#b48a6e"
                     dashed
-                    label={`Projeção OLS (${lastHistoricalYear + 1}–${PROJECTION_END})`}
+                    label={`Tendência Linear Padrão (${lastHistoricalYear + 1}–${PROJECTION_END})`}
                 />
                 <LegendItem color="#f4a582" dashed label={`MM${MA_WINDOW} histórica`} />
                 <LegendItem
@@ -330,7 +335,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     faint
                     label={`MM${MA_WINDOW} extrapolada (slope-anchor)`}
                 />
-                <LegendItem color="rgba(160,144,128,0.65)" dashed faint label="Tendência OLS" />
+                <LegendItem color="rgba(160,144,128,0.65)" dashed faint label="Tendência Linear Padrão" />
             </div>
 
             {/* Chart */}
@@ -353,9 +358,16 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                             fontFamily: "'DM Sans', sans-serif",
                             fontSize: 11,
                         }}
-                        tickFormatter={(v: number) => `${v} ${config.unit}`}
+                        tickFormatter={(v: number) => v > 0 ? `+${v}` : `${v}`}
                     />
                     <RechartsTooltip content={<CustomTooltip />} />
+
+                    {/* Baseline Zero */}
+                    <ReferenceLine
+                        y={0}
+                        stroke="rgba(255,255,255,0.3)"
+                        strokeWidth={1.5}
+                    />
 
                     {/* Separator: last historical year */}
                     <ReferenceLine
@@ -413,7 +425,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     <Line
                         type="monotone"
                         dataKey="projected"
-                        name="Projeção OLS"
+                        name="Tendência Linear Padrão"
                         stroke="#b48a6e"
                         strokeWidth={2}
                         strokeDasharray="6 4"
@@ -464,7 +476,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     <Line
                         type="monotone"
                         dataKey="trend"
-                        name="Tendência OLS"
+                        name="Tendência Linear Padrão"
                         stroke="rgba(160,144,128,0.42)"
                         strokeWidth={1.5}
                         strokeDasharray="4 5"
@@ -491,9 +503,9 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                         marginTop: '0.5rem',
                     }}
                 >
-                    Recorde:{' '}
+                    Recorde Máximo de Anomalia:{' '}
                     <strong style={{ color: '#67001f' }}>{recordYear.year}</strong> —{' '}
-                    {recordYear.historical} {config.unit}
+                    {(recordYear.historical ?? 0) > 0 ? `+${recordYear.historical}` : recordYear.historical} {config.unit}
                 </p>
             )}
 
@@ -502,7 +514,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                 headers={[
                     'Ano',
                     'Histórico',
-                    'Projeção OLS',
+                    'Tendência Linear Padrão',
                     `MM${MA_WINDOW} / extrapolada`,
                     'Tendência',
                 ]}
