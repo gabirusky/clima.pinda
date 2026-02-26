@@ -1,13 +1,10 @@
-# 🌡️ A Memória de Calor de uma Cidade
+# 🌡️ Mapa de calor de uma cidade:
 ### *Pindamonhangaba, SP — 85 anos de dados climáticos*
-
-> **"Pindamonhangaba está esquentando. Aqui está a prova."**
-
 🔗 **Acesse online**: [gabirusky.github.io/clima.pinda](https://gabirusky.github.io/clima.pinda/)
 
 ---
 
-## O que é isso
+## About
 
 Uma experiência de dados imersiva que transforma 85 anos de registros climáticos de Pindamonhangaba em uma história visual. Sete capítulos narram o aquecimento da cidade — de dias quentes que dobraram em quantidade, a noites sem dormir, ondas de calor que viram rotina, e o custo crescente do ar-condicionado.
 
@@ -15,7 +12,7 @@ Uma experiência de dados imersiva que transforma 85 anos de registros climátic
 
 ---
 
-## Principais conclusões
+## Resultados
 
 | Métrica | Média histórica | Recorde | Tendência/década |
 |---|---|---|---|
