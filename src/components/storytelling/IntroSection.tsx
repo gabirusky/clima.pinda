@@ -22,7 +22,6 @@ interface IntroSectionProps {
  */
 export default function IntroSection({ metrics }: IntroSectionProps) {
     const [highlightRecent, setHighlightRecent] = useState(false);
-    const [showAnomaly, setShowAnomaly] = useState(false);
 
     const metricsArray = Object.values(metrics).sort((a, b) => a.year - b.year);
     const latestAnomaly = metricsArray.length > 0
@@ -66,8 +65,7 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
 
     const handleStepEnter = (index: number) => {
         if (index >= 1) setHighlightRecent(true);
-        if (index >= 2) setShowAnomaly(true);
-        if (index === 0) { setHighlightRecent(false); setShowAnomaly(false); }
+        if (index === 0) setHighlightRecent(false);
     };
 
     return (
@@ -82,18 +80,10 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     overflow: 'hidden',
-                    // Deep aesthetic gradient reflecting the heat narrative
-                    background: 'radial-gradient(ellipse 100% 120% at 50% 10%, #160205 0%, #160205 60%, #160205 100%)',
+                    // Deep aesthetic gradient reflecting the heat narrative: top full red to dark gray
+                    background: 'linear-gradient(to bottom, #510a13ff 0%, #1a1a1a 50%,  #000000ff 100%)',
                 }}
             >
-                {/* Subtle burning glow at the bottom edge fading up */}
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(to top, rgba(178,24,43,0.3) 0%, rgba(214,96,77,0.05) 20%, transparent 60%)',
-                    pointerEvents: 'none',
-                    zIndex: 1,
-                }} />
 
                 {/* Overlay headline */}
                 <div style={{
@@ -114,10 +104,9 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         color: 'rgba(240,236,227,0.88)',
                         textShadow: '0 2px 24px rgba(0,0,0,0.6)',
                         marginBottom: '0.25rem',
-                        whiteSpace: 'nowrap',
                         textAlign: 'center',
                     }}>
-                        Pindamonhangaba está esquentando.
+                        Pindamonhangaba está ficando
                     </p>
 
                     {/* Statement — the big punch */}
@@ -133,7 +122,7 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                         whiteSpace: 'nowrap',
                         textAlign: 'center',
                     }}>
-                        Aqui está a prova.
+                        mais quente?
                     </p>
 
                     <p style={{
@@ -211,20 +200,7 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                                 transition: 'opacity 0.5s',
                             }} />
                         )}
-                        {showAnomaly && (
-                            <div style={{
-                                position: 'absolute',
-                                bottom: '2rem',
-                                right: '2rem',
-                                fontFamily: "'Syne', sans-serif",
-                                fontWeight: 800,
-                                fontSize: 'clamp(2rem, 5vw, 4rem)',
-                                color: '#b2182b',
-                                textShadow: '0 0 40px rgba(178,24,43,0.5)',
-                            }}>
-                                {latestAnomaly >= 0 ? '+' : ''}{latestAnomaly.toFixed(2)}°C
-                            </div>
-                        )}
+                        {/* Anomaly label removed as requested */}
                     </div>
                 }
                 steps={steps}

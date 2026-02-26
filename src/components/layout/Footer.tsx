@@ -24,7 +24,7 @@ export default function Footer() {
                     color: 'var(--color-text-accent, #ef8a62)',
                     marginBottom: '0.5rem',
                 }}>
-                    A Memória de Calor de uma Cidade
+                    GLOBAL HEATMAP: Pindamonhangaba
                 </p>
                 <p style={{
                     fontFamily: "'DM Sans', sans-serif",
@@ -141,7 +141,7 @@ export default function Footer() {
                         <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <li>
                                 <a
-                                    href="https://github.com/gabirusky/pesquisa.clima.pinda"
+                                    href="https://github.com/gabirusky/clima.pinda"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}
