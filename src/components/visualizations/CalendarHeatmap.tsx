@@ -109,7 +109,7 @@ export default function CalendarHeatmap({
             .attr('stroke', d => {
                 const dateStr = d3.timeFormat('%Y-%m-%d')(d);
                 const rec = recordsByDate.get(dateStr);
-                return rec && rec.temp_min >= 20 ? '#d9d90dff' : 'transparent';
+                return rec && rec.temp_min >= 20 ? '#ffffffff' : 'transparent';
             })
             .attr('stroke-width', 1.5)
             .attr('opacity', 0)
@@ -144,7 +144,7 @@ export default function CalendarHeatmap({
                 const y = marginTop + ((d.getDay() + 6) % 7) * cellStep;
                 return `M ${x} ${y} L ${x + CELL_SIZE} ${y + CELL_SIZE} M ${x + CELL_SIZE} ${y} L ${x} ${y + CELL_SIZE}`;
             })
-            .attr('stroke', '#d9d90dff')
+            .attr('stroke', '#ffffffff')
             .attr('stroke-width', 2)
             .attr('stroke-linecap', 'round')
             .attr('opacity', 0)
@@ -278,8 +278,8 @@ export default function CalendarHeatmap({
                             <LegendItem color="#b2182b" label="35°C" />
                             <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                                 <svg width="12" height="12" viewBox="0 0 12 12" style={{ display: 'block', overflow: 'visible' }}>
-                                    <rect x="0.75" y="0.75" width="10.5" height="10.5" rx="2" fill="none" stroke="#d9d90dff" strokeWidth="1.5" />
-                                    <path d="M 0.75 0.75 L 11.25 11.25 M 11.25 0.75 L 0.75 11.25" stroke="#d9d90dff" strokeWidth="1.5" strokeLinecap="round" />
+                                    <rect x="0.75" y="0.75" width="10.5" height="10.5" rx="2" fill="none" stroke="#ffffffff" strokeWidth="1.5" />
+                                    <path d="M 0.75 0.75 L 11.25 11.25 M 11.25 0.75 L 0.75 11.25" stroke="#ffffffff" strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
                                 TR20 (noite ≥20°C)
                             </span>
