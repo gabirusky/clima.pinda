@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useClimateData } from './hooks/useClimateData.ts';
 import { useScrollProgress } from './hooks/useScrollProgress.ts';
 import LoadingSpinner from './components/common/LoadingSpinner.tsx';
@@ -31,6 +31,12 @@ export default function App() {
     // This powers the ambient background gradient (cool blue → burning red)
     // defined in index.css.
     useScrollProgress();
+
+    // Always start at the top — prevents the browser's scroll restoration from
+    // briefly showing a non-zero scroll position (blank background) on first frame.
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }, []);
 
     const { dailyData, metrics, summary, loading, error } = useClimateData();
 
