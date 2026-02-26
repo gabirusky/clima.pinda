@@ -12,7 +12,7 @@ export default function LoadingSpinner() {
             role="status"
             aria-label="Carregando dados climáticos..."
             className="flex flex-col items-center justify-center min-h-screen gap-6"
-            style={{ background: '#0a0f1e' }}
+            style={{ background: '#0a0a0f' }}
         >
             {/* Pulsing heat ring */}
             <div className="relative flex items-center justify-center">
