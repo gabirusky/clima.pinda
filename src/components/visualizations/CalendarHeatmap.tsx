@@ -21,7 +21,7 @@ interface TooltipInfo {
 
 const CELL_SIZE = 14;
 const CELL_MARGIN = 2;
-const WEEK_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+const WEEK_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 /**
@@ -128,6 +128,29 @@ export default function CalendarHeatmap({
             })
             .on('mouseleave', () => setTooltip(t => ({ ...t, visible: false })));
 
+        // TR20 dot overlays
+        svg.selectAll<SVGCircleElement, Date>('circle.tr20-dot')
+            .data(allDays.filter(d => {
+                const dateStr = d3.timeFormat('%Y-%m-%d')(d);
+                const rec = recordsByDate.get(dateStr);
+                return rec && rec.temp_min >= 20;
+            }))
+            .enter()
+            .append('circle')
+            .attr('class', 'tr20-dot')
+            .attr('cx', d => {
+                const weekNum = d3.timeMonday.count(firstMonday, d) + weekOffset;
+                return marginLeft + weekNum * cellStep + CELL_SIZE / 2;
+            })
+            .attr('cy', d => {
+                const dow = (d.getDay() + 6) % 7;
+                return marginTop + dow * cellStep + CELL_SIZE / 2;
+            })
+            .attr('r', 2)
+            .attr('fill', '#ef8a62')
+            .attr('opacity', 0)
+            .attr('pointer-events', 'none');
+
         // SU30 dot overlays
         svg.selectAll<SVGCircleElement, Date>('circle.su30-dot')
             .data(allDays.filter(d => {
@@ -167,16 +190,14 @@ export default function CalendarHeatmap({
 
         // Day-of-week labels
         WEEK_LABELS.forEach((label, i) => {
-            if (i % 2 === 1) { // show Mon, Wed, Fri, Sun only (alternating)
-                svg.append('text')
-                    .attr('x', marginLeft - 4)
-                    .attr('y', marginTop + i * cellStep + CELL_SIZE / 2 + 4)
-                    .attr('text-anchor', 'end')
-                    .attr('fill', 'rgba(240,236,227,0.3)')
-                    .attr('font-family', "'DM Sans', sans-serif")
-                    .attr('font-size', 9)
-                    .text(label.slice(0, 3));
-            }
+            svg.append('text')
+                .attr('x', marginLeft - 4)
+                .attr('y', marginTop + i * cellStep + CELL_SIZE / 2 + 4)
+                .attr('text-anchor', 'end')
+                .attr('fill', 'rgba(240,236,227,0.3)')
+                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-size', 9)
+                .text(label.slice(0, 3));
         });
 
         // Animate cells chronologically (2ms per day)
@@ -188,8 +209,8 @@ export default function CalendarHeatmap({
                 .attr('opacity', 1);
         });
 
-        // Animate SU30 dots after cells
-        svg.selectAll<SVGCircleElement, Date>('circle.su30-dot').each(function (d) {
+        // Animate SU30 and TR20 dots after cells
+        svg.selectAll<SVGCircleElement, Date>('circle.su30-dot, circle.tr20-dot').each(function (d) {
             const idx = allDays.findIndex(dd => format(dd) === format(d));
             d3.select(this)
                 .transition()
@@ -210,38 +231,83 @@ export default function CalendarHeatmap({
     const svgHeight = CELL_SIZE * 7 + CELL_MARGIN * 6 + 60;
 
     return (
-        <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
+        <div ref={containerRef} style={{
+            position: 'relative',
+            width: '100%',
+            display: 'flex',
+            flexDirection: width > 900 ? 'row' : 'column',
+            gap: '1.5rem',
+            alignItems: width > 900 ? 'center' : 'flex-start',
+            background: 'rgba(255, 255, 255, 0.03)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+        }}>
 
-
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ flex: 1, minWidth: 0, paddingBottom: '0.5rem' }}>
                 <svg
                     ref={svgRef}
                     role="img"
                     aria-label={`Calendário de calor — ${year}. Cada célula é um dia do ano, colorida pela temperatura máxima.`}
-                    style={{ display: 'block', minWidth: '700px', height: svgHeight }}
-                    width="100%"
-                    height={svgHeight}
+                    style={{ display: 'block', width: '100%', height: 'auto' }}
+                    viewBox={`0 0 885 ${svgHeight}`}
                 >
                     <title>Calendário de Calor — {year}</title>
                     <desc>Grade de 53 semanas × 7 dias mostrando temperaturas máximas diárias para {year}. Pontos vermelhos = dias acima de 30°C (SU30). Borda laranja = noites acima de 20°C (TR20).</desc>
                 </svg>
             </div>
 
-            {/* Legend */}
-            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '0.75rem', flexWrap: 'wrap' }}>
-                <LegendItem color="#2166ac" label="10°C" />
-                <LegendItem color="#67a9cf" label="20°C" />
-                <LegendItem color="#fddbc7" label="30°C" />
-                <LegendItem color="#d6604d" label="36°C" />
-                <LegendItem color="#b2182b" label="40°C" />
-                <span style={{ marginLeft: '1rem', fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#67001f' }} />
-                    SU30 (≥30°C)
-                </span>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                    <span style={{ display: 'inline-block', width: 10, height: 10, border: '1.5px solid #ef8a62', borderRadius: 2 }} />
-                    TR20 (noite ≥20°C)
-                </span>
+            {/* Right Panel: Year & Legend */}
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                maxWidth: '180px',
+                flexShrink: 0
+            }}>
+                <p style={{
+                    fontFamily: "'Syne', sans-serif",
+                    fontWeight: 800,
+                    fontSize: 'clamp(2rem, 3.5vw, 2.75rem)',
+                    color: 'rgba(255,255,255,0.85)',
+                    lineHeight: 1,
+                    letterSpacing: '-0.04em',
+                    margin: 0,
+                }}>
+                    {year}
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    <p style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: '0.65rem',
+                        color: 'rgba(255,255,255,0.3)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        marginBottom: '0.25rem',
+                    }}>
+                        Legenda
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', flexDirection: width > 900 ? 'column' : 'row' }}>
+                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <LegendItem color="#2166ac" label="10°C" />
+                            <LegendItem color="#67a9cf" label="20°C" />
+                            <LegendItem color="#fddbc7" label="30°C" />
+                            <LegendItem color="#d6604d" label="36°C" />
+                            <LegendItem color="#b2182b" label="40°C" />
+                            <LegendItem color="#67001f" label="SU30 (≥30°C)" />
+                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 12, height: 12, border: '1.5px solid #ef8a62', borderRadius: 2, boxSizing: 'border-box' }}>
+                                    <span style={{ display: 'inline-block', width: 4, height: 4, borderRadius: '50%', background: '#ef8a62' }} />
+                                </span>
+                                TR20 (noite ≥20°C)
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Tooltip */}
