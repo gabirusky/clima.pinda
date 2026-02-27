@@ -122,7 +122,7 @@ const ClimateStripes = memo(function ClimateStripes({ data, height = '100vh' }: 
         grad.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(10,10,15,0.82)').attr('stop-opacity', 1);
 
         setReady(true);
-    }, [data, width]);
+    }, [data, width, sortedData]);
 
     const tableRows = data
         .sort((a, b) => a.year - b.year)
