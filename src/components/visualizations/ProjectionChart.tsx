@@ -122,7 +122,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
             : 0;
 
         const histYears = validArr.map(m => m.year);
-        const histVals = validArr.map(m => (m[activeMetric] as number) - baselineValue);
+        const histVals = validArr.map(m => m[activeMetric] as number);
 
         if (histYears.length < 2) {
             return { chartData: [], recordYear: null, lastHistoricalYear: 2025, baselineValue };
@@ -247,16 +247,12 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     {isFuture && ' (projeção)'}
                 </p>
                 <p style={{ color: 'rgba(255,255,255,0.5)', margin: '0 0 4px 0', fontSize: '10px' }}>
-                    Anomalia vs {BASELINE_START}-{BASELINE_END}
+                    Valores absolutos
                 </p>
                 {payload.map(p => {
-                    const val = p.value > 0 ? `+${p.value}` : p.value;
                     return (
                         <p key={p.name} style={{ color: p.color, margin: '2px 0' }}>
                             {p.name}:{' '}
-                            <strong>
-                                {val} {config.unit}
-                            </strong>
                         </p>
                     )
                 })}
@@ -320,7 +316,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                 }}
             >
                 <div style={{ width: '100%', marginBottom: '0.25rem', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
-                    Valores em Anomalia (Linha de base {BASELINE_START}-{BASELINE_END}: {Math.round(baselineValue * 10) / 10} {config.unit})
+                    Valores em Absoluto
                 </div>
                 <LegendItem color={config.color} label="Dados históricos" />
                 <LegendItem
@@ -352,13 +348,14 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                         }}
                     />
                     <YAxis
+                        domain={[0, 'auto']}
                         stroke="rgba(255,255,255,0.2)"
                         tick={{
                             fill: 'rgba(240,236,227,0.5)',
                             fontFamily: "'DM Sans', sans-serif",
                             fontSize: 11,
                         }}
-                        tickFormatter={(v: number) => v > 0 ? `+${v}` : `${v}`}
+                        tickFormatter={(v: number) => `${v}`}
                     />
                     <RechartsTooltip content={<CustomTooltip />} />
 
@@ -503,9 +500,9 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                         marginTop: '0.5rem',
                     }}
                 >
-                    Recorde Máximo de Anomalia:{' '}
+                    Recorde Máximo:{' '}
                     <strong style={{ color: '#67001f' }}>{recordYear.year}</strong> —{' '}
-                    {(recordYear.historical ?? 0) > 0 ? `+${recordYear.historical}` : recordYear.historical} {config.unit}
+                    {recordYear.historical} {config.unit}
                 </p>
             )}
 

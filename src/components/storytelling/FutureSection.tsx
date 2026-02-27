@@ -33,7 +33,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
         : 0;
 
     const xs = validArr.map(m => m.year);
-    const ys = validArr.map(m => (m.su30 as number) - baselineValue);
+    const ys = validArr.map(m => m.su30 as number);
 
     const reg =
         xs.length >= 2
@@ -111,9 +111,9 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
         >
             <SectionTitle
                 id="future-title"
-                kicker="ANOMALIAS E PROJEÇÕES"
+                kicker="TENDÊNCIAS E PROJEÇÕES"
                 accentColor="#67001f"
-                sub="A partir de 2026, comparamos a tendência linear com a extrapolação ancorada no período da OMM (1991-2020)."
+                sub="A partir de 2026, comparamos a tendência linear histórica das métricas com a extrapolação da média móvel."
             >
                 O Que Vem Depois?
             </SectionTitle>
@@ -148,7 +148,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                     paddingBottom: '0.5rem',
                 }}
             >
-                Dias de Anomalia Projetados
+                Dias Projetados
             </h3>
             <div
                 style={{
@@ -219,7 +219,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                     <StatCallout
                         value={chartProj.ols2050}
                         showSign={true}
-                        label="desvio em relação à normal climatológica"
+                        label="valor projetado"
                         accentColor="#b2182b"
                     />
                 </div>
@@ -262,8 +262,8 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 }}
             >
                 <strong style={{ color: 'rgba(255,255,255,0.6)' }}>⚠ Metodologia e Limitações:</strong>{' '}
-                São apresentadas duas extrapolações matemáticas de anomalias (desvios em relação à normal climatológica 1991-2020), não modelos climáticos físicos.
-                A <strong>Tendência Linear Padrão</strong> traça uma linha de tendência sobre todo o histórico de anomalias.
+                São apresentadas duas extrapolações matemáticas de valores absolutos, não modelos climáticos físicos.
+                A <strong>Tendência Linear Padrão</strong> traça uma linha de tendência sobre todo o histórico.
                 Já a <strong>Média Móvel Extrapolada</strong> utiliza o método de <em>slope-anchor</em>:
                 a taxa de crescimento é calculada apenas desde o período de referência (capturando a
                 aceleração recente do aquecimento) e ancorada no valor real mais recente para garantir integração perfeita com o gráfico.
