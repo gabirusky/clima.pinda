@@ -38,7 +38,6 @@ const METRIC_CONFIG: Record<MetricKey, { label: string; color: string; unit: str
 const PROJECTION_END = 2050;
 const MA_WINDOW = 5;
 const BASELINE_START = 1991;
-const BASELINE_END = 2020;
 
 interface ChartPoint {
     year: number;
@@ -110,22 +109,17 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
         [onProjectionValues],
     );
 
-    const { chartData, recordYear, lastHistoricalYear, baselineValue } = useMemo(() => {
+    const { chartData, recordYear, lastHistoricalYear } = useMemo(() => {
         const arr = metricsToArray(metrics);
         const validArr = arr.filter(
             m => typeof m[activeMetric] === 'number' && isFinite(m[activeMetric] as number),
         );
 
-        const baselineData = validArr.filter(m => m.year >= BASELINE_START && m.year <= BASELINE_END);
-        const baselineValue = baselineData.length > 0
-            ? baselineData.reduce((acc, m) => acc + (m[activeMetric] as number), 0) / baselineData.length
-            : 0;
-
         const histYears = validArr.map(m => m.year);
         const histVals = validArr.map(m => m[activeMetric] as number);
 
         if (histYears.length < 2) {
-            return { chartData: [], recordYear: null, lastHistoricalYear: 2025, baselineValue };
+            return { chartData: [], recordYear: null, lastHistoricalYear: 2025 };
         }
 
         // ── 1. Raw OLS on historical data ────────────────────────────────────
@@ -200,7 +194,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
             null,
         );
 
-        return { chartData: allData, recordYear: recordPt, lastHistoricalYear: lastYear, baselineValue };
+        return { chartData: allData, recordYear: recordPt, lastHistoricalYear: lastYear };
     }, [metrics, activeMetric, stableCallback]);
 
     const config = METRIC_CONFIG[activeMetric];

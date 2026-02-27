@@ -22,15 +22,9 @@ interface FutureSectionProps {
 export default function FutureSection({ metrics }: FutureSectionProps) {
     // ── OLS projection for SU30 ──────────────────────────────────────────
     const BASELINE_START = 1991;
-    const BASELINE_END = 2020;
 
     const arr = metricsToArray(metrics);
     const validArr = arr.filter(m => typeof m.su30 === 'number' && isFinite(m.su30));
-
-    const baselineData = validArr.filter(m => m.year >= BASELINE_START && m.year <= BASELINE_END);
-    const baselineValue = baselineData.length > 0
-        ? baselineData.reduce((acc, m) => acc + (m.su30 as number), 0) / baselineData.length
-        : 0;
 
     const xs = validArr.map(m => m.year);
     const ys = validArr.map(m => m.su30 as number);
