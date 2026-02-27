@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState, useMemo } from 'react';
 import * as d3 from 'd3';
 import type { AnnualMetrics } from '../../types/climate.ts';
 import { anomalyToStripeColor } from '../../utils/colors.ts';
@@ -41,6 +41,9 @@ const ClimateStripes = memo(function ClimateStripes({ data, height = '100vh' }: 
     const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, year: 0, anomaly: 0, temp: 0, containerW: 0 });
     const [ready, setReady] = useState(false);
 
+    const sortedData = useMemo(() => [...data].sort((a, b) => a.year - b.year), [data]);
+    const decades = useMemo(() => sortedData.filter(d => d.year % 10 === 0), [sortedData]);
+
     useEffect(() => {
         if (!svgRef.current || data.length === 0) return;
 
@@ -51,14 +54,10 @@ const ClimateStripes = memo(function ClimateStripes({ data, height = '100vh' }: 
         const H = svgRef.current.clientHeight || 400;
         const stripeWidth = W / data.length;
         const containerW = containerRef.current?.clientWidth ?? W;
-        const sorted = [...data].sort((a, b) => a.year - b.year);
-
-        // Decade labels
-        const decades = sorted.filter(d => d.year % 10 === 0);
 
         // Draw stripes
         const stripes = svg.selectAll<SVGRectElement, AnnualMetrics>('rect.stripe')
-            .data(sorted)
+            .data(sortedData)
             .enter()
             .append('rect')
             .attr('class', 'stripe')
@@ -107,9 +106,9 @@ const ClimateStripes = memo(function ClimateStripes({ data, height = '100vh' }: 
         // Dark fade behind decade labels so they read over any stripe colour
         svg.append('rect')
             .attr('x', 0)
-            .attr('y', H * 0.88)
+            .attr('y', H * 0.8)
             .attr('width', W)
-            .attr('height', H * 0.12)
+            .attr('height', H * 0.3)
             .attr('fill', 'url(#labelFade)')
             .attr('pointer-events', 'none');
 
@@ -121,24 +120,6 @@ const ClimateStripes = memo(function ClimateStripes({ data, height = '100vh' }: 
             .attr('x2', '0').attr('y2', '1');
         grad.append('stop').attr('offset', '0%').attr('stop-color', 'rgba(10,10,15,0)').attr('stop-opacity', 0);
         grad.append('stop').attr('offset', '100%').attr('stop-color', 'rgba(10,10,15,0.82)').attr('stop-opacity', 1);
-
-        // Decade labels — overlaid on top of the fade rect
-        svg.selectAll<SVGTextElement, AnnualMetrics>('text.decade-label')
-            .data(decades)
-            .enter()
-            .append('text')
-            .attr('class', 'decade-label')
-            .attr('x', d => {
-                const idx = sorted.findIndex(s => s.year === d.year);
-                return idx * stripeWidth + stripeWidth / 2;
-            })
-            .attr('y', H * 0.955)
-            .attr('text-anchor', 'middle')
-            .attr('fill', 'rgba(240,236,227,0.6)')
-            .attr('font-family', "'Raleway', sans-serif")
-            .attr('font-size', Math.max(10, Math.min(14, stripeWidth * 6)))
-            .attr('pointer-events', 'none')
-            .text(d => d.year);
 
         setReady(true);
     }, [data, width]);
@@ -171,9 +152,48 @@ const ClimateStripes = memo(function ClimateStripes({ data, height = '100vh' }: 
                 <desc>Visualização das anomalias de temperatura de 1940 a 2025. Azul = abaixo da média 1940–1980; vermelho = acima da média.</desc>
             </svg>
 
+            {/* Text labels outside SVG so they aren't blurred or darkened */}
+            {ready && (
+                <div style={{
+                    position: 'absolute',
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    pointerEvents: 'none',
+                    zIndex: 10,
+                }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: 'max(16px, 10%)',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        color: '#ffffff',
+                        textShadow: '0px 2px 4px rgba(0, 0, 0, 1)',
+                        fontFamily: "'Raleway', sans-serif",
+                        fontSize: Math.max(10, Math.min(14, (width / data.length) * 6)),
+                        letterSpacing: '0.05em',
+                    }}>TEMPERATURA MÉDIA</div>
+
+                    {decades.map(d => {
+                        const idx = sortedData.findIndex(s => s.year === d.year);
+                        const leftPct = ((idx + 0.5) / sortedData.length) * 100;
+                        return (
+                            <div key={d.year} style={{
+                                position: 'absolute',
+                                bottom: '10%',
+                                left: `${leftPct}%`,
+                                transform: 'translate(-50%, 50%)',
+                                color: '#ffffff',
+                                textShadow: '0px 2px 4px rgba(0, 0, 0, 1)',
+                                fontFamily: "'Raleway', sans-serif",
+                                fontSize: Math.max(10, Math.min(14, (width / data.length) * 6)),
+                            }}>{d.year}</div>
+                        );
+                    })}
+                </div>
+            )}
+
             {/* Light gradient at top — softens entry edge */}
             <div style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: '80px',
+                position: 'absolute', top: 0, left: 0, right: 0, height: '140px',
                 background: 'linear-gradient(to bottom, rgba(10,15,30,0.55), transparent)',
                 pointerEvents: 'none',
             }} />
