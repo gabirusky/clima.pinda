@@ -30,7 +30,6 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
     const hottestDay = summary.hottest_day;
     const mostSu30 = summary.year_most_su30;
     const hottestDateFormatted = formatDate(hottestDay.date);
-    const recordYear = parseInt(hottestDay.date.slice(0, 4), 10);
 
     const metricsArr = Object.values(metrics);
     const mostTr20 = metricsArr.reduce((prev, current) => (current.tr20 > prev.tr20 ? current : prev), metricsArr[0]);
