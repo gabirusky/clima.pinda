@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useId, type ReactNode } from 'react';
 import scrollama from 'scrollama';
+import { useWindowSize } from '../../hooks/useWindowSize.ts';
 
 // Mirror scrollama's DecimalType so we can use it in props without
 // importing from a `export =` module (which is awkward in ESM).
@@ -52,7 +53,12 @@ export default function ScrollySection({
         onStepExit?.(index);
     }, [onStepExit]);
 
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
+
     useEffect(() => {
+        if (isMobile) return;
+
         const scroller = scrollama();
 
         scroller
@@ -73,7 +79,7 @@ export default function ScrollySection({
             scroller.destroy();
             window.removeEventListener('resize', handleResize);
         };
-    }, [offset, stepClass, handleStepEnter, handleStepExit]);
+    }, [offset, stepClass, handleStepEnter, handleStepExit, isMobile]);
 
     return (
         <section
@@ -84,21 +90,35 @@ export default function ScrollySection({
                 width: '100%',
                 // Fluid horizontal margins — breathing room from viewport edges.
                 // IMPORTANT: do NOT use overflow: hidden — breaks Scrollama.
-                paddingInline: 'clamp(24px, 6vw, 120px)',
+                paddingInline: 'clamp(16px, 6vw, 120px)',
             }}
         >
             <div style={{
                 display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'flex-start',
-                gap: '2rem',
+                flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'center' : 'flex-start',
+                gap: isMobile ? '1rem' : '2rem',
             }}>
-                {/* Steps column — scrollable prose (LEFT) */}
+                {isMobile && (
+                    <div
+                        style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '1rem 0 2rem 0',
+                        }}
+                    >
+                        {visualization}
+                    </div>
+                )}
+
+                {/* Steps column — scrollable prose (LEFT on desktop, BELOW on mobile) */}
                 <div
                     className="scroll-steps"
                     style={{
                         flex: '0 0 auto',
-                        width: 'clamp(280px, 40%, 480px)',
+                        width: isMobile ? '100%' : 'clamp(280px, 40%, 480px)',
                         position: 'relative',
                         zIndex: 10,
                     }}
@@ -109,12 +129,10 @@ export default function ScrollySection({
                             className={stepClass}
                             data-step={i}
                             style={{
-                                minHeight: '100vh',
+                                minHeight: isMobile ? 'auto' : '100vh',
                                 display: 'flex',
                                 alignItems: 'center',
-                                paddingBlock: 'clamp(48px, 8vh, 96px)',
-                                // Inline padding is now smaller because the outer section
-                                // already provides horizontal breathing room.
+                                paddingBlock: isMobile ? '2rem' : 'clamp(48px, 8vh, 96px)',
                                 paddingInline: 'clamp(16px, 2vw, 32px)',
                             }}
                         >
@@ -126,6 +144,7 @@ export default function ScrollySection({
                                     fontSize: '1.0625rem',
                                     lineHeight: 1.8,
                                     color: 'var(--color-text-primary)',
+                                    margin: isMobile ? '0 auto' : '0',
                                 }}
                             >
                                 {step}
@@ -134,43 +153,26 @@ export default function ScrollySection({
                     ))}
                 </div>
 
-                {/* Sticky visualization pane (RIGHT) */}
-                <div
-                    className="sticky-viz"
-                    style={{
-                        flex: '1 1 auto',
-                        position: 'sticky',
-                        top: 0,
-                        alignSelf: 'flex-start',   /* required for sticky in flex */
-                        height: '100vh',
-                        overflow: 'hidden',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '2rem 1rem',
-                    }}
-                >
-                    {visualization}
-                </div>
+                {!isMobile && (
+                    <div
+                        className="sticky-viz"
+                        style={{
+                            flex: '1 1 auto',
+                            position: 'sticky',
+                            top: 0,
+                            alignSelf: 'flex-start',   /* required for sticky in flex */
+                            height: '100vh',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '2rem 1rem',
+                        }}
+                    >
+                        {visualization}
+                    </div>
+                )}
             </div>
-
-            <style>{`
-                @media (max-width: 767px) {
-                    /* Stack on mobile: viz above, steps below */
-                    section > div {
-                        flex-direction: column !important;
-                    }
-                    .sticky-viz {
-                        position: relative !important;
-                        height: 50vh !important;
-                        width: 100% !important;
-                        align-self: auto !important;
-                    }
-                    .scroll-steps {
-                        width: 100% !important;
-                    }
-                }
-            `}</style>
         </section>
     );
 }

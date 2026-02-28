@@ -225,12 +225,12 @@ export default function CalendarHeatmap({
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
         }}>
 
-            <div style={{ flex: 1, minWidth: 0, paddingBottom: '0.5rem' }}>
+            <div style={{ flex: 1, minWidth: 0, width: '100%', overflowX: 'auto', paddingBottom: '0.5rem' }}>
                 <svg
                     ref={svgRef}
                     role="img"
                     aria-label={`Calendário de calor — ${year}. Cada célula é um dia do ano, colorida pela temperatura máxima.`}
-                    style={{ display: 'block', width: '100%', height: 'auto' }}
+                    style={{ minWidth: 885, height: svgHeight }}
                     viewBox={`0 0 885 ${svgHeight}`}
                 >
                     <title>Calendário de Calor — {year}</title>
@@ -243,8 +243,10 @@ export default function CalendarHeatmap({
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.5rem',
-                maxWidth: '180px',
-                flexShrink: 0
+                maxWidth: width > 900 ? '180px' : '100%',
+                flexShrink: 0,
+                alignItems: width > 900 ? 'flex-start' : 'center',
+                textAlign: width > 900 ? 'left' : 'center',
             }}>
                 <p style={{
                     fontFamily: "'Syne', sans-serif",
@@ -269,8 +271,8 @@ export default function CalendarHeatmap({
                     }}>
                         Legenda
                     </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', flexDirection: width > 900 ? 'column' : 'row' }}>
-                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', flexDirection: width > 900 ? 'column' : 'row', justifyContent: width > 900 ? 'flex-start' : 'center' }}>
+                        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: width > 900 ? 'flex-start' : 'center' }}>
                             <LegendItem color="#2166ac" label="10°C" />
                             <LegendItem color="#67a9cf" label="20°C" />
                             <LegendItem color="#fddbc7" label="25°C" />

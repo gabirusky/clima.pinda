@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
     ComposedChart, Line, XAxis, YAxis, CartesianGrid,
     Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine,
@@ -104,12 +104,7 @@ function extrapolateMA5(
 export default function ProjectionChart({ metrics, onProjectionValues }: ProjectionChartProps) {
     const [activeMetric, setActiveMetric] = useState<MetricKey>('su30');
 
-    const stableCallback = useCallback(
-        (vals: ProjectionValues[]) => onProjectionValues?.(vals),
-        [onProjectionValues],
-    );
-
-    const { chartData, recordYear, lastHistoricalYear } = useMemo(() => {
+    const { chartData, recordYear, lastHistoricalYear, projectionValues } = useMemo(() => {
         const arr = metricsToArray(metrics);
         const validArr = arr.filter(
             m => typeof m[activeMetric] === 'number' && isFinite(m[activeMetric] as number),
@@ -119,7 +114,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
         const histVals = validArr.map(m => m[activeMetric] as number);
 
         if (histYears.length < 2) {
-            return { chartData: [], recordYear: null, lastHistoricalYear: 2025 };
+            return { chartData: [], recordYear: null, lastHistoricalYear: 2025, projectionValues: [] };
         }
 
         // ── 1. Raw OLS on historical data ────────────────────────────────────
@@ -148,15 +143,11 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
         const ma5Anchor = histMA5[histYears.length - 1];
 
         // ── 6. Notify parent with projected values ───────────────────────────
-        setTimeout(() => {
-            stableCallback(
-                projYears.map((yr, i) => ({
-                    year: yr,
-                    ols: Math.round(projOLS[i] * 10) / 10,
-                    ma5proj: Math.round(projMA5[i] * 10) / 10,
-                })),
-            );
-        }, 0);
+        const calculatedProjectionValues = projYears.map((yr, i) => ({
+            year: yr,
+            ols: Math.round(projOLS[i] * 10) / 10,
+            ma5proj: Math.round(projMA5[i] * 10) / 10,
+        }));
 
         // ── 7. Build chart data arrays ───────────────────────────────────────
         const historicalPoints: ChartPoint[] = validArr.map((m, i) => ({
@@ -194,8 +185,14 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
             null,
         );
 
-        return { chartData: allData, recordYear: recordPt, lastHistoricalYear: lastYear };
-    }, [metrics, activeMetric, stableCallback]);
+        return { chartData: allData, recordYear: recordPt, lastHistoricalYear: lastYear, projectionValues: calculatedProjectionValues };
+    }, [metrics, activeMetric]);
+
+    useEffect(() => {
+        if (projectionValues && projectionValues.length > 0) {
+            onProjectionValues?.(projectionValues);
+        }
+    }, [projectionValues, onProjectionValues]);
 
     const config = METRIC_CONFIG[activeMetric];
 

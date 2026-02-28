@@ -11,7 +11,7 @@ export default function Footer() {
             style={{
                 background: 'rgba(0,0,0,0.4)',
                 borderTop: '1px solid rgba(255,255,255,0.06)',
-                padding: 'clamp(48px, 8vh, 80px) 1.5rem clamp(32px, 5vh, 56px)',
+                padding: 'clamp(48px, 8vh, 80px) clamp(1rem, 5vw, 1.5rem) clamp(32px, 5vh, 56px)',
             }}
         >
             <div style={{ maxWidth: '960px', margin: '0 auto' }}>

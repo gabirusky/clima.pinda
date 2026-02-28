@@ -466,15 +466,38 @@
 > **Design intent**: Expand fluid, mobile-native responsiveness across all remaining components using dynamic CSS grids (`repeat(auto-fit, minmax(...))`), clamps, and flex wrappers to prevent horizontal scroll constraints. Following the standard set in `RainSection.tsx`.
 
 ### 15.1 Storytelling Sections Layout Refactoring
-- [ ] **FutureSection**: Replace hardcoded `grid-template-columns: repeat(2, 1fr)` with `repeat(auto-fit, minmax(240px, 1fr))` on the Projection Callouts grid.
-- [ ] **SummerSection**: Verify ThresholdSlider margins padding and `grid`/`flex` flow on very narrow mobile viewports.
-- [ ] **Remaining Sections**: Audit `paddingBlock`, `gridTemplateColumns`, and inner `div` layouts across all storytelling components to ensure fluid columns that drop to 1 column gracefully.
+- [x] **FutureSection**: Replace hardcoded `grid-template-columns: repeat(2, 1fr)` with `repeat(auto-fit, minmax(240px, 1fr))` on the Projection Callouts grid.
+- [x] **SummerSection**: Verify ThresholdSlider margins padding and `grid`/`flex` flow on very narrow mobile viewports.
+- [x] **Remaining Sections**: Audit `paddingBlock`, `gridTemplateColumns`, and inner `div` layouts across all storytelling components to ensure fluid columns that drop to 1 column gracefully.
 
 ### 15.2 Widgets & Visualization Containers
-- [ ] **ThresholdSlider**: Review layout blocks; convert any fixed grid/flex constraints to auto-fit minimums or flex wrap.
-- [ ] **YearSelector**: Check side-by-side inputs/dropdown behavior, make sure they stack cleanly on narrow widths.
-- [ ] **Charts padding/margins**: Ensure that inner SVG content from `Recharts` and D3 scale fully within containers on narrow device dimensions without squashing text labels.
+- [x] **ThresholdSlider**: Review layout blocks; convert any fixed grid/flex constraints to auto-fit minimums or flex wrap.
+- [x] **YearSelector**: Check side-by-side inputs/dropdown behavior, make sure they stack cleanly on narrow widths.
+- [x] **Charts padding/margins**: Ensure that inner SVG content from `Recharts` and D3 scale fully within containers on narrow device dimensions without squashing text labels.
 
 ### 15.3 Global Layout
-- [ ] **Footer**: Refactor static flex layout into `flex-wrap` or `flex-col` so the attribution/links clusters stack properly without overlapping.
-- [ ] **Overall CSS/index.css**: Verify base clamps (`padding`, `font-size`) cover extreme mobile contexts (e.g. 320px logic).
+- [x] **Footer**: Refactor static flex layout into `flex-wrap` or `flex-col` so the attribution/links clusters stack properly without overlapping.
+- [x] **Overall CSS/index.css**: Verify base clamps (`padding`, `font-size`) cover extreme mobile contexts (e.g. 320px logic).
+
+---
+
+## PHASE 16 — Mobile Layout: Content Flow Optimization
+
+> **Design intent**: On mobile screens, storytelling elements should abandon the "scrollytelling" (sticky viz + scrolling steps) paradigm. Instead, the sections for Clima, Verão, and Noites will prioritize the data visualization at the top of the viewport, with the narrative text stacked compactly beneath it. The desktop experience will retain the full Scrollytelling features.
+
+### 16.1 Scrollytelling Component Adaptation (`ScrollySection.tsx`)
+- [x] Determine mobile viewport boundaries (e.g., using `useWindowSize` or CSS media queries).
+- [x] Implement conditional rendering or CSS structure in `ScrollySection.tsx` to disable `Scrollama` mechanics on mobile.
+- [x] Restructure flex/grid order on mobile so that the `visualization` prop renders first (static, no longer `position: sticky`), immediately followed by the `steps` array compacted into a standard text flow.
+
+### 16.2 Clima Section (`IntroSection.tsx`)
+- [x] Adjust the Hero layout on mobile: Ensure the `ClimateStripes` visualization renders fully at the top.
+- [x] Stack the introductory narrative and steps cleanly below the stripes without relying on scroll-triggers for visibility.
+
+### 16.3 Verão Section (`SummerSection.tsx`)
+- [x] Verify that the `ComparativeBarChart` displays properly as the first element on mobile.
+- [x] Ensure the associated text steps and `StatCallout` for the section render sequentially and compactly beneath the chart.
+
+### 16.4 Noites Section (`TropicalNightsSection.tsx`)
+- [x] Display the `CalendarHeatmap` (defaulting to the final comparison year or cycling via local state/tabs if needed) at the top of the mobile view.
+- [x] Ensure all narrative text and the TR20 `StatCallout` stack underneath seamlessly.

@@ -1,4 +1,5 @@
 import { useState, useMemo, lazy, Suspense } from 'react';
+import { useWindowSize } from '../../hooks/useWindowSize.ts';
 import type { AnnualMetrics, DailyRecord, ClimateSummary } from '../../types/climate.ts';
 import ScrollySection from './ScrollySection.tsx';
 import SectionTitle from '../common/SectionTitle.tsx';
@@ -23,6 +24,9 @@ interface IntroSectionProps {
  */
 export default function IntroSection({ metrics }: IntroSectionProps) {
     const [highlightRecent, setHighlightRecent] = useState(false);
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
+    const displayHighlight = isMobile ? true : highlightRecent;
 
     // useMemo keeps the array reference stable across re-renders triggered by
     // highlightRecent state changes. Without this, ClimateStripes receives a
@@ -95,11 +99,11 @@ export default function IntroSection({ metrics }: IntroSectionProps) {
                 <ScrollySection
                     id="stripes-scrolly"
                     visualization={
-                        <div style={{ width: '100%', height: '60vh', position: 'relative' }}>
+                        <div style={{ width: '100%', height: isMobile ? '30vh' : '60vh', position: 'relative' }}>
                             <Suspense fallback={<LoadingSpinner />}>
                                 <ClimateStripes data={metricsArray} height="100%" />
                             </Suspense>
-                            {highlightRecent && (
+                            {displayHighlight && (
                                 <div style={{
                                     position: 'absolute',
                                     right: 0,

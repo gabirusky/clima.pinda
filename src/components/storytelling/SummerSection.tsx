@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense } from 'react';
+import { useWindowSize } from '../../hooks/useWindowSize.ts';
 import type { AnnualMetrics, DailyRecord } from '../../types/climate.ts';
 import ScrollySection from './ScrollySection.tsx';
 import SectionTitle from '../common/SectionTitle.tsx';
@@ -24,6 +25,9 @@ interface SummerSectionProps {
  */
 export default function SummerSection({ metrics, dailyData }: SummerSectionProps) {
     const [activeDecadeRange, setActiveDecadeRange] = useState(0);
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
+    const displayDecadeRange = isMobile ? 2 : activeDecadeRange;
 
     const steps = [
         <div key="s1">
@@ -74,7 +78,7 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
                 visualization={
                     <Suspense fallback={<LoadingSpinner />}>
                         <div style={{ width: '100%' }}>
-                            <ComparativeBarChart metrics={metrics} stepIndex={activeDecadeRange} />
+                            <ComparativeBarChart metrics={metrics} stepIndex={displayDecadeRange} />
                             {/* Decade range highlight overlay */}
                             <div style={{
                                 marginTop: '1rem',
@@ -84,9 +88,9 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
                                 color: 'rgba(255,255,255,0.4)',
                                 textAlign: 'center',
                             }}>
-                                {activeDecadeRange === 0 && 'Décadas 1940–1960'}
-                                {activeDecadeRange === 1 && 'Décadas 1940–1990'}
-                                {activeDecadeRange === 2 && 'Décadas 1940–2020'}
+                                {displayDecadeRange === 0 && 'Décadas 1940–1960'}
+                                {displayDecadeRange === 1 && 'Décadas 1940–1990'}
+                                {displayDecadeRange === 2 && 'Décadas 1940–2020'}
                             </div>
                         </div>
                     </Suspense>

@@ -29,7 +29,7 @@ export default function RainSection({ rainMetrics, summary, dailyData }: RainSec
             className="section-block"
             style={{
                 paddingBlock: 'clamp(80px, 12vh, 160px)',
-                paddingInline: 'clamp(1.5rem, 5vw, 4rem)',
+                paddingInline: 'clamp(1rem, 5vw, 4rem)',
                 maxWidth: '1200px',
                 margin: '0 auto',
             }}

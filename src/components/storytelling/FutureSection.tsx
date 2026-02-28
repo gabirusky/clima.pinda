@@ -98,7 +98,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
             className="section-block"
             style={{
                 paddingBlock: 'clamp(80px, 12vh, 160px)',
-                paddingInline: 'clamp(1.5rem, 5vw, 4rem)',
+                paddingInline: 'clamp(1rem, 5vw, 4rem)',
                 maxWidth: '1200px',
                 margin: '0 auto',
             }}
@@ -147,7 +147,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
             <div
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
                     gap: '2rem',
                     marginBottom: '3rem',
                 }}

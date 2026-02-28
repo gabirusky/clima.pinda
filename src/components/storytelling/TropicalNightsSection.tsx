@@ -1,4 +1,5 @@
 import { useState, useMemo, lazy, Suspense } from 'react';
+import { useWindowSize } from '../../hooks/useWindowSize.ts';
 import type { AnnualMetrics, DailyRecord } from '../../types/climate.ts';
 import ScrollySection from './ScrollySection.tsx';
 import SectionTitle from '../common/SectionTitle.tsx';
@@ -23,6 +24,9 @@ const STEP_YEARS = [1990, 2015, 2024];
  */
 export default function TropicalNightsSection({ metrics, dailyData }: TropicalNightsSectionProps) {
     const [year, setYear] = useState(STEP_YEARS[0]);
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
+    const displayYear = isMobile ? STEP_YEARS[STEP_YEARS.length - 1] : year;
 
     const tr20Trend = useMemo(() => {
         const arr = metricsToArray(metrics);
@@ -84,7 +88,7 @@ export default function TropicalNightsSection({ metrics, dailyData }: TropicalNi
                         <div style={{ width: '100%' }}>
                             <CalendarHeatmap
                                 data={dailyData}
-                                year={year}
+                                year={displayYear}
                             />
                         </div>
                     </Suspense>

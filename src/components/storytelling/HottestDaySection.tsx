@@ -46,7 +46,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
             className="section-block"
             style={{
                 paddingBlock: 'clamp(80px, 12vh, 160px)',
-                paddingInline: 'clamp(1.5rem, 5vw, 4rem)',
+                paddingInline: 'clamp(1rem, 5vw, 4rem)',
                 maxWidth: '1200px',
                 margin: '0 auto',
             }}
@@ -69,7 +69,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                     background: 'rgba(103,0,31,0.15)',
                     border: '1px solid rgba(103,0,31,0.3)',
                     borderRadius: '12px',
-                    padding: 'clamp(1.5rem, 4vw, 2.5rem)',
+                    padding: 'clamp(1rem, 4vw, 2.5rem)',
                     marginBottom: '3rem',
                     display: 'inline-block',
                 }}

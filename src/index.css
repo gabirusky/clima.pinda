@@ -468,7 +468,7 @@ input[type='range']:focus-visible {
     display: flex;
     align-items: center;
     padding-block: clamp(48px, 8vh, 96px);
-    padding-inline: clamp(24px, 5vw, 64px);
+    padding-inline: clamp(16px, 5vw, 64px);
     max-width: 600px;
 }
 
