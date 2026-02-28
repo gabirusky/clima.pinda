@@ -210,7 +210,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
         label,
     }: {
         active?: boolean;
-        payload?: Array<{ name: string; value: number; color: string }>;
+        payload?: Array<{ name: string; value: number; color: string; dataKey?: string }>;
         label?: number;
     }) => {
         if (!active || !payload || payload.length === 0) return null;
@@ -241,10 +241,10 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     Valores absolutos
                 </p>
                 {payload
-                    .filter(p => (p as any).dataKey !== 'trend')
+                    .filter(p => p.dataKey !== 'trend')
                     .map(p => {
                         return (
-                            <p key={(p as any).dataKey || p.name} style={{ color: p.color, margin: '3px 0' }}>
+                            <p key={p.dataKey || p.name} style={{ color: p.color, margin: '3px 0' }}>
                                 {p.name}: <strong>{typeof p.value === 'number' ? p.value.toFixed(1) : p.value}</strong>
                             </p>
                         )
