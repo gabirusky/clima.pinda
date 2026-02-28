@@ -19,6 +19,8 @@ interface ScrollySectionProps {
     offset?: DecimalType;
     /** Section id for anchor navigation */
     id?: string;
+    /** Reverse order on desktop: viz on left, text on right */
+    reverseDesktop?: boolean;
 }
 
 /**
@@ -37,6 +39,7 @@ export default function ScrollySection({
     onStepExit,
     offset = 0.5,
     id,
+    reverseDesktop = false,
 }: ScrollySectionProps) {
     // Unique stable ID for this instance — scopes Scrollama to this section only
     const uid = useId().replace(/:/g, '');
@@ -95,7 +98,7 @@ export default function ScrollySection({
         >
             <div style={{
                 display: 'flex',
-                flexDirection: isMobile ? 'column' : 'row',
+                flexDirection: isMobile ? 'column' : (reverseDesktop ? 'row-reverse' : 'row'),
                 alignItems: isMobile ? 'center' : 'flex-start',
                 gap: isMobile ? '1rem' : '2rem',
             }}>

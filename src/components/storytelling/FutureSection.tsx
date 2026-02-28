@@ -147,8 +147,8 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
             <div
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                    gap: '2rem',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '1.5rem',
                     marginBottom: '3rem',
                 }}
             >
@@ -158,19 +158,20 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                         style={{
                             fontFamily: "'DM Sans', sans-serif",
                             fontSize: '0.8125rem',
-                            color: 'rgba(255,255,255,0.4)',
+                            color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
                             textTransform: 'uppercase',
                             letterSpacing: '0.06em',
                         }}
                     >
-                        Tendência Linear Padrão — 2040
+                        2040 — Tendência Linear
                     </p>
                     <StatCallout
                         value={chartProj.ols2040}
                         showSign={true}
                         label="regressão linear se a tendência continuar"
                         accentColor="#d6604d"
+                        fontSize="clamp(56px, 6vw, 84px)"
                     />
                 </div>
 
@@ -180,19 +181,20 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                         style={{
                             fontFamily: "'DM Sans', sans-serif",
                             fontSize: '0.8125rem',
-                            color: 'rgba(255,255,255,0.4)',
+                            color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
                             textTransform: 'uppercase',
                             letterSpacing: '0.06em',
                         }}
                     >
-                        Média móvel 5 anos — 2040
+                        2040 — MM 5 Anos
                     </p>
                     <StatCallout
                         value={chartProj.ma5_2040 ?? chartProj.ols2040}
                         showSign={true}
                         label="estimativa suavizada pela média móvel projetada"
                         accentColor="#ca0020"
+                        fontSize="clamp(56px, 6vw, 84px)"
                     />
                 </div>
 
@@ -202,19 +204,20 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                         style={{
                             fontFamily: "'DM Sans', sans-serif",
                             fontSize: '0.8125rem',
-                            color: 'rgba(255,255,255,0.4)',
+                            color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
                             textTransform: 'uppercase',
                             letterSpacing: '0.06em',
                         }}
                     >
-                        Tendência Linear Padrão — 2050
+                        2050 — Tendência Linear
                     </p>
                     <StatCallout
                         value={chartProj.ols2050}
                         showSign={true}
                         label="valor projetado"
                         accentColor="#b2182b"
+                        fontSize="clamp(56px, 6vw, 84px)"
                     />
                 </div>
 
@@ -224,19 +227,20 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                         style={{
                             fontFamily: "'DM Sans', sans-serif",
                             fontSize: '0.8125rem',
-                            color: 'rgba(255,255,255,0.4)',
+                            color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
                             textTransform: 'uppercase',
                             letterSpacing: '0.06em',
                         }}
                     >
-                        Média móvel 5 anos — 2050
+                        2050 — MM 5 Anos
                     </p>
                     <StatCallout
                         value={chartProj.ma5_2050 ?? chartProj.ols2050}
                         showSign={true}
                         label="estimativa suavizada pela média móvel projetada"
                         accentColor="#67001f"
+                        fontSize="clamp(56px, 6vw, 84px)"
                     />
                 </div>
             </div>

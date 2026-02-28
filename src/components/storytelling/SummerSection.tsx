@@ -97,6 +97,7 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
                 }
                 steps={steps}
                 onStepEnter={handleStepEnter}
+                reverseDesktop={true}
             />
 
             {/* ThresholdSlider below */}

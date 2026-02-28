@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { useWindowSize } from '../../hooks/useWindowSize.ts';
 import type { AnnualMetrics, ClimateSummary } from '../../types/climate.ts';
 import SectionTitle from '../common/SectionTitle.tsx';
 import StatCallout from '../common/StatCallout.tsx';
@@ -18,6 +19,8 @@ interface HeatWaveSectionProps {
  * StatCallout: 82 days longest heat wave (2018).
  */
 export default function HeatWaveSection({ metrics, summary }: HeatWaveSectionProps) {
+    const { width } = useWindowSize();
+    const isMobile = width < 768;
     const longestSpell = summary.longest_warm_spell;
 
     return (
@@ -57,20 +60,23 @@ export default function HeatWaveSection({ metrics, summary }: HeatWaveSectionPro
 
             {/* Callout cards */}
             <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row-reverse',
                 gap: '2rem',
                 marginTop: '2rem',
             }}>
-                <div>
+                <div style={{ flex: 1, minWidth: '240px' }}>
+                    <h2>Em 2018: </h2>
                     <StatCallout
                         value={longestSpell?.days ?? 82}
                         unit="DIAS"
-                        label={`maior onda de calor consecutiva — em ${longestSpell?.year ?? 2018}`}
-                        accentColor="#67001f"
+                        label={`maior onda de calor consecutiva}`}
+                        accentColor="#b2182b"
                     />
                 </div>
                 <div style={{
+                    flex: 1,
+                    minWidth: '240px',
                     fontFamily: "'DM Sans', sans-serif",
                     fontSize: '1rem',
                     color: 'var(--color-text-secondary)',

@@ -14,6 +14,8 @@ interface StatCalloutProps {
     decimals?: number;
     /** Optional accent color override (default: --color-stripe-warm) */
     accentColor?: string;
+    /** Optional font size override */
+    fontSize?: string;
 }
 
 /**
@@ -30,6 +32,7 @@ export default function StatCallout({
     showSign = false,
     decimals = 0,
     accentColor,
+    fontSize,
 }: StatCalloutProps) {
     const [displayed, setDisplayed] = useState(0);
     const [inView, setInView] = useState(false);
@@ -94,7 +97,7 @@ export default function StatCallout({
                 style={{
                     fontFamily: "'Raleway', sans-serif",
                     fontWeight: 800,
-                    fontSize: 'var(--text-display-xl, clamp(80px, 12vw, 160px))',
+                    fontSize: fontSize || 'var(--text-display-xl, clamp(80px, 12vw, 160px))',
                     lineHeight: 0.9,
                     letterSpacing: '-0.04em',
                     color,
