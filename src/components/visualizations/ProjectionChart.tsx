@@ -240,13 +240,15 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                 <p style={{ color: 'rgba(255,255,255,0.5)', margin: '0 0 4px 0', fontSize: '10px' }}>
                     Valores absolutos
                 </p>
-                {payload.map(p => {
-                    return (
-                        <p key={p.name} style={{ color: p.color, margin: '2px 0' }}>
-                            {p.name}:{' '}
-                        </p>
-                    )
-                })}
+                {payload
+                    .filter(p => (p as any).dataKey !== 'trend')
+                    .map(p => {
+                        return (
+                            <p key={(p as any).dataKey || p.name} style={{ color: p.color, margin: '3px 0' }}>
+                                {p.name}: <strong>{typeof p.value === 'number' ? p.value.toFixed(1) : p.value}</strong>
+                            </p>
+                        )
+                    })}
             </div>
         );
     };
