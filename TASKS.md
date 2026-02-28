@@ -303,13 +303,7 @@
 - [x] Birth year input → `PersonalTimeline` activation
 - [x] Typography/background softens on PersonalTimeline reveal
 
-### 7.7 CostSection (`src/components/storytelling/CostSection.tsx`) ✅
-> *The AC Calculator. It feels like a receipt.*
 
-- [x] `ACCalculator` widget — JetBrains Mono, receipt layout
-- [x] 1990 vs selected year comparison
-- [x] Equity context: accessibility of AC for low-income households
-- [x] 1990 comparison block using metrics data
 
 ### 7.8 FutureSection (`src/components/storytelling/FutureSection.tsx`) ✅
 > *A question left open.*
@@ -340,16 +334,7 @@
 - [x] First decade (1940–1949) vs last decade (2015–2025) comparison shown live
 - [x] `aria-live="polite"` region; gradient track fill via inline `background`
 
-### 8.3 ACCalculator (`src/components/widgets/ACCalculator.tsx`) ✅
-> *A receipt. JetBrains Mono. The total lands with uncomfortable clarity.*
 
-- [x] Year selector → filter daily records for that year
-- [x] Calculates: days above `AC_THRESHOLD` × `AC_HOURS_PER_HOT_DAY` × `AC_POWER_KW` × rate
-- [x] Itemized rows: days, hours, kWh consumed, rate
-- [x] Hairline `border-top` before TOTAL; blinking `▌` cursor via `pulseHot`
-- [x] Editable electricity rate input (default `DEFAULT_ELECTRICITY_RATE_BRL`)
-- [x] Comparison to 1990 baseline below receipt
-- [x] `useState<number>` explicit types to avoid literal-type inference from `as const` constants
 
 ### 8.4 PersonalTimeline (`src/components/widgets/PersonalTimeline.tsx`) ✅
 > *Intimate register. Smaller type. Softer light. A private record.*
@@ -371,7 +356,7 @@
 - [x] `<LoadingSpinner />` while loading; typed error state with fallback UI
 - [x] Wrapped in `<ErrorBoundary>`
 - [x] Skip link (`#main-content`) for keyboard navigation
-- [x] Sections rendered in order: IntroSection → SummerSection → TropicalNightsSection → HeatWaveSection → HottestDaySection → CostSection → FutureSection
+- [x] Sections rendered in order: IntroSection → SummerSection → TropicalNightsSection → HeatWaveSection → HottestDaySection → FutureSection
 - [x] All 7 sections wrapped in `React.lazy` + `<Suspense>` with `SectionLoader` fallback
 - [x] Null-narrowing: `safeData = dailyData ?? []` / `safeMetrics = metrics ?? {}` before passing to sections
 - [x] Graceful no-data state with instructions to run `generate_web_data.py`
@@ -394,7 +379,7 @@
 ### 10.1 Accessibility ✅
 - [x] All SVG charts: `role="img"`, `aria-label`, `<title>`, `<desc>` inside (all 7 charts)
 - [x] `<DataTable>` visually-hidden alternative for ClimateStripes, CalendarHeatmap, RadialChart
-- [x] All form inputs have associated `<label>` elements (ACCalculator, ThresholdSlider, YearSelector)
+- [x] All form inputs have associated `<label>` elements (ThresholdSlider, YearSelector)
 - [x] `aria-live="polite"` on ThresholdSlider output
 - [x] `prefers-reduced-motion` block in `index.css` — all durations → 0.01ms
 - [x] Skip link (`.skip-link` CSS class, CSS-driven show on `:focus`) in App.tsx
@@ -432,7 +417,6 @@
 - [x] Test `groupByYear`, `groupByDecade`, `filterByYear` — 18 tests in `dataProcessing.test.ts`
 - [x] Test Python: `calculate_wsdi` (via baseline test), `calculate_cdd`, `calculate_cwd` — see 12.3
 - [x] Test `ThresholdSlider` renders, shows 30°C default, slider attrs, updates on change
-- [x] Test `ACCalculator` renders without crash; exposes year select & rate input; kWh formula verified
 
 ### 12.2 Integration Tests ✅ Partial
 - [x] `useClimateData` hook: data-fetch types verified via `ClimateDataState` export; loading/error paths covered by ErrorBoundary and SectionLoader fallbacks in `App.tsx`
@@ -475,3 +459,22 @@
 - [x] Inline comments — D3 animations in `RidgelinePlot.tsx`, `PersonalTimeline.tsx`, `ClimateStripes.tsx` annotated with stroke-dashoffset and stagger mechanics
 - [x] `CHANGELOG.md` updated with full v1.0.0 launch entry (2026-02-25)
 
+---
+
+## PHASE 15 — Mobile Native Responsiveness Polish
+
+> **Design intent**: Expand fluid, mobile-native responsiveness across all remaining components using dynamic CSS grids (`repeat(auto-fit, minmax(...))`), clamps, and flex wrappers to prevent horizontal scroll constraints. Following the standard set in `RainSection.tsx`.
+
+### 15.1 Storytelling Sections Layout Refactoring
+- [ ] **FutureSection**: Replace hardcoded `grid-template-columns: repeat(2, 1fr)` with `repeat(auto-fit, minmax(240px, 1fr))` on the Projection Callouts grid.
+- [ ] **SummerSection**: Verify ThresholdSlider margins padding and `grid`/`flex` flow on very narrow mobile viewports.
+- [ ] **Remaining Sections**: Audit `paddingBlock`, `gridTemplateColumns`, and inner `div` layouts across all storytelling components to ensure fluid columns that drop to 1 column gracefully.
+
+### 15.2 Widgets & Visualization Containers
+- [ ] **ThresholdSlider**: Review layout blocks; convert any fixed grid/flex constraints to auto-fit minimums or flex wrap.
+- [ ] **YearSelector**: Check side-by-side inputs/dropdown behavior, make sure they stack cleanly on narrow widths.
+- [ ] **Charts padding/margins**: Ensure that inner SVG content from `Recharts` and D3 scale fully within containers on narrow device dimensions without squashing text labels.
+
+### 15.3 Global Layout
+- [ ] **Footer**: Refactor static flex layout into `flex-wrap` or `flex-col` so the attribution/links clusters stack properly without overlapping.
+- [ ] **Overall CSS/index.css**: Verify base clamps (`padding`, `font-size`) cover extreme mobile contexts (e.g. 320px logic).

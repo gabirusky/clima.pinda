@@ -15,7 +15,7 @@ const TropicalNightsSection = lazy(() => import('./components/storytelling/Tropi
 const HeatWaveSection = lazy(() => import('./components/storytelling/HeatWaveSection.tsx'));
 const HottestDaySection = lazy(() => import('./components/storytelling/HottestDaySection.tsx'));
 const RainSection = lazy(() => import('./components/storytelling/RainSection.tsx'));
-const CostSection = lazy(() => import('./components/storytelling/CostSection.tsx'));
+
 const FutureSection = lazy(() => import('./components/storytelling/FutureSection.tsx'));
 
 /**
@@ -159,10 +159,7 @@ export default function App() {
                                 <RainSection rainMetrics={safeRainMetrics} summary={summary!} dailyData={safeData} />
                             </Suspense>
 
-                            {/* ── CostSection: AC Calculator ────────────────── */}
-                            <Suspense fallback={<SectionLoader />}>
-                                <CostSection metrics={safeMetrics} dailyData={safeData} />
-                            </Suspense>
+
 
                             {/* ── FutureSection: OLS projection ─────────────── */}
                             <Suspense fallback={<SectionLoader />}>

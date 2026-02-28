@@ -8,7 +8,7 @@ const NAV_LINKS = [
     { href: '#heatwaves', label: 'Ondas de Calor' },
     { href: '#hottest', label: 'Recorde' },
     { href: '#chuvas', label: 'Chuvas' },
-    { href: '#cost', label: 'Custo' },
+
     { href: '#future', label: 'Futuro' },
 ];
 
