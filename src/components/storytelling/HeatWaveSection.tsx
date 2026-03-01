@@ -70,7 +70,7 @@ export default function HeatWaveSection({ metrics, summary }: HeatWaveSectionPro
                     <StatCallout
                         value={longestSpell?.days ?? 82}
                         unit="DIAS"
-                        label={`maior onda de calor consecutiva}`}
+                        label={`maior onda de calor consecutiva`}
                         accentColor="#b2182b"
                     />
                 </div>
