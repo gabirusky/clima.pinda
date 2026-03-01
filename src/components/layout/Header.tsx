@@ -76,10 +76,11 @@ export default function Header() {
                 background: scrolled
                     ? 'rgba(10, 15, 30, 0.85)'
                     : 'rgba(10, 15, 30, 0)',
-                backdropFilter: scrolled ? 'blur(14px)' : 'none',
-                WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
-                borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
-                transition: 'background 0.3s ease, border-color 0.3s ease',
+                backdropFilter: scrolled ? 'blur(14px)' : 'blur(0px)',
+                WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'blur(0px)',
+                borderBottom: '1px solid',
+                borderBottomColor: scrolled ? 'rgba(255,255,255,0.06)' : 'transparent',
+                transition: 'background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease',
             }}
         >
             <div
