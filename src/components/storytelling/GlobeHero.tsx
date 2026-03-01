@@ -314,7 +314,7 @@ export default function GlobeHero() {
                     </div>
                 </div>
 
-                <a className="globe-hero__cta" href="#stripes">
+                <a className="globe-hero__cta" href="#hottest">
                     Explorar os dados
                     <svg width={14} height={14} viewBox="0 0 14 14" fill="none" aria-hidden="true">
                         <path
