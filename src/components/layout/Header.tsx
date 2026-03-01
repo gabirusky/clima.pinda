@@ -57,10 +57,19 @@ export default function Header() {
         setMenuOpen(false);
         const el = document.getElementById(href.slice(1));
         if (el) {
-            // Header height is 56px, plus some breathing room = 70px offset
-            const offset = 100;
+            // Adjust offset for mobile vs desktop if needed, 80px is generally safe
+            const offset = 80;
             const y = el.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
+
+            // Close menu FIRST and immediately to avoid fighting with scroll
+            if (menuOpen) {
+                setMenuOpen(false);
+            }
+
+            // Trigger scroll on next frame to ensure the state update doesn't block it
+            requestAnimationFrame(() => {
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            });
         }
     };
 
@@ -73,13 +82,13 @@ export default function Header() {
                 left: 0,
                 right: 0,
                 zIndex: 100,
-                background: scrolled
-                    ? 'rgba(10, 15, 30, 0.85)'
+                background: (scrolled || menuOpen)
+                    ? 'rgba(10, 15, 30, 0.98)'
                     : 'rgba(10, 15, 30, 0)',
-                backdropFilter: scrolled ? 'blur(14px)' : 'blur(0px)',
-                WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'blur(0px)',
+                backdropFilter: (scrolled || menuOpen) ? 'blur(14px)' : 'blur(0px)',
+                WebkitBackdropFilter: (scrolled || menuOpen) ? 'blur(14px)' : 'blur(0px)',
                 borderBottom: '1px solid',
-                borderBottomColor: scrolled ? 'rgba(255,255,255,0.06)' : 'transparent',
+                borderBottomColor: (scrolled || menuOpen) ? 'rgba(255,255,255,0.06)' : 'transparent',
                 transition: 'background 0.4s ease, border-color 0.4s ease, backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease',
             }}
         >
@@ -168,9 +177,11 @@ export default function Header() {
                     }}
                     className="show-mobile"
                 >
-                    <span style={{ display: 'block', width: 22, height: 2, background: 'currentColor', borderRadius: 1, transition: 'transform 0.2s', transform: menuOpen ? 'rotate(45deg) translateY(7px)' : 'none' }} />
-                    <span style={{ display: 'block', width: 22, height: 2, background: 'currentColor', borderRadius: 1, opacity: menuOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
-                    <span style={{ display: 'block', width: 22, height: 2, background: 'currentColor', borderRadius: 1, transition: 'transform 0.2s', transform: menuOpen ? 'rotate(-45deg) translateY(-7px)' : 'none' }} />
+                    <div style={{ position: 'relative', width: 22, height: 16 }}>
+                        <span style={{ position: 'absolute', top: 0, left: 0, width: 22, height: 2, background: 'currentColor', borderRadius: 1, transition: 'transform 0.2s', transform: menuOpen ? 'translateY(7px) rotate(45deg)' : 'none' }} />
+                        <span style={{ position: 'absolute', top: 7, left: 0, width: 22, height: 2, background: 'currentColor', borderRadius: 1, opacity: menuOpen ? 0 : 1, transition: 'opacity 0.2s' }} />
+                        <span style={{ position: 'absolute', top: 14, left: 0, width: 22, height: 2, background: 'currentColor', borderRadius: 1, transition: 'transform 0.2s', transform: menuOpen ? 'translateY(-7px) rotate(-45deg)' : 'none' }} />
+                    </div>
                 </button>
             </div>
 
@@ -201,11 +212,13 @@ export default function Header() {
                                         fontFamily: "'DM Sans', sans-serif",
                                         fontSize: '1rem',
                                         color: activeSection === link.href
-                                            ? 'var(--color-text-accent)'
+                                            ? 'var(--color-text-accent, #ef8a62)'
                                             : 'rgba(255,255,255,0.7)',
                                         textDecoration: 'none',
-                                        padding: '0.625rem 0',
+                                        padding: '1.25rem 0', // Even larger hit area for mobile
                                         borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                        fontWeight: activeSection === link.href ? 600 : 400,
+                                        transition: 'color 0.2s',
                                     }}
                                 >
                                     {link.label}
