@@ -63,7 +63,7 @@ export default function ThresholdSlider({ dailyData, metrics: _metrics }: Thresh
         >
             {/* Current value display */}
             <div style={{
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "'Raleway', sans-serif",
                 fontWeight: 800,
                 fontSize: 'var(--text-display-md, clamp(32px, 4.5vw, 56px))',
                 lineHeight: 1,
@@ -76,7 +76,7 @@ export default function ThresholdSlider({ dailyData, metrics: _metrics }: Thresh
             </div>
 
             {/* Slider */}
-            <label htmlFor="threshold-slider" style={{ display: 'block', fontFamily: "'DM Sans', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.75rem' }}>
+            <label htmlFor="threshold-slider" style={{ display: 'block', fontFamily: "'Raleway', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.75rem' }}>
                 Limiar de temperatura
             </label>
             <input
@@ -99,7 +99,7 @@ export default function ThresholdSlider({ dailyData, metrics: _metrics }: Thresh
                     marginBottom: '1rem',
                 }}
             />
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '-0.5rem', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', marginTop: '-0.5rem', marginBottom: '1.5rem' }}>
                 <span>25°C</span>
                 <span>30°C</span>
                 <span>35°C</span>
@@ -112,7 +112,7 @@ export default function ThresholdSlider({ dailyData, metrics: _metrics }: Thresh
                 borderRadius: '8px',
                 padding: '1rem 1.25rem',
             }}>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>
+                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>
                     Dias acima de {threshold.toFixed(1)}°C em {latestYear}
                 </p>
                 <p style={{
@@ -139,10 +139,10 @@ export default function ThresholdSlider({ dailyData, metrics: _metrics }: Thresh
                         borderRadius: '8px',
                         padding: '1rem',
                     }}>
-                        <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: '1.75rem', color: d.color, lineHeight: 1 }}>
+                        <p style={{ fontFamily: "'Raleway', sans-serif", fontWeight: 800, fontSize: '1.75rem', color: d.color, lineHeight: 1 }}>
                             {d.su30}
                         </p>
-                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.25rem' }}>
+                        <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.8125rem', color: 'rgba(255,255,255,0.45)', marginTop: '0.25rem' }}>
                             dias/ano · {d.decade}
                         </p>
                     </div>

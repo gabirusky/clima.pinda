@@ -143,7 +143,7 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
                 .attr('y', marginTop + i * cellStep + CELL_SIZE / 2 + 3)
                 .attr('text-anchor', 'end')
                 .attr('fill', 'rgba(240,236,227,0.4)')
-                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-family', "'Raleway', sans-serif")
                 .attr('font-size', 9)
                 .text(month);
         });
@@ -156,7 +156,7 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
                     .attr('y', marginTop - 6)
                     .attr('text-anchor', 'middle')
                     .attr('fill', 'rgba(240,236,227,0.4)')
-                    .attr('font-family', "'DM Sans', sans-serif")
+                    .attr('font-family', "'Raleway', sans-serif")
                     .attr('font-size', 9)
                     .text(year);
             }
@@ -194,7 +194,7 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
         }}>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <p style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', color: '#fff', margin: 0 }}>
+                <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '1.25rem', color: '#fff', margin: 0 }}>
                     Distribuição das chuvas ao longo dos anos
                 </p>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -206,7 +206,7 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
                             color: metricType === 'r10mm' ? '#67a9cf' : 'rgba(255,255,255,0.6)',
                             padding: '0.25rem 0.75rem',
                             borderRadius: '999px',
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.75rem',
                             cursor: 'pointer',
                         }}
@@ -221,7 +221,7 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
                             color: metricType === 'wet_days' ? '#67a9cf' : 'rgba(255,255,255,0.6)',
                             padding: '0.25rem 0.75rem',
                             borderRadius: '999px',
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.75rem',
                             cursor: 'pointer',
                         }}
@@ -249,10 +249,10 @@ export default function RainHeatmap({ rainMetrics }: RainHeatmapProps) {
                     visible={tooltip.visible}
                     content={
                         <div>
-                            <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '0.875rem', marginBottom: 4 }}>
+                            <p style={{ fontFamily: "'Raleway', sans-serif", fontWeight: 700, fontSize: '0.875rem', marginBottom: 4 }}>
                                 {MONTHS[tooltip.month - 1]} {tooltip.year}
                             </p>
-                            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+                            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
                                 {metricType === 'r10mm' ? 'Dias ≥ 10mm' : 'Dias chuvosos'}: <strong style={{ color: '#67a9cf' }}>{tooltip.value}</strong>
                             </p>
                         </div>

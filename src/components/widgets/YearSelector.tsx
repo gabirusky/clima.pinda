@@ -66,7 +66,7 @@ export default function YearSelector({ metrics }: YearSelectorProps) {
         border: '1px solid rgba(255,255,255,0.12)',
         borderRadius: '6px',
         color: 'var(--color-text-primary)',
-        fontFamily: "'Syne', sans-serif",
+        fontFamily: "'Raleway', sans-serif",
         fontWeight: 700,
         fontSize: '1.125rem',
         padding: '0.375rem 0.75rem',
@@ -84,13 +84,13 @@ export default function YearSelector({ metrics }: YearSelectorProps) {
             {/* Year selectors */}
             <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <label htmlFor="year-a" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem', color: '#4393c3' }}>Ano A:</label>
+                    <label htmlFor="year-a" style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem', color: '#4393c3' }}>Ano A:</label>
                     <select id="year-a" value={yearA} onChange={e => setYearA(Number(e.target.value))} style={selectStyle}>
                         {years.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <label htmlFor="year-b" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem', color: '#d6604d' }}>Ano B:</label>
+                    <label htmlFor="year-b" style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem', color: '#d6604d' }}>Ano B:</label>
                     <select id="year-b" value={yearB} onChange={e => setYearB(Number(e.target.value))} style={selectStyle}>
                         {years.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
@@ -99,7 +99,7 @@ export default function YearSelector({ metrics }: YearSelectorProps) {
                     onClick={handleReset}
                     aria-label="Resetar seleção de anos"
                     style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.8125rem',
                         color: 'rgba(255,255,255,0.4)',
                         background: 'transparent',
@@ -115,7 +115,7 @@ export default function YearSelector({ metrics }: YearSelectorProps) {
 
             {/* Comparison table */}
             <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem' }}>
                     <thead>
                         <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                             <th style={{ textAlign: 'left', padding: '0.5rem 0.75rem', color: 'rgba(255,255,255,0.4)', fontWeight: 400, letterSpacing: '0.04em' }}>
@@ -157,7 +157,7 @@ export default function YearSelector({ metrics }: YearSelectorProps) {
                 </table>
             </div>
 
-            <p style={{ marginTop: '0.75rem', fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)' }}>
+            <p style={{ marginTop: '0.75rem', fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)' }}>
                 Vermelho = piora · Azul = melhora
             </p>
         </div>

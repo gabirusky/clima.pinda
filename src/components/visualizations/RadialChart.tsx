@@ -61,7 +61,7 @@ export default function RadialChart({ metrics }: RadialChartProps) {
                 .attr('x', cx + 4)
                 .attr('y', cy - rScale(temp) + 4)
                 .attr('fill', 'rgba(255,255,255,0.25)')
-                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-family', "'Raleway', sans-serif")
                 .attr('font-size', 9)
                 .text(`${temp}°C`);
         });
@@ -84,7 +84,7 @@ export default function RadialChart({ metrics }: RadialChartProps) {
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'middle')
                 .attr('fill', 'rgba(240,236,227,0.4)')
-                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-family', "'Raleway', sans-serif")
                 .attr('font-size', 10)
                 .text(MONTHS[i]);
         });
@@ -153,7 +153,7 @@ export default function RadialChart({ metrics }: RadialChartProps) {
                 .attr('x', SIZE - 55)
                 .attr('y', 26 + di * 18)
                 .attr('fill', color)
-                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-family', "'Raleway', sans-serif")
                 .attr('font-size', 10)
                 .text(`${decade}s`);
         });

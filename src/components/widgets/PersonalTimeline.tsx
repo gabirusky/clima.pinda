@@ -30,7 +30,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
         return (
             <div style={{
                 padding: '2rem',
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Raleway', sans-serif",
                 fontStyle: 'italic',
                 fontSize: '1rem',
                 color: 'rgba(255,255,255,0.4)',
@@ -44,7 +44,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
         return (
             <div style={{
                 padding: '2rem',
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Raleway', sans-serif",
                 fontSize: '0.875rem',
                 color: 'rgba(255,255,255,0.3)',
             }}>
@@ -96,7 +96,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
         >
             {/* Intimate header — smaller type, softer light */}
             <p style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Raleway', sans-serif",
                 fontStyle: 'italic',
                 fontSize: '0.9375rem',
                 color: 'rgba(255,255,255,0.5)',
@@ -146,7 +146,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
                     textAnchor="middle"
                     fill="rgba(240,236,227,0.5)"
                     fontSize={9}
-                    fontFamily="'DM Sans', sans-serif"
+                    fontFamily="'Raleway', sans-serif"
                 >
                     {recordYear.year}
                 </text>
@@ -173,7 +173,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
                         textAnchor="middle"
                         fill="rgba(255,255,255,0.3)"
                         fontSize={9}
-                        fontFamily="'DM Sans', sans-serif"
+                        fontFamily="'Raleway', sans-serif"
                     >
                         {y}
                     </text>
@@ -187,7 +187,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
                     dominantBaseline="middle"
                     fill="rgba(255,255,255,0.2)"
                     fontSize={8}
-                    fontFamily="'DM Sans', sans-serif"
+                    fontFamily="'Raleway', sans-serif"
                     transform={`rotate(-90, ${margL - 16}, ${margT + plotH / 2})`}
                 >
                     dias/ano
@@ -196,7 +196,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
 
             {/* Intimate narrative */}
             <p style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Raleway', sans-serif",
                 fontStyle: 'italic',
                 fontSize: '0.9375rem',
                 color: 'rgba(255,255,255,0.5)',
@@ -208,7 +208,7 @@ export default function PersonalTimeline({ birthYear, metrics, dailyData: _daily
                 </strong>.
             </p>
             <p style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Raleway', sans-serif",
                 fontStyle: 'italic',
                 fontSize: '0.875rem',
                 color: 'rgba(255,255,255,0.35)',

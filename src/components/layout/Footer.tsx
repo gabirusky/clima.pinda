@@ -17,7 +17,7 @@ export default function Footer() {
             <div style={{ maxWidth: '960px', margin: '0 auto' }}>
                 {/* Logo line */}
                 <p style={{
-                    fontFamily: "'Syne', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontWeight: 800,
                     fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
                     letterSpacing: '-0.02em',
@@ -27,7 +27,7 @@ export default function Footer() {
                     LOCAL HEATMAP
                 </p>
                 <p style={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.8125rem',
                     color: 'rgba(255,255,255,0.35)',
                     letterSpacing: '0.06em',
@@ -46,7 +46,7 @@ export default function Footer() {
                     {/* Data Sources */}
                     <div>
                         <h3 style={{
-                            fontFamily: "'Syne', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.75rem',
                             fontWeight: 700,
                             letterSpacing: '0.1em',
@@ -62,7 +62,7 @@ export default function Footer() {
                                     href="https://open-meteo.com/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}
+                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem' }}
                                 >
                                     Open-Meteo (ERA5 / Copernicus)
                                 </a>
@@ -72,7 +72,7 @@ export default function Footer() {
                                     href="https://showyourstripes.info/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}
+                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem' }}
                                 >
                                     Ed Hawkins — Climate Stripes
                                 </a>
@@ -82,7 +82,7 @@ export default function Footer() {
                                     href="https://www.openstreetmap.org/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}
+                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem' }}
                                 >
                                     © OpenStreetMap contributors
                                 </a>
@@ -93,7 +93,7 @@ export default function Footer() {
                     {/* Downloads */}
                     <div>
                         <h3 style={{
-                            fontFamily: "'Syne', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.75rem',
                             fontWeight: 700,
                             letterSpacing: '0.1em',
@@ -108,7 +108,7 @@ export default function Footer() {
                                 <a
                                     href="./data/climate_data.json"
                                     download
-                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}
+                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem' }}
                                 >
                                     ↓ climate_data.json (31K registros)
                                 </a>
@@ -117,7 +117,7 @@ export default function Footer() {
                                 <a
                                     href="./data/metrics.json"
                                     download
-                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}
+                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem' }}
                                 >
                                     ↓ metrics.json (86 anos de índices)
                                 </a>
@@ -128,7 +128,7 @@ export default function Footer() {
                     {/* Links */}
                     <div>
                         <h3 style={{
-                            fontFamily: "'Syne', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.75rem',
                             fontWeight: 700,
                             letterSpacing: '0.1em',
@@ -144,7 +144,7 @@ export default function Footer() {
                                     href="https://github.com/gabirusky/clima.pinda"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem' }}
+                                    style={{ color: 'rgba(255,255,255,0.55)', textDecoration: 'none', fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem' }}
                                 >
                                     GitHub ↗
                                 </a>
@@ -164,14 +164,14 @@ export default function Footer() {
                     alignItems: 'center',
                 }}>
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.75rem',
                         color: 'rgba(255,255,255,0.25)',
                     }}>
                         Código: MIT · Dados: CC BY 4.0
                     </p>
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.75rem',
                         color: 'rgba(255,255,255,0.25)',
                     }}>

@@ -56,7 +56,7 @@ export default function App() {
                     gap: '1rem',
                     padding: '2rem',
                     background: '#0a0f1e',
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     color: '#a09080',
                     textAlign: 'center',
                 }}
@@ -111,7 +111,7 @@ export default function App() {
                             justifyContent: 'center',
                             minHeight: '100vh',
                             gap: '1rem',
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             color: 'rgba(255,255,255,0.3)',
                             textAlign: 'center',
                             padding: '2rem',
@@ -186,7 +186,7 @@ function SectionLoader() {
             justifyContent: 'center',
             background: '#0a0a0f',
             color: 'rgba(255,255,255,0.2)',
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "'Raleway', sans-serif",
             fontSize: '0.875rem',
         }}>
             <div style={{ animation: 'pulseHot 1.5s ease-in-out infinite' }}>

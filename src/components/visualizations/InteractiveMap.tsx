@@ -73,8 +73,8 @@ export default function InteractiveMap() {
                 />
                 <Marker position={[LAT, LON]}>
                     <Popup>
-                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.875rem', lineHeight: 1.5 }}>
-                            <strong style={{ fontFamily: "'Syne', sans-serif" }}>Pindamonhangaba, SP</strong>
+                        <div style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.875rem', lineHeight: 1.5 }}>
+                            <strong style={{ fontFamily: "'Raleway', sans-serif" }}>Pindamonhangaba, SP</strong>
                             <br />
                             <span style={{ color: '#666' }}>
                                 {LAT}°, {LON}°

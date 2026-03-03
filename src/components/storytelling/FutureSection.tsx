@@ -133,7 +133,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
             {/* Projection callouts — OLS + MM5 side by side, 2x2 grid */}
             <h3
                 style={{
-                    fontFamily: "'Syne', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontWeight: 700,
                     fontSize: '1.25rem',
                     color: 'var(--color-text-primary)',
@@ -156,7 +156,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 <div>
                     <p
                         style={{
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.8125rem',
                             color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
@@ -179,7 +179,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 <div>
                     <p
                         style={{
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.8125rem',
                             color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
@@ -202,7 +202,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 <div>
                     <p
                         style={{
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.8125rem',
                             color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
@@ -225,7 +225,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                 <div>
                     <p
                         style={{
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.8125rem',
                             color: 'rgba(255, 255, 255, 0.77)',
                             marginBottom: '0.5rem',
@@ -253,7 +253,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                     borderRadius: '8px',
                     padding: '1.5rem',
                     marginBottom: '3rem',
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.875rem',
                     color: 'rgba(255,255,255,0.4)',
                     lineHeight: 1.7,
@@ -272,7 +272,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
             <div style={{ marginBottom: '2rem' }}>
                 <p
                     style={{
-                        fontFamily: "'Syne', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontWeight: 700,
                         fontSize: '1.125rem',
                         color: 'var(--color-text-primary)',
@@ -294,7 +294,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.875rem',
                                 color: 'rgba(255,255,255,0.55)',
                                 border: '1px solid rgba(255,255,255,0.1)',
@@ -316,7 +316,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                     href="./data/climate_data.json"
                     download
                     style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.875rem',
                         background: 'rgba(239,138,98,0.12)',
                         border: '1px solid rgba(239,138,98,0.2)',
@@ -332,7 +332,7 @@ export default function FutureSection({ metrics }: FutureSectionProps) {
                     href="./data/metrics.json"
                     download
                     style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.875rem',
                         background: 'rgba(239,138,98,0.08)',
                         border: '1px solid rgba(239,138,98,0.15)',

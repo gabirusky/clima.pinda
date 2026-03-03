@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 interface SectionTitleProps {
     /** The headline text */
     children: ReactNode;
-    /** Optional sub-text below the title (DM Sans, smaller) */
+    /** Optional sub-text below the title (Raleway, smaller) */
     sub?: string;
     /** Optional id for anchor navigation */
     id?: string;
@@ -23,7 +23,7 @@ interface SectionTitleProps {
 /**
  * SectionTitle — styled <h2> with animated underline.
  *
- * Design intent: Each chapter opens with a title in Syne that draws
+ * Design intent: Each chapter opens with a title in Raleway that draws
  * an underline from left to right as it enters the viewport.
  * The underline color echoes the current chapter's temperature register.
  */
@@ -43,7 +43,7 @@ export default function SectionTitle({
         <div id={id} className={`flex flex-col gap-4 mb-10 ${className}`}>
             {kicker && (
                 <p style={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontWeight: 400,
                     fontSize: '0.75rem',
                     letterSpacing: '0.1em',
@@ -59,7 +59,7 @@ export default function SectionTitle({
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                 style={{
-                    fontFamily: "'Syne', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontWeight: 800,
                     fontSize: 'var(--text-display-md, clamp(32px, 4.5vw, 56px))',
                     lineHeight: 1.05,
@@ -95,7 +95,7 @@ export default function SectionTitle({
                     viewport={{ once: true, amount: 0.5 }}
                     transition={{ duration: 0.6, delay: 0.35 }}
                     style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '1rem',
                         color: 'var(--color-text-secondary, #a09080)',
                         maxWidth: '48ch',
@@ -113,7 +113,7 @@ export default function SectionTitle({
                     viewport={{ once: true, amount: 0.5 }}
                     transition={{ duration: 0.6, delay: 0.35 }}
                     style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '1rem',
                         color: 'var(--color-text-secondary, #a09080)',
                         maxWidth: '48ch',

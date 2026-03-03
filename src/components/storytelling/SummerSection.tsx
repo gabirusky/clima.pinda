@@ -83,7 +83,7 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
                             <div style={{
                                 marginTop: '1rem',
                                 padding: '0.5rem',
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.8125rem',
                                 color: 'rgba(255,255,255,0.4)',
                                 textAlign: 'center',
@@ -103,7 +103,7 @@ export default function SummerSection({ metrics, dailyData }: SummerSectionProps
             {/* ThresholdSlider below */}
             <div style={{ maxWidth: '600px', margin: '4rem auto 0', padding: '0 1.5rem' }}>
                 <p style={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.875rem',
                     color: 'rgba(255,255,255,0.4)',
                     marginBottom: '1.5rem',

@@ -4,103 +4,112 @@
 
 ---
 
-## About
+## Sobre o Projeto (Design & Experiência)
 
-Uma experiência de dados imersiva que transforma 85 anos de registros climáticos de Pindamonhangaba em uma história visual. Sete capítulos narram o aquecimento da cidade desde dias quentes que dobraram em quantidade, às noites sem dormir, ondas de calor que viram rotina, e o custo crescente do ar-condicionado.
+Uma experiência de dados imersiva no formato *scrollytelling* que transforma 85 anos de registros climáticos brutos de Pindamonhangaba em uma história visceral e humana sobre o aquecimento gradual de um vale brasileiro. 
 
-**Regra de design**: *Se o usuário consegue ler a página toda sem sentir o calor então o design falhou.*
+**Regra de Design:** Se o usuário conseguir ler a página inteira sem *sentir* o calor, o design falhou.
 
-## Resultados
+A estética baseia-se no jornalismo de dados editorial, focado em tratar os dados como arte:
+- **Cores & Atmosfera**: Fundo azul marinho profundo constratando com tons quentes de âmbar e vermelho (representando o aumento das temperaturas).
+- **Tipografia**: Uso rigoroso da fonte *Raleway* para garantir títulos marcantes e textos corporais legíveis e elegantes.
+- **Visualizações Interativas**: Painéis intercalados com animações graduais ativadas por rolagem (*Framer Motion* e *Scrollama*) e fundo dinâmico de faixas climáticas (*climate stripes*) em proporção de tela cheia.
 
-### Médias e Tendências (ETCCDI)
+---
 
-| Métrica | Média histórica | Recorde | Tendência/década |
-|---|---|---|---|
-| SU30 (dias ≥ 30°C) | 43,3/ano | **140 dias — 2024** | **+7,1 dias** |
-| TR20 (noites ≥ 20°C) | 31,6/ano | **99 noites — 2017** | **+5,0 noites** |
-| WSDI (ondas de calor) | 13,3/ano | **82 dias — 2018** | **+3,9 dias** |
-| DTR_MEAN (amplitude térmica) | 9,7 °C | **11,3 °C — 1960** | **+0,1 °C** |
-| CDD (dias secos seguidos) | 24,7/ano | **49 dias — 2025** | +0,4 dias (ns) |
-| CWD (dias úmidos seguidos)| 20,7/ano | **55 dias — 1965** | **-1,5 dias** |
+## Índices Climáticos Monitorados (ETCCDI)
 
-> Todos os índices seguem o padrão ETCCDI. Tendências em negrito indicam significância estatística (p < 0,05, sendo a maioria p < 0,001); "ns" indica ausência de tendência significativa.
+As métricas calculadas ao longo do período baseiam-se nos parâmetros do padrão internacional ETCCDI:
 
-### Extremos e Marcos Históricos (1940–2025)
+| Métrica | Índice Base | Definição |
+|---------|-------------|-----------|
+| **SU25** | SU25 | Dias no ano onde a temperatura máxima (T_max) ≥ 25°C |
+| **SU30** | SU30 (modificado)| Dias no ano onde a temperatura máxima (T_max) ≥ 30°C |
+| **TR20** | TR20 | Noites tropicais onde a temperatura mínima (T_min) ≥ 20°C |
+| **DTR** | DTR | Média da amplitude térmica diária (T_max − T_min) |
+| **WSDI** | WSDI | Dias de ondas de calor (≥6 dias seguidos com T_max acima do percentil 90 da base 1961–1990) |
+| **TX90p** | TX90p | Porcentagem de dias onde T_max excede o limite do percentil 90 histórico |
+| **TN90p** | TN90p | Porcentagem de noites onde T_min excede o limite do percentil 90 histórico |
+| **CDD** | CDD | Máximo de dias secos consecutivos (< 1mm de precipitação) |
+| **CWD** | CWD | Máximo de dias úmidos consecutivos (≥ 1mm de precipitação) |
+| **R10mm** | R10mm | Número de dias de chuva forte (precipitação ≥ 10mm) |
+| **R20mm** | R20mm | Número de dias de chuva muito forte (precipitação ≥ 20mm) |
+| **SDII** | SDII | Índice simples de intensidade de precipitação (média em dias úmidos, mm/dia) |
+| **Rx1day**| Rx1day | Quantidade máxima de precipitação registrada em um único dia (mm) |
+---
 
-Baseado nos dados processados, os maiores recordes absolutos de Pindamonhangaba são:
+## Extremos e Marcos Históricos (1940–2025)
+
+Baseado nos dados processados, os maiores recordes absolutos de Pindamonhangaba no período analisado são:
 
 - **Dia mais quente:** 38,2 °C (28/09/1961)
 - **Dia mais frio:** 1,3 °C (01/06/1979)
-- **Dia mais chuvoso:** 153,6 mm (25/01/1947)
-- **Onda de calor mais longa (WSDI):** 82 dias (2018)
-- **Ano com mais dias quentes (SU30):** 140 dias (2024)
+- **Onda de calor mais longa (WSDI):** 82 dias seguidos (2018)
+- **Ano com mais dias quentes extremados (SU30):** 140 dias (2024)
+- **Dia mais chuvoso:** 153,6 mm numa única data (25/01/1947)
 - **Temperatura média histórico-base (1940–1980):** 20,3 °C
-- **Maior anomalia de temperatura:** +1,9 °C (2019 e 2024, em relação à média base)
+- **Maior anomalia de temperatura reportada:** +1,9 °C (anos de 2019 e 2024, em relação à média base)
+
+---
 
 ## Metodologia de Projeção
-Para visualizar os cenários de 2040 e 2050, aplicamos extrapolações matemáticas rigorosas sobre os dados históricos, em vez de preditores climáticos físicos:
 
-**Tendência Linear Padrão**: Uma regressão linear simples calculada sobre toda a série histórica.
+Para desenhar os cenários probabilísticos até 2040 e 2050, aplicamos extrapolações matemáticas rigorosas sobre os dados históricos:
 
-**Extrapolação Recente (Slope-Anchor)**: Para capturar a aceleração do aquecimento, que seria mascarada pelas décadas estáveis do século XX, calculamos a taxa de crescimento da média móvel entre 1991-2020. Essa projeção é "ancorada" no último valor real da série, garantindo uma transição visual e matemática contínua para o futuro.
+1. **Tendência Linear Padrão**: Uma regressão linear simples computada detalhadamente sobre a série histórica completa.
+2. **Extrapolação Acelerada (*Slope-Anchor*)**: Composta para capturar a real aceleração contemporânea do aquecimento, calculando a taxa de crescimento da média móvel de 1991–2020. Esta via é atrelada/ancorada no último valor contatado da série para harmonizar visual e matematicamente o encerramento do histórico com o traçado futuro, sempre respeitando as diretrizes climáticas da Organização Meteorológica Mundial (OMM).
 
-O uso desse recorte temporal específico alinha-se às [**diretrizes da Organização Meteorológica Mundial (OMM)**](https://library.wmo.int/viewer/55797/download?file=1203_en.pdf&type=pdf&navigator=1).
+---
 
-## Como rodar localmente
+## Como Rodar Localmente
 
-### Frontend
+### 1. Web Frontend
 
 ```bash
 npm install
 npm run dev
-# Acesse http://localhost:5173/clima.pinda/
+# Acesse localmente via http://localhost:5173/clima.pinda/
 ```
 
-### Pipeline de dados (Python)
+### 2. Pipeline de Dados (Python)
 
 ```bash
 conda env create -f data/environment.yml
 conda activate pinda-climate
 
-python data/scripts/fetch_climate_data.py    # 1. Busca dados (Open-Meteo ERA5)
-python data/scripts/process_climate_data.py  # 2. Limpeza e validação
-python data/scripts/calculate_metrics.py     # 3. Índices climáticos ETCCDI
-python data/scripts/generate_web_data.py     # 4. Gera JSONs para o frontend
+python data/scripts/fetch_climate_data.py    # 1. Download de telemetria brura (Open-Meteo/ERA5)
+python data/scripts/process_climate_data.py  # 2. Sanitização e preenchimento de hiatos
+python data/scripts/calculate_metrics.py     # 3. Consolidação dos índices primários ETCCDI
+python data/scripts/generate_web_data.py     # 4. Formatação de pacotes JSON para Frontend
 ```
 
-### Testes
+### 3. Testes Globais
 
 ```bash
-npm test                  # Testes JS (Jest + Testing Library)
-python -m pytest data/tests/ -v  # Testes Python (pytest)
+npm test                         # Bateria JS (Jest + Testing Library)
+python -m pytest data/tests/ -v  # Bateria Python (Pytest)
 ```
 
 ---
 
-## Stack
+## Resumo Tecnológico
 
-| Camada | Tecnologia |
-|--------|------------|
-| Frontend | React 18 · Vite 5 · TypeScript |
-| Estilos | Tailwind CSS v4 · shadcn/ui |
-| Visualizações | D3.js v7 · Recharts · Leaflet |
-| Animações | Framer Motion · Scrollama |
-| Service Worker | vite-plugin-pwa (Workbox) |
-| Pipeline de dados | Python (pandas · numpy · scipy) |
-| Hospedagem | GitHub Pages · GitHub Actions |
-
----
-
-## Fonte dos dados
-
-- **Open-Meteo / ERA5** (Copernicus/ECMWF) — dados primários, 1940–2025
-- **NASA POWER / MERRA-2** — validação cruzada (r T_max = 0,893 · r T_min = 0,926)
+| Escopo | Stack Central |
+|--------|---------------|
+| **Frontend UI** | React 18 · Vite 5 · TypeScript Strict |
+| **Sistema de Estilos** | Tailwind CSS v4 · shadcn/ui · Fonte Raleway |
+| **Visualizações Base** | D3.js v7 · Recharts · Leaflet.js |
+| **Comportamento & Animação** | Framer Motion · Scrollama |
+| **Otimização** | vite-plugin-pwa (Agressive Workbox) |
+| **Engenharia de Dados** | Python Core (pandas · numpy · scipy) |
+| **Infraestrutura Automática** | GitHub Pages · GitHub Actions CI/CD |
 
 ---
 
-## Licença
+## Fontes e Licenças
 
-- **Código**: MIT
-- **Dados climáticos**: CC BY 4.0 — [Open-Meteo](https://open-meteo.com/)
-- **Paleta de cores**: inspirada em [Ed Hawkins Climate Stripes](https://showyourstripes.info/)
-- **Mapa**: © [OpenStreetMap](https://www.openstreetmap.org/copyright)
+- **Lógica e UI**: Sob lincença `MIT`
+- **Telemetria Primária** (1940–2025): [Open-Meteo / ERA5](https://open-meteo.com) (Copernicus/ECMWF) — CC BY 4.0
+- **Cross-Validation de Dados**: Dados validados contra a malha geofísica do NASA POWER / MERRA-2
+- **Inspiração Direta de Paleta**: [Ed Hawkins / Climate Stripes](https://showyourstripes.info/)
+- **Mapas Interativos**: Mapas distribuídos e baseados sob © [OpenStreetMap](https://www.openstreetmap.org/copyright)

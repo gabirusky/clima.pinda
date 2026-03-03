@@ -140,7 +140,7 @@ export default function Header() {
                                 href={link.href}
                                 onClick={e => { e.preventDefault(); handleNavClick(link.href); }}
                                 style={{
-                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontSize: '0.8125rem',
                                     fontWeight: isActive ? 600 : 400,
                                     color: isActive
@@ -209,7 +209,7 @@ export default function Header() {
                                     onClick={e => { e.preventDefault(); handleNavClick(link.href); }}
                                     style={{
                                         display: 'block',
-                                        fontFamily: "'DM Sans', sans-serif",
+                                        fontFamily: "'Raleway', sans-serif",
                                         fontSize: '1rem',
                                         color: activeSection === link.href
                                             ? 'var(--color-text-accent, #ef8a62)'

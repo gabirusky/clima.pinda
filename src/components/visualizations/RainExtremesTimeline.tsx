@@ -39,7 +39,7 @@ export default function RainExtremesTimeline({ dailyData, topCount = 5 }: RainEx
             width: '100%'
         }}>
             <h3 style={{
-                fontFamily: "'Syne', sans-serif",
+                fontFamily: "'Raleway', sans-serif",
                 fontSize: '1.25rem',
                 color: '#fff',
                 marginBottom: '1.5rem',
@@ -66,7 +66,7 @@ export default function RainExtremesTimeline({ dailyData, topCount = 5 }: RainEx
                                 background: 'rgba(33, 102, 172, 0.2)',
                                 color: '#67a9cf',
                                 borderRadius: '50%',
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontWeight: 600,
                                 fontSize: '0.875rem'
                             }}>
@@ -74,7 +74,7 @@ export default function RainExtremesTimeline({ dailyData, topCount = 5 }: RainEx
                             </span>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
                                 <span style={{
-                                    fontFamily: "'Syne', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontWeight: 700,
                                     fontSize: '1.25rem',
                                     color: 'rgba(255,255,255,0.85)',
@@ -83,7 +83,7 @@ export default function RainExtremesTimeline({ dailyData, topCount = 5 }: RainEx
                                     {event.year}
                                 </span>
                                 <span style={{
-                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontSize: '0.8rem',
                                     fontWeight: 500,
                                     color: 'rgba(255,255,255,0.4)',
@@ -94,7 +94,7 @@ export default function RainExtremesTimeline({ dailyData, topCount = 5 }: RainEx
                             </div>
                         </div>
                         <div style={{
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '1.5rem',
                             fontWeight: 700,
                             color: '#d6604d'

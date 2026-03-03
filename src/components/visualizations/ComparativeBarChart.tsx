@@ -19,7 +19,7 @@ const tooltipStyle = {
     background: 'rgba(10,15,30,0.95)',
     border: '1px solid rgba(255,255,255,0.08)',
     borderRadius: '6px',
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "'Raleway', sans-serif",
     fontSize: '0.875rem',
     color: '#f0ece3',
 };
@@ -79,11 +79,11 @@ export default function ComparativeBarChart({ metrics, stepIndex = 2 }: Comparat
                     <XAxis
                         dataKey="label"
                         stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}
+                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'Raleway', sans-serif", fontSize: 11 }}
                     />
                     <YAxis
                         stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}
+                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'Raleway', sans-serif", fontSize: 11 }}
                         tickFormatter={v => `${v}`}
                     />
                     <RechartsTooltip
@@ -117,7 +117,7 @@ function LegendItem({ color, label }: { color: string; label: string }) {
     return (
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: 2, background: color }} />
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>{label}</span>
+            <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>{label}</span>
         </span>
     );
 }

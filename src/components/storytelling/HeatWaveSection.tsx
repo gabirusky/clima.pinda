@@ -77,7 +77,7 @@ export default function HeatWaveSection({ metrics, summary }: HeatWaveSectionPro
                 <div style={{
                     flex: 1,
                     minWidth: '240px',
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '1rem',
                     color: 'var(--color-text-secondary)',
                     lineHeight: 1.7,

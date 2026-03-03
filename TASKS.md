@@ -123,14 +123,14 @@
 
 ### 4.1 Entry Point & Root ✅
 - [x] `src/main.tsx` — strict mode, App, index.css
-- [x] `index.html` — title *"A Memória de Calor de uma Cidade | Pindamonhangaba"*; all meta/OG/Twitter tags, Google Fonts (Syne 400/700/800, DM Sans 300–700 italic, JetBrains Mono), CSP present
+- [x] `index.html` — title *"A Memória de Calor de uma Cidade | Pindamonhangaba"*; all meta/OG/Twitter tags, Google Fonts (Raleway 400/700/800, Raleway 300–700 italic, JetBrains Mono), CSP present
 - [x] Schema.org Dataset JSON-LD present in `index.html`
 
 ### 4.2 CSS Design System (Tailwind v4 CSS-first) ✅
 - [x] `src/index.css` — full `@theme {}` block with complete Ed Hawkins stripe palette (`--color-stripe-deep-cold` → `--color-stripe-extreme`), `--color-base`, `--color-surface-*`, `--color-text-primary/secondary/accent`, all `--color-temp-*`, all three font vars, and full type scale (`--text-display-xl` clamped 80–160px through `--text-caption`)
 - [x] `@custom-variant dark` — present
 - [x] Keyframes: `stripeReveal`, `slideUp`, `pulseHot`, `fadeIn`, `drawLine` (stroke-dashoffset timeline reveal), `heatShimmer` (StatCallout glow)
-- [x] Base styles: `background: var(--color-base)`, Syne for `h1–h6`, DM Sans for `body`, warm `--color-text-primary` (#f0ece3)
+- [x] Base styles: `background: var(--color-base)`, Raleway for `h1–h6`, Raleway for `body`, warm `--color-text-primary` (#f0ece3)
 - [x] `prefers-reduced-motion` block — all durations set to 0.01ms
 - [x] Scroll-driven background on `body` — `radial-gradient` using `color-mix(in srgb, ...)` with `var(--scroll-heat, 0)`; shifts from cool blue (#2166ac) to burning red (#67001f) as user scrolls
 - [x] Scrollytelling utilities: `.sticky-viz`, `.scroll-steps`, `.scroll-step` (min-height 100vh), `.section-block`, `.prose-block`, `.glass`
@@ -175,7 +175,7 @@
 ### 5.3 Common Components ✅
 - [x] `src/components/common/LoadingSpinner.tsx` — Framer Motion heat-pulse: three concentric rings breathing warm orange-red
 - [x] `src/components/common/ErrorBoundary.tsx` — class component with project palette fallback UI
-- [x] `src/components/common/SectionTitle.tsx` — Syne 800 at `--text-display-md`; animated underline bar `scaleX` 0→1 on viewport entry; accepts `id`, `sub`/`description`, `accentColor`, `kicker`
+- [x] `src/components/common/SectionTitle.tsx` — Raleway 800 at `--text-display-md`; animated underline bar `scaleX` 0→1 on viewport entry; accepts `id`, `sub`/`description`, `accentColor`, `kicker`
 - [x] `src/components/common/StatCallout.tsx` — massive number display at `--text-display-xl` (80–160px); IntersectionObserver + rAF count-up (1200ms cubic ease-out); warm glow `text-shadow`; Framer Motion entrance
 - [x] `src/components/common/Tooltip.tsx` — absolutely-positioned div, dark glass background
 - [x] `src/components/common/DataTable.tsx` — visually-hidden accessible table alternative for all charts
@@ -192,7 +192,7 @@
 - [x] Hover: year label fades in; brightness lifts (CSS filter)
 - [x] **Animation**: stripes reveal left-to-right, 8ms/stripe stagger (~700ms total)
 - [x] Accessibility: `role="img"`, `aria-label`, `<title>`, `<desc>` inside SVG
-- [x] Decade labels below stripes; DM Sans semi-transparent
+- [x] Decade labels below stripes; Raleway semi-transparent
 - [x] Responsive via `useWindowSize`
 - [x] `<DataTable>` accessible fallback
 
@@ -256,7 +256,7 @@
 - [x] Scrollama initialized; `offset: 0.5` typed as `DecimalType` literal union (mirrored locally)
 - [x] Accepts `steps: ReactNode[]`, `onStepEnter`, `onStepExit`, `id`, `offset` props
 - [x] Sticky visualization pane: `position: sticky; top: 0; height: 100vh`
-- [x] Scrollable steps column: DM Sans, `min-height: 100vh` per step
+- [x] Scrollable steps column: Raleway, `min-height: 100vh` per step
 - [x] No `overflow: hidden` on Scrollama parent
 - [x] Cleanup on unmount; `scroller.resize()` on window resize
 - [x] Mobile: flex stacks to column — viz above, steps below
@@ -265,8 +265,8 @@
 > *"Pindamonhangaba está esquentando. Aqui está a prova."*
 
 - [x] Full-bleed ClimateStripes hero (100vw × 100vh) as background
-- [x] Headline floats over stripes: Syne 800, `--text-display-lg`
-- [x] Sub-text: coordinates · altitude · 85 years; DM Sans semi-transparent
+- [x] Headline floats over stripes: Raleway 800, `--text-display-lg`
+- [x] Sub-text: coordinates · altitude · 85 years; Raleway semi-transparent
 - [x] Scroll indicator: animated `<ChevronDown>` with `pulseHot`
 - [x] Steps: (1) intro; (2) highlight recent red stripes overlay; (3) anomaly label + `StatCallout`
 - [x] Scrollytelling: `onStepEnter` updates `highlightRecent` and `showAnomaly` state
@@ -298,7 +298,7 @@
 ### 7.6 HottestDaySection (`src/components/storytelling/HottestDaySection.tsx`) ✅
 > *A record card. Intimate scale.*
 
-- [x] Record card: 38.2°C / 28 set 1961 — Syne 800, `--color-stripe-extreme`, Framer Motion scale+fade
+- [x] Record card: 38.2°C / 28 set 1961 — Raleway 800, `--color-stripe-extreme`, Framer Motion scale+fade
 - [x] `CalendarHeatmap` for record year
 - [x] Birth year input → `PersonalTimeline` activation
 - [x] Typography/background softens on PersonalTimeline reveal
@@ -329,7 +329,7 @@
 
 ### 8.2 ThresholdSlider (`src/components/widgets/ThresholdSlider.tsx`) ✅
 - [x] Native `<input type="range">`, min=25, max=35, step=0.5
-- [x] Threshold value displayed at `--text-display-md` in Syne; color shifts blue → orange → red
+- [x] Threshold value displayed at `--text-display-md` in Raleway; color shifts blue → orange → red
 - [x] Real-time count from `dailyData` via `countDaysAboveThreshold`
 - [x] First decade (1940–1949) vs last decade (2015–2025) comparison shown live
 - [x] `aria-live="polite"` region; gradient track fill via inline `background`

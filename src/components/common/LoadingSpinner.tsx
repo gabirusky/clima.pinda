@@ -78,7 +78,7 @@ export default function LoadingSpinner() {
                 animate={{ opacity: [0, 0.6, 0.6] }}
                 transition={{ duration: 1.2, times: [0, 0.5, 1] }}
                 style={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.8125rem',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',

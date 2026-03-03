@@ -41,14 +41,14 @@ export default function RainClimatologyChart({ rainMetrics }: RainClimatologyCha
         background: 'rgba(10,15,30,0.95)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '6px',
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Raleway', sans-serif",
         fontSize: '0.875rem',
         color: 'var(--color-text-primary)',
     };
 
     return (
         <div style={{ width: '100%' }}>
-            <p style={{ fontFamily: "'Syne', sans-serif", fontSize: '1.25rem', color: '#fff', marginBottom: '1rem' }}>
+            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '1.25rem', color: '#fff', marginBottom: '1rem' }}>
                 Climograma (Média Histórica)
             </p>
             <ResponsiveContainer width="100%" height={300}>
@@ -57,11 +57,11 @@ export default function RainClimatologyChart({ rainMetrics }: RainClimatologyCha
                     <XAxis
                         dataKey="month"
                         stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}
+                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'Raleway', sans-serif", fontSize: 11 }}
                     />
                     <YAxis
                         stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}
+                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'Raleway', sans-serif", fontSize: 11 }}
                         tickFormatter={v => `${v}mm`}
                     />
                     <RechartsTooltip

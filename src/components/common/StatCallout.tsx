@@ -22,7 +22,7 @@ interface StatCalloutProps {
  * StatCallout — renders a single key statistic at massive scale.
  *
  * Design intent: Numbers like "+2.4°C" or "140 DIAS" should have physical weight.
- * Uses --text-display-xl (clamped 80–160px), Syne 800.
+ * Uses --text-display-xl (clamped 80–160px), Raleway 800.
  * Animates with a count-up effect on viewport entry.
  */
 export default function StatCallout({

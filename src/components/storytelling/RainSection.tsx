@@ -86,7 +86,7 @@ export default function RainSection({ rainMetrics, summary, dailyData }: RainSec
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                     <div>
                         <p style={{
-                            fontFamily: "'Syne', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '1.25rem',
                             color: '#fff',
                             marginBottom: '1rem',
@@ -104,7 +104,7 @@ export default function RainSection({ rainMetrics, summary, dailyData }: RainSec
                     </div>
 
                     <div style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '1rem',
                         color: 'var(--color-text-secondary)',
                         lineHeight: 1.7,

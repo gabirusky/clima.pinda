@@ -59,7 +59,7 @@ export default function RainTimeSeriesChart({ rainMetrics, defaultMetric = 'prec
         background: 'rgba(10,15,30,0.95)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '6px',
-        fontFamily: "'DM Sans', sans-serif",
+        fontFamily: "'Raleway', sans-serif",
         fontSize: '0.875rem',
         color: 'var(--color-text-primary)',
     };
@@ -83,7 +83,7 @@ export default function RainTimeSeriesChart({ rainMetrics, defaultMetric = 'prec
                             onClick={() => setActiveMetric(key)}
                             aria-pressed={isActive}
                             style={{
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.75rem',
                                 fontWeight: isActive ? 600 : 400,
                                 letterSpacing: '0.03em',
@@ -109,11 +109,11 @@ export default function RainTimeSeriesChart({ rainMetrics, defaultMetric = 'prec
                     <XAxis
                         dataKey="year"
                         stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}
+                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'Raleway', sans-serif", fontSize: 11 }}
                     />
                     <YAxis
                         stroke="rgba(255,255,255,0.2)"
-                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'DM Sans', sans-serif", fontSize: 11 }}
+                        tick={{ fill: 'rgba(240,236,227,0.5)', fontFamily: "'Raleway', sans-serif", fontSize: 11 }}
                         tickFormatter={v => `${v} ${config.unit}`}
                     />
                     <RechartsTooltip
@@ -176,7 +176,7 @@ export default function RainTimeSeriesChart({ rainMetrics, defaultMetric = 'prec
 
             {recordYear && (
                 <p style={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.8125rem',
                     color: 'rgba(255,255,255,0.4)',
                     marginTop: '0.5rem',

@@ -221,7 +221,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     background: 'rgba(10,15,30,0.97)',
                     border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: '8px',
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.8125rem',
                     color: 'var(--color-text-primary)',
                     padding: '0.6rem 0.9rem',
@@ -278,7 +278,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                             onClick={() => setActiveMetric(key)}
                             aria-pressed={isActive}
                             style={{
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.75rem',
                                 fontWeight: isActive ? 600 : 400,
                                 letterSpacing: '0.03em',
@@ -303,7 +303,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                     flexWrap: 'wrap',
                     gap: '1.25rem',
                     marginBottom: '0.75rem',
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.75rem',
                     color: 'rgba(255,255,255,0.5)',
                 }}
@@ -336,7 +336,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                         stroke="rgba(255,255,255,0.2)"
                         tick={{
                             fill: 'rgba(240,236,227,0.5)',
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: 11,
                         }}
                     />
@@ -345,7 +345,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                         stroke="rgba(255,255,255,0.2)"
                         tick={{
                             fill: 'rgba(240,236,227,0.5)',
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: 11,
                         }}
                         tickFormatter={(v: number) => `${v}`}
@@ -369,7 +369,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                             position: 'insideTopRight',
                             fill: 'rgba(180,138,110,0.65)',
                             fontSize: 10,
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                         }}
                     />
                     <ReferenceLine
@@ -381,7 +381,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                             position: 'insideTopLeft',
                             fill: 'rgba(202,0,32,0.4)',
                             fontSize: 9,
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                         }}
                     />
                     <ReferenceLine
@@ -393,7 +393,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
                             position: 'insideTopLeft',
                             fill: 'rgba(202,0,32,0.4)',
                             fontSize: 9,
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                         }}
                     />
 
@@ -487,7 +487,7 @@ export default function ProjectionChart({ metrics, onProjectionValues }: Project
             {recordYear && (
                 <p
                     style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.8125rem',
                         color: 'rgba(255,255,255,0.4)',
                         marginTop: '0.5rem',

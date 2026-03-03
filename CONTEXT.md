@@ -98,9 +98,9 @@ Time is geological strata. Scrolling down = drilling deeper into the past. Scrol
 ### Typography
 | Role | Font | Size | Usage |
 |------|------|------|-------|
-| Display / Key stats | **Syne** 800 | 120–160px (CSS clamp) | `+2.4°C`, `140 DAYS` — physical weight |
-| Section headlines | **Syne** 700 | 48–96px | Chapter titles |
-| Body copy | **DM Sans** 400–500 | 1.125rem | Prose, captions, annotations |
+| Display / Key stats | **Raleway** 800 | 120–160px (CSS clamp) | `+2.4°C`, `140 DAYS` — physical weight |
+| Section headlines | **Raleway** 700 | 48–96px | Chapter titles |
+| Body copy | **Raleway** 400–500 | 1.125rem | Prose, captions, annotations |
 | Calculator / data tables | **JetBrains Mono** | 0.9rem | Receipt-style layout |
 
 > **Never** use Inter, Roboto, Arial, or system fonts. They break the aesthetic.
@@ -325,7 +325,7 @@ optimizeDeps: { include: ['scrollama'] }
 - Do not generate your own blue-to-red gradient. Use the exact tokens from `@theme {}` in `src/index.css`.
 
 **Error: Body text uses a generic font**
-- Never use Inter, Roboto, or Arial. DM Sans for body, Syne for display, JetBrains Mono for calculator/data.
+- Never use Inter, Roboto, or Arial. Raleway for body, Raleway for display, JetBrains Mono for calculator/data.
 
 **Error: Key statistics are too small**
 - Stats like `+2.4°C`, `140 DAYS` must use `--text-display-xl` (clamped 80–160px). If a stat can be read at arm's length without squinting, it's too small.

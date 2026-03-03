@@ -82,7 +82,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                     }}
                 >
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.875rem',
                         color: 'rgba(255, 255, 255, 0.7)',
                         letterSpacing: '0.08em',
@@ -92,7 +92,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                         {hottestDateFormatted}
                     </p>
                     <p style={{
-                        fontFamily: "'Syne', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontWeight: 800,
                         fontSize: 'var(--text-display-lg, clamp(48px, 7vw, 96px))',
                         lineHeight: 0.9,
@@ -103,7 +103,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                         {hottestDay.temp_max.toFixed(1)}°C
                     </p>
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.8125rem',
                         color: 'rgba(255, 255, 255, 0.7)',
                         marginTop: '0.75rem',
@@ -134,7 +134,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                     }}
                 >
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.875rem',
                         color: 'rgba(255, 255, 255, 0.7)',
                         letterSpacing: '0.08em',
@@ -153,7 +153,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                         <div>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', flexWrap: 'wrap' }}>
                                 <p style={{
-                                    fontFamily: "'Syne', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontWeight: 800,
                                     fontSize: 'clamp(48px, 6vw, 84px)',
                                     lineHeight: 0.9,
@@ -163,7 +163,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                     {mostSu30.su30}
                                 </p>
                                 <span style={{
-                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontSize: '0.75rem',
                                     fontWeight: 700,
                                     color: 'rgba(255, 255, 255, 0.5)',
@@ -172,7 +172,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                 </span>
                             </div>
                             <p style={{
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.8125rem',
                                 color: 'rgba(255, 255, 255, 0.7)',
                                 marginTop: '0.5rem',
@@ -187,7 +187,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                         <div>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', flexWrap: 'wrap' }}>
                                 <p style={{
-                                    fontFamily: "'Syne', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontWeight: 800,
                                     fontSize: 'clamp(48px, 6vw, 84px)',
                                     lineHeight: 0.9,
@@ -197,7 +197,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                     {mostTr20?.tr20}
                                 </p>
                                 <span style={{
-                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontSize: '0.75rem',
                                     fontWeight: 700,
                                     color: 'rgba(255, 255, 255, 0.5)',
@@ -206,7 +206,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                 </span>
                             </div>
                             <p style={{
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.8125rem',
                                 color: 'rgba(255, 255, 255, 0.7)',
                                 marginTop: '0.5rem',
@@ -221,7 +221,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                         <div>
                             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', flexWrap: 'wrap' }}>
                                 <p style={{
-                                    fontFamily: "'Syne', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontWeight: 800,
                                     fontSize: 'clamp(48px, 6vw, 84px)',
                                     lineHeight: 0.9,
@@ -231,7 +231,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                     {mostCdd?.cdd}
                                 </p>
                                 <span style={{
-                                    fontFamily: "'DM Sans', sans-serif",
+                                    fontFamily: "'Raleway', sans-serif",
                                     fontSize: '0.75rem',
                                     fontWeight: 700,
                                     color: 'rgba(255, 255, 255, 0.5)',
@@ -240,7 +240,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                 </span>
                             </div>
                             <p style={{
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.8125rem',
                                 color: 'rgba(255, 255, 255, 0.7)',
                                 marginTop: '0.5rem',
@@ -257,7 +257,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
             {/* CalendarHeatmap for record year */}
             <div style={{ marginBottom: '3rem' }}>
                 <p style={{
-                    fontFamily: "'DM Sans', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontSize: '0.875rem',
                     color: 'rgba(255,255,255,0.4)',
                     marginBottom: '1rem',
@@ -286,7 +286,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                     }}
                 >
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontStyle: 'italic',
                         fontSize: '1.125rem',
                         color: 'rgba(255,255,255,0.6)',
@@ -296,7 +296,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                     </p>
                     <form onSubmit={handleBirthYearSubmit} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                         <label htmlFor="birth-year-input" style={{
-                            fontFamily: "'DM Sans', sans-serif",
+                            fontFamily: "'Raleway', sans-serif",
                             fontSize: '0.875rem',
                             color: 'rgba(255,255,255,0.5)',
                             flexShrink: 0,
@@ -316,7 +316,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                 border: '1px solid rgba(255,255,255,0.12)',
                                 borderRadius: '6px',
                                 color: 'var(--color-text-primary)',
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '1rem',
                                 padding: '0.5rem 0.75rem',
                                 width: '100px',
@@ -329,7 +329,7 @@ export default function HottestDaySection({ dailyData, summary, metrics }: Hotte
                                 border: '1px solid rgba(239,138,98,0.3)',
                                 borderRadius: '6px',
                                 color: '#ef8a62',
-                                fontFamily: "'DM Sans', sans-serif",
+                                fontFamily: "'Raleway', sans-serif",
                                 fontSize: '0.875rem',
                                 padding: '0.5rem 1rem',
                                 cursor: 'pointer',

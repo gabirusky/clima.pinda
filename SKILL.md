@@ -32,13 +32,12 @@ This metaphor governs:
 ## Typography
 
 ### Fonts
-- **Syne** — display headlines, section titles, key statistics
-  - Load from Google Fonts: `Syne:wght@400;700;800`
-  - At large sizes (120–160px), Syne becomes geometric and slightly unsettling — this is intentional
+- **Raleway** — display headlines, section titles, key statistics
+  - Load from Google Fonts: `Raleway:wght@400;700;800`
   - Key stats like `+2.4°C` or `140 DAYS` should live at 120–160px minimum
-- **DM Sans** — body copy, captions, annotations
+- **Raleway** — body copy, captions, annotations
   - Load from Google Fonts: `DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700`
-  - Warm, readable, approachable — the contrast to Syne's weight
+  - Warm, readable, approachable
 - **JetBrains Mono** — the AC Calculator, data tables, any receipt-style layout
   - Monospaced numbers. Stark. Uncomfortable.
 
@@ -121,8 +120,8 @@ body {
 - Full-bleed SVG climate stripes, 100vw × 100vh
 - Stripes: tall, slightly blurred (`filter: blur(0.5px)`)
 - Each stripe fades in on hover: `opacity: 0.4 → 1.0`, year label appears beneath
-- Headline floats over stripes in Syne 800: *"Pindamonhangaba está esquentando. Aqui está a prova."*
-- Sub-headline in DM Sans, small, below: coordinates · altitude · 85 years
+- Headline floats over stripes in Raleway 800: *"Pindamonhangaba está esquentando. Aqui está a prova."*
+- Sub-headline in Raleway, small, below: coordinates · altitude · 85 years
 - Scroll indicator: animated chevron, slow pulse
 
 **Animation**: Stripes reveal left-to-right on load, staggered 8ms per stripe, total duration ~700ms.
@@ -132,7 +131,7 @@ body {
 Each chapter feels like turning a page in a climate field notebook:
 - Dark paper texture (subtle, SVG noise overlay at 3% opacity)
 - Data color bursts that break the texture — sudden, eye-shocking
-- Step prose in DM Sans, 1.125rem, max-width 600px, left-aligned
+- Step prose in Raleway, 1.125rem, max-width 600px, left-aligned
 - Visualization: sticky, right side (desktop) / below (mobile)
 
 **Chapter entrance animation**: Evidence laid on a table. Slow reveal — 600ms ease-out, not instant pop-ins.
@@ -140,7 +139,7 @@ Each chapter feels like turning a page in a climate field notebook:
 ### 3. The Personal Timeline Widget — Intimate Scale
 
 Emotional climax. The design shifts register:
-- Birth year input: large, centered, DM Sans italic prompt
+- Birth year input: large, centered, Raleway italic prompt
 - On submit: the entire section transitions to softer light, ambient temperature drops
 - Typography scales *down* — smaller type, generous line-height, reads like a private letter
 - Mini chart: sparse, annotated, personal

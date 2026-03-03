@@ -90,7 +90,7 @@ export default function RidgelinePlot({ data }: RidgelinePlotProps) {
             .attr('x', xScale(30) + 4)
             .attr('y', 12)
             .attr('fill', '#b2182b')
-            .attr('font-family', "'DM Sans', sans-serif")
+            .attr('font-family', "'Raleway', sans-serif")
             .attr('font-size', 10)
             .attr('opacity', 0.8)
             .text('30°C');
@@ -141,7 +141,7 @@ export default function RidgelinePlot({ data }: RidgelinePlotProps) {
                 .attr('y', 4)
                 .attr('text-anchor', 'end')
                 .attr('fill', decadeColor)
-                .attr('font-family', "'Syne', sans-serif")
+                .attr('font-family', "'Raleway', sans-serif")
                 .attr('font-weight', 700)
                 .attr('font-size', 11)
                 .text(`${decade}s`);
@@ -164,7 +164,7 @@ export default function RidgelinePlot({ data }: RidgelinePlotProps) {
             .call(xAxis)
             .selectAll('text')
             .attr('fill', 'rgba(240,236,227,0.5)')
-            .attr('font-family', "'DM Sans', sans-serif")
+            .attr('font-family', "'Raleway', sans-serif")
             .attr('font-size', 11);
 
         g.select('.domain').attr('stroke', 'rgba(255,255,255,0.15)');

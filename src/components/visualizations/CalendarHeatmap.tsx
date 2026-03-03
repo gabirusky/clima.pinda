@@ -161,7 +161,7 @@ export default function CalendarHeatmap({
                 .attr('x', marginLeft + weekNum * cellStep)
                 .attr('y', marginTop - 10)
                 .attr('fill', 'rgba(240,236,227,0.4)')
-                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-family', "'Raleway', sans-serif")
                 .attr('font-size', 10)
                 .text(month);
         });
@@ -173,7 +173,7 @@ export default function CalendarHeatmap({
                 .attr('y', marginTop + i * cellStep + CELL_SIZE / 2 + 4)
                 .attr('text-anchor', 'end')
                 .attr('fill', 'rgba(240,236,227,0.3)')
-                .attr('font-family', "'DM Sans', sans-serif")
+                .attr('font-family', "'Raleway', sans-serif")
                 .attr('font-size', 9)
                 .text(label.slice(0, 3));
         });
@@ -249,7 +249,7 @@ export default function CalendarHeatmap({
                 textAlign: width > 900 ? 'left' : 'center',
             }}>
                 <p style={{
-                    fontFamily: "'Syne', sans-serif",
+                    fontFamily: "'Raleway', sans-serif",
                     fontWeight: 800,
                     fontSize: 'clamp(2rem, 3.5vw, 2.75rem)',
                     color: 'rgba(255,255,255,0.85)',
@@ -262,7 +262,7 @@ export default function CalendarHeatmap({
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     <p style={{
-                        fontFamily: "'DM Sans', sans-serif",
+                        fontFamily: "'Raleway', sans-serif",
                         fontSize: '0.65rem',
                         color: 'rgba(255,255,255,0.3)',
                         textTransform: 'uppercase',
@@ -278,7 +278,7 @@ export default function CalendarHeatmap({
                             <LegendItem color="#fddbc7" label="25°C" />
                             <LegendItem color="#d6604d" label="30°C" />
                             <LegendItem color="#b2182b" label="35°C" />
-                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                            <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                                 <svg width="12" height="12" viewBox="0 0 12 12" style={{ display: 'block', overflow: 'visible' }}>
                                     <rect x="0.75" y="0.75" width="10.5" height="10.5" rx="2" fill="none" stroke="#ffffffff" strokeWidth="1.5" />
                                     <path d="M 0.75 0.75 L 11.25 11.25 M 11.25 0.75 L 0.75 11.25" stroke="#ffffffff" strokeWidth="1.5" strokeLinecap="round" />
@@ -298,16 +298,16 @@ export default function CalendarHeatmap({
                     visible={tooltip.visible}
                     content={
                         <div>
-                            <p style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '0.875rem', marginBottom: 4 }}>
+                            <p style={{ fontFamily: "'Raleway', sans-serif", fontWeight: 700, fontSize: '0.875rem', marginBottom: 4 }}>
                                 {formatDate(tooltip.record.date)}
                             </p>
-                            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+                            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
                                 Tmáx: <strong style={{ color: '#ff0000ff' }}>{tooltip.record.temp_max.toFixed(1)}°C</strong>
                             </p>
-                            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+                            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
                                 Tmín: {tooltip.record.temp_min.toFixed(1)}°C
                             </p>
-                            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
+                            <p style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>
                                 Chuva: {tooltip.record.precipitation.toFixed(1)} mm
                             </p>
                         </div>
@@ -328,7 +328,7 @@ function LegendItem({ color, label }: { color: string; label: string }) {
     return (
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
             <span style={{ display: 'inline-block', width: 12, height: 12, borderRadius: 2, background: color }} />
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{label}</span>
+            <span style={{ fontFamily: "'Raleway', sans-serif", fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{label}</span>
         </span>
     );
 }
